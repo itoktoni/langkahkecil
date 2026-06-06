@@ -64,7 +64,8 @@ import { ref, computed } from 'vue'
 const props = defineProps({
   title: { type: String, default: 'Halo Bunda 👋' },
   tabs: { type: Array, default: () => [] },
-  activeTab: { type: String, default: '' }
+  activeTab: { type: String, default: '' },
+  userName: { type: String, default: 'Bunda' }
 })
 
 defineEmits(['switch'])

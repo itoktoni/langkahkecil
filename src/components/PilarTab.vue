@@ -1,62 +1,96 @@
 <template>
   <div class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto">
+
     <div v-show="!selectedSub" class="mb-stack-lg">
-      <p class="font-body-lg text-body-lg text-on-surface-variant leading-tight">
-        Hari ini ingin membantu anak berkembang di area apa?
-      </p>
-    </div>
+      <section class="mb-4">
+        <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-text-main leading-tight mb-2">
+          Mau Belajar Apa Hari Ini?
+        </h2>
+        <p class="font-body-md text-body-md text-on-surface-variant">Pilih area yang ingin dikembangkan bersama si kecil.</p>
+      </section>
 
-    <div v-show="!selectedSub" class="flex flex-col gap-3">
       <template v-for="(pilar, index) in pilars" :key="pilar.key">
-        <button
-          class="w-full flex items-center gap-4 p-5 md:p-6 rounded-[24px] transition-all duration-300 border-2 text-left"
-            :style="{
-              backgroundColor: pilar.bg,
-              borderColor: selectedPilar === pilar.key ? pilar.color : `${pilar.color}40`,
-              boxShadow: selectedPilar === pilar.key ? `0 6px 24px ${pilar.color}50` : `0 2px 12px ${pilar.color}20`,
-            }" @click="togglePilar(pilar.key)">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-3xl shrink-0"
-            :style="{ background: 'white' }">{{ pilar.emoji }}</div>
-          <div class="flex-1 min-w-0">
-            <span class="font-label-lg text-label-lg block">{{ pilar.title }}</span>
-            <span class="text-xs text-on-surface-variant">{{ pilar.subtitle }}</span>
+        <div v-if="index === 0"
+          class="bento-card group relative overflow-hidden rounded-[32px] cursor-pointer transition-all hover:shadow-xl border-2 mb-3"
+          :style="{ background: `linear-gradient(135deg, ${pilar.color}20, ${pilar.color}08)`, borderColor: selectedPilar === pilar.key ? pilar.color : `${pilar.color}60`, boxShadow: selectedPilar === pilar.key ? `0 8px 32px ${pilar.color}40` : `0 4px 16px ${pilar.color}20` }"
+          @click="togglePilar(pilar.key)">
+          <div class="flex items-center gap-5 p-6 md:p-8">
+            <div class="w-20 h-20 rounded-[24px] flex items-center justify-center text-5xl shrink-0 shadow-lg"
+              :style="{ background: `linear-gradient(135deg, ${pilar.color}, ${pilar.color}CC)` }">
+              {{ pilar.emoji }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[10px] font-bold uppercase tracking-widest" :style="{ color: pilar.color }">Pilar 1</span>
+              <h3 class="font-headline-md text-headline-md text-text-main mt-1">{{ pilar.title }}</h3>
+              <p class="text-sm text-on-surface-variant mt-1">{{ pilar.subtitle }}</p>
+            </div>
+            <span class="material-symbols-outlined text-3xl text-outline-variant group-hover:text-primary transition-all shrink-0"
+              :class="{ 'rotate-180': selectedPilar === pilar.key }">expand_more</span>
           </div>
-          <span class="material-symbols-outlined text-on-surface-variant transition-transform duration-300 shrink-0"
-            :class="{ 'rotate-180': selectedPilar === pilar.key }">expand_more</span>
-        </button>
+          <div class="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-10" :style="{ background: pilar.color }"></div>
+        </div>
 
-        <Transition @enter="onEnter" @leave="onLeave" @after-leave="afterLeave">
-          <div v-if="selectedPilar === pilar.key && subData" :key="'collapse-' + pilar.key" ref="collapseEl"
-            class="overflow-hidden">
-            <div class="pb-2 pl-4 md:pl-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div v-for="item in subData.items" :key="item.title"
-                  class="group bg-white p-4 rounded-[20px] soft-shadow flex items-center gap-3 transition-all hover:shadow-xl cursor-pointer border"
-                  :style="{ borderColor: subData.color }" @click.stop="openAktivitas(item.title)">
-                  <div class="w-11 h-11 rounded-xl flex items-center justify-center text-2xl shrink-0"
-                    :style="{ background: subData.bg }">{{ item.emoji }}</div>
-                  <div class="flex-1 min-w-0">
-                    <h3 class="font-label-lg text-label-lg text-primary leading-snug">{{ item.title }}</h3>
-                    <p class="text-xs leading-snug text-on-surface-variant mt-0.5 line-clamp-2">{{ item.desc }}</p>
-                  </div>
+        <div v-else
+          class="bento-card group bg-white rounded-[24px] soft-shadow overflow-hidden cursor-pointer transition-all hover:shadow-xl border-2 mb-3"
+          :style="{ borderColor: selectedPilar === pilar.key ? pilar.color : pilar.color + '40', boxShadow: selectedPilar === pilar.key ? `0 6px 24px ${pilar.color}40` : `0 2px 12px ${pilar.color}15` }"
+          @click="togglePilar(pilar.key)">
+          <div class="flex items-center gap-4 p-4 md:p-5">
+            <div class="w-12 h-12 rounded-[16px] flex items-center justify-center text-2xl shrink-0"
+              :style="{ background: pilar.bg }">
+              {{ pilar.emoji }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-label-lg text-label-lg text-text-main">{{ pilar.title }}</h3>
+              <p class="text-xs text-on-surface-variant">{{ pilar.subtitle }}</p>
+            </div>
+            <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-lg shrink-0"
+              :class="{ 'rotate-180': selectedPilar === pilar.key }">expand_more</span>
+          </div>
+        </div>
+
+        <div v-if="selectedPilar === pilar.key && getSubData(pilar.key)" class="mb-3 fade-in-up">
+          <div class="bg-canvas-cream rounded-[24px] p-5">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-headline-sm text-text-main">{{ getSubData(pilar.key).title }}</h3>
+              <button @click.stop="closePilar"
+                class="flex items-center gap-1.5 text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-lg">close</span>
+                Tutup
+              </button>
+            </div>
+            <p class="text-sm text-on-surface-variant mb-4">{{ getSubData(pilar.key).desc }}</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div v-for="item in getSubData(pilar.key).items" :key="item.title"
+                class="group bg-white p-4 rounded-[20px] soft-shadow flex items-center gap-3 transition-all hover:shadow-xl cursor-pointer border-2"
+                :style="{ borderColor: getSubData(pilar.key).color + '40' }" @click.stop="openAktivitas(item.title)">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center text-2xl shrink-0"
+                  :style="{ background: getSubData(pilar.key).bg }">{{ item.emoji }}</div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-label-lg text-label-lg text-primary leading-snug">{{ item.title }}</h3>
+                  <p class="text-xs leading-snug text-on-surface-variant mt-0.5 line-clamp-2">{{ item.desc }}</p>
                 </div>
+                <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-lg shrink-0">chevron_right</span>
               </div>
             </div>
           </div>
-        </Transition>
+        </div>
       </template>
     </div>
 
     <div v-show="!selectedSub"
-      class="mt-stack-lg bg-tertiary-container/10 p-6 md:p-8 rounded-[32px] soft-shadow relative overflow-hidden border border-growth-green">
-      <div class="flex gap-4 items-start relative z-10">
-        <span class="material-symbols-outlined text-tertiary text-2xl">auto_awesome</span>
+      class="mt-stack-lg bg-[#D7EDFF] rounded-[32px] p-6 md:p-8 relative overflow-hidden soft-shadow">
+      <div class="relative z-10 flex gap-4">
+        <div class="shrink-0">
+          <div class="w-12 h-12 bg-white/50 rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-3xl">psychology</span>
+          </div>
+        </div>
         <div>
-          <p class="font-label-lg text-label-lg text-tertiary mb-1">Tips Siang Ini</p>
-          <p class="font-body-md text-body-md text-on-surface-variant">Fokus pada satu hal kecil hari ini memberikan
-            dampak besar di masa depan.</p>
+          <h4 class="font-label-lg text-label-lg text-on-tertiary-fixed mb-1 uppercase tracking-wider">Tips Hari Ini</h4>
+          <p class="font-body-md text-body-lg text-primary italic leading-relaxed">"Fokus pada satu hal kecil hari ini memberikan dampak besar di masa depan."</p>
         </div>
       </div>
+      <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-white/20 rounded-full blur-3xl"></div>
     </div>
 
     <AktivitasPage v-if="selectedSub && !selectedAktivitas" :title="selectedSub" @back="closeAktivitas"
@@ -64,12 +98,11 @@
 
     <AktivitasDetailPage v-if="selectedAktivitas" :item="selectedAktivitas" @back="closeDetail" />
 
-
   </div>
 </template>
 
 <script setup>
-import { ref, computed, nextTick, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import AktivitasPage from './AktivitasPage.vue'
 import AktivitasDetailPage from './AktivitasDetailPage.vue'
 import { pilars, pillarSubs } from '../data/pilars.js'
@@ -82,7 +115,6 @@ const emit = defineEmits(['select-pilar', 'close-pilar'])
 
 const selectedSub = ref(null)
 const selectedAktivitas = ref(null)
-const collapseEl = ref(null)
 
 watch(() => props.selectedPilar, (val) => {
   if (!val) {
@@ -91,10 +123,9 @@ watch(() => props.selectedPilar, (val) => {
   }
 })
 
-const subData = computed(() => {
-  if (!props.selectedPilar) return null
-  return pillarSubs[props.selectedPilar] || null
-})
+function getSubData(key) {
+  return pillarSubs[key] || null
+}
 
 function togglePilar(key) {
   if (props.selectedPilar === key) {
@@ -130,31 +161,5 @@ function openDetail(item) {
 
 function closeDetail() {
   selectedAktivitas.value = null
-}
-
-function onEnter(el) {
-  el.style.height = '0'
-  el.style.opacity = '0'
-  nextTick(() => {
-    el.style.transition = 'height 0.35s ease, opacity 0.35s ease'
-    el.style.height = el.scrollHeight + 'px'
-    el.style.opacity = '1'
-  })
-}
-
-function onLeave(el) {
-  el.style.height = el.scrollHeight + 'px'
-  el.style.opacity = '1'
-  nextTick(() => {
-    el.style.transition = 'height 0.3s ease, opacity 0.3s ease'
-    el.style.height = '0'
-    el.style.opacity = '0'
-  })
-}
-
-function afterLeave(el) {
-  el.style.height = ''
-  el.style.opacity = ''
-  el.style.transition = ''
 }
 </script>

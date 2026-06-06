@@ -1,7 +1,7 @@
 <template>
   <div class="bg-canvas-cream text-text-main min-h-screen">
-    <AppSidebar :tabs="tabs" :active-tab="activeTab" @switch="switchTab" />
-    <AppHeader :title="pageTitle" :tabs="tabs" :active-tab="activeTab" @switch="switchTab" />
+    <AppSidebar :tabs="tabs" :active-tab="activeTab" :user-name="userName" @switch="switchTab" />
+    <AppHeader :title="pageTitle" :tabs="tabs" :active-tab="activeTab" :user-name="userName" @switch="switchTab" />
 
     <main class="content-wrapper pb-24 lg:pb-8">
       <PilarTab v-show="activeTab === 'pilar'" :selected-pilar="selectedPilar" @select-pilar="openPilarSub" @close-pilar="closePilarSub" />
@@ -28,6 +28,7 @@ import ProfileTab from './components/ProfileTab.vue'
 const activeTab = ref('pilar')
 const selectedPilar = ref(null)
 const selectedAnakId = ref(null)
+const userName = ref('Azizah')
 
 const anakList = ref([
   {
@@ -68,8 +69,8 @@ const anakList = ref([
 ])
 
 const pageTitle = computed(() => {
-  const titles = { pilar: 'Home', progress: 'Statistik', tools: 'Buku Alat', profile: 'Profile' }
-  return titles[activeTab.value] || 'Home'
+  const titles = { pilar: `Halo ${userName.value}!`, progress: 'Statistik', tools: 'Buku Alat', profile: 'Profile' }
+  return titles[activeTab.value] || `Halo ${userName.value}!`
 })
 
 const allHistory = computed(() => {

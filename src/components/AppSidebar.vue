@@ -8,7 +8,7 @@
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzJNpRkogQwczNStctNhENEVUYGd8K9gvJsJHTF4dEc8EJ0f7gqUIejr4bQpYMLUPW5IXczrErhaApGFrTVwP_x6ydST_7zIETJf3sBbPA_SJkfU6g7oBaRxYDJiZEVtiDkwNnpiHti6_c1CUO8EyBmmilPhrfKepTN-4SeBHs_ll75dnAePuOcw-mydodKV12Zwo6rVBVVPdjjo1ZFFuREjTkuDmc4lifG7lewY_DLtHTp4RUKAG66H77zbFeqqZi-xuHnx8k2Ew">
         </div>
         <div>
-          <h2 class="font-headline-md text-headline-md text-text-main">Halo Bunda!</h2>
+          <h2 class="font-headline-md text-headline-md text-text-main">Halo {{ userName }}!</h2>
           <p class="text-sm text-on-surface-variant">Selamat datang</p>
         </div>
       </div>
@@ -56,7 +56,8 @@
 <script setup>
 const props = defineProps({
   tabs: { type: Array, required: true },
-  activeTab: { type: String, required: true }
+  activeTab: { type: String, required: true },
+  userName: { type: String, default: 'Bunda' }
 })
 
 defineEmits(['switch'])
