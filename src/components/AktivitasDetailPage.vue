@@ -199,21 +199,20 @@
         class="bento-card group bg-white rounded-[28px] soft-shadow overflow-hidden border cursor-pointer transition-all hover:shadow-xl flex flex-col"
         :style="{ borderColor: item.color }"
         @click="openPuzzle(pz)">
-        <!-- Image -->
-        <div class="h-48 overflow-hidden relative shrink-0">
-          <img :src="pz.image" :alt="pz.title" class="w-full h-full object-cover" />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-          <div class="absolute top-3 right-3 bg-white/90 rounded-full px-3 py-1 text-xs font-bold text-primary">
+        <!-- Header -->
+        <div class="p-5 pb-3 flex items-center justify-between" :style="{ background: item.bg }">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" :style="{ background: 'white' }">🧩</div>
+          <span class="bg-white/90 rounded-full px-3 py-1 text-xs font-bold text-primary">
             {{ pz.questions.length }} soal
-          </div>
+          </span>
         </div>
         <!-- Content -->
-        <div class="p-5 flex flex-col flex-1">
+        <div class="p-5 pt-3 flex flex-col flex-1">
           <h3 class="font-headline-md text-headline-md mb-2">{{ pz.title }}</h3>
           <p class="text-sm text-on-surface-variant mb-3">{{ pz.desc }}</p>
           <div class="flex flex-wrap gap-2 mb-3">
             <span v-for="q in pz.questions.slice(0, 3)" :key="q.q" class="bg-surface-container-low rounded-full px-3 py-1 text-xs text-on-surface-variant">
-              {{ q.emoji }} {{ q.q.slice(0, 25) }}...
+              {{ q.q.slice(0, 30) }}...
             </span>
           </div>
           <!-- Footer -->
