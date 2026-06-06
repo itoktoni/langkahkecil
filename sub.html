@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&amp;display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "text-main": "#3D3D3D",
+                        "on-tertiary-container": "#004568",
+                        "surface-tint": "#176c33",
+                        "primary-fixed-dim": "#86d993",
+                        "surface-container-high": "#ede7e1",
+                        "on-surface": "#1d1b18",
+                        "surface-container-low": "#f8f3ed",
+                        "canvas-cream": "#FFF9F3",
+                        "surface-bright": "#fef8f2",
+                        "tertiary-fixed": "#cbe6ff",
+                        "surface-dim": "#dfd9d3",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "success-soft": "#E1F2E5",
+                        "primary-container": "#6dbe7b",
+                        "on-secondary-fixed-variant": "#6f3800",
+                        "inverse-on-surface": "#f6f0ea",
+                        "on-primary-fixed": "#002109",
+                        "on-tertiary-fixed": "#001e30",
+                        "surface-container": "#f3ede7",
+                        "friendly-sky": "#7CC6FE",
+                        "secondary-fixed-dim": "#ffb780",
+                        "tertiary-container": "#69b4eb",
+                        "surface-container-lowest": "#ffffff",
+                        "warm-bonding": "#F4A261",
+                        "on-primary-container": "#004b1e",
+                        "secondary-fixed": "#ffdcc4",
+                        "on-tertiary-fixed-variant": "#004b71",
+                        "secondary": "#8e4e14",
+                        "primary": "#176c33",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e7e2dc",
+                        "on-primary-fixed-variant": "#005322",
+                        "on-secondary-container": "#783d01",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#ffab69",
+                        "inverse-surface": "#32302c",
+                        "warning-soft": "#FDF0E6",
+                        "surface-container-highest": "#e7e2dc",
+                        "on-secondary-fixed": "#2f1400",
+                        "surface": "#fef8f2",
+                        "outline-variant": "#bfc9bc",
+                        "on-surface-variant": "#40493f",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fef8f2",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#86d993",
+                        "tertiary": "#006494",
+                        "on-background": "#1d1b18",
+                        "primary-fixed": "#a2f6ad",
+                        "outline": "#707a6e",
+                        "tertiary-fixed-dim": "#8ecdff",
+                        "growth-green": "#6DBE7B"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "32px",
+                        "margin-mobile": "20px",
+                        "gutter": "16px",
+                        "stack-sm": "8px",
+                        "margin-desktop": "40px",
+                        "unit": "8px",
+                        "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Nunito Sans"],
+                        "label-sm": ["Nunito Sans"],
+                        "headline-lg": ["Nunito Sans"],
+                        "body-md": ["Nunito Sans"],
+                        "body-lg": ["Nunito Sans"],
+                        "label-lg": ["Nunito Sans"],
+                        "headline-lg-mobile": ["Nunito Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "800" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .pillar-card {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .pillar-card:active {
+            transform: scale(0.95);
+        }
+
+        .soft-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .bento-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .bento-card:active {
+            transform: scale(0.98);
+        }
+
+        .sub-list-container {
+            display: none;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .sub-list-container.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    <style>
+        /* Desktop sidebar navigation */
+        @media (min-width: 1024px) {
+            body {
+                padding-bottom: 0 !important;
+            }
+
+            .desktop-sidebar {
+                display: flex !important;
+            }
+
+            .mobile-nav {
+                display: none !important;
+            }
+
+            .content-wrapper {
+                margin-left: 280px;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .desktop-sidebar {
+                display: none !important;
+            }
+
+            .mobile-nav {
+                display: flex !important;
+            }
+
+            .content-wrapper {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-canvas-cream text-text-main min-h-screen">
+    <!-- Desktop Sidebar -->
+    <aside class="desktop-sidebar fixed left-0 top-0 h-full w-[280px] bg-white shadow-lg z-50 flex flex-col p-6">
+        <div class="flex items-center gap-3 mb-8">
+            <div class="w-12 h-12 rounded-full bg-canvas-cream flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+                <img alt="Profil Bunda" class="w-full h-full object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzJNpRkogQwczNStctNhENEVUYGd8K9gvJsJHTF4dEc8EJ0f7gqUIejr4bQpYMLUPW5IXczrErhaApGFrTVwP_x6ydST_7zIETJf3sBbPA_SJkfU6g7oBaRxYDJiZEVtiDkwNnpiHti6_c1CUO8EyBmmilPhrfKepTN-4SeBHs_ll75dnAePuOcw-mydodKV12Zwo6rVBVVPdjjo1ZFFuREjTkuDmc4lifG7lewY_DLtHTp4RUKAG66H77zbFeqqZi-xuHnx8k2Ew">
+            </div>
+            <div>
+                <h2 class="font-headline-md text-headline-md text-text-main">Halo Bunda!</h2>
+                <p class="text-sm text-on-surface-variant">Selamat datang</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-2">
+            <button class="sidebar-btn w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-150" data-tab="pilar">
+                <span class="material-symbols-outlined sidebar-icon">home</span>
+                <span class="font-label-lg">Home</span>
+            </button>
+            <button class="sidebar-btn w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-150" data-tab="progress">
+                <span class="material-symbols-outlined sidebar-icon">auto_graph</span>
+                <span class="font-label-lg">Progress</span>
+            </button>
+            <button class="sidebar-btn w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-150" data-tab="tools">
+                <span class="material-symbols-outlined sidebar-icon">build</span>
+                <span class="font-label-lg">Tools</span>
+            </button>
+            <button class="sidebar-btn w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-150" data-tab="poin">
+                <span class="material-symbols-outlined sidebar-icon">star</span>
+                <span class="font-label-lg">Point</span>
+            </button>
+        </nav>
+
+        <div class="mt-auto pt-6 border-t border-outline-variant">
+            <div class="flex items-center gap-3 px-4 py-3">
+                <span class="material-symbols-outlined text-primary">notifications</span>
+                <span class="font-label-lg">Notifikasi</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- TopAppBar -->
+    <header
+        class="w-full top-0 sticky z-40 bg-canvas-cream flex justify-between items-center px-margin-mobile md:px-margin-desktop py-stack-md lg:hidden">
+        <div class="flex items-center gap-3">
+            <div
+                class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+                <img alt="Profil Bunda" class="w-full h-full object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzJNpRkogQwczNStctNhENEVUYGd8K9gvJsJHTF4dEc8EJ0f7gqUIejr4bQpYMLUPW5IXczrErhaApGFrTVwP_x6ydST_7zIETJf3sBbPA_SJkfU6g7oBaRxYDJiZEVtiDkwNnpiHti6_c1CUO8EyBmmilPhrfKepTN-4SeBHs_ll75dnAePuOcw-mydodKV12Zwo6rVBVVPdjjo1ZFFuREjTkuDmc4lifG7lewY_DLtHTp4RUKAG66H77zbFeqqZi-xuHnx8k2Ew">
+            </div>
+            <h1 class="font-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-text-main" id="page-title">Halo Bunda 👋
+            </h1>
+        </div>
+        <button
+            class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white shadow-sm text-primary hover:opacity-80 transition-opacity duration-200">
+            <span class="material-symbols-outlined">notifications</span>
+        </button>
+    </header>
+    <!-- Main Content Areas -->
+    <main id="content-container" class="content-wrapper pb-24 lg:pb-8">
+        <!-- PILAR TAB -->
+        <div class="tab-content active px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto" id="pilar-tab">
+            <div class="mb-stack-lg">
+                <p class="font-body-lg text-body-lg text-on-surface-variant leading-tight">
+                    Hari ini ingin membantu anak berkembang di area apa?
+                </p>
+            </div>
+            <div
+                class="mb-stack-lg bg-tertiary-container/10 p-6 md:p-8 rounded-[32px] soft-shadow relative overflow-hidden border border-growth-green">
+                <div class="flex gap-4 items-start relative z-10">
+                    <span class="material-symbols-outlined text-tertiary text-2xl">auto_awesome</span>
+                    <div>
+                        <p class="font-label-lg text-label-lg text-tertiary mb-1">Tips Siang Ini</p>
+                        <p class="font-body-md text-body-md text-on-surface-variant">Fokus pada satu hal kecil hari ini
+                            memberikan dampak besar di masa depan.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <button
+                    class="pillar-card flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] bg-[#E8F5E9] aspect-square transition-all duration-500 opacity-100 translate-y-0 border border-[#4CAF50]"
+                    style="transition-delay: 0ms; box-shadow: 0 4px 16px rgba(76,175,80,0.25);"
+                    data-pillar="spiritual">
+                    <div class="mb-4 text-4xl">🙏</div>
+                    <span class="font-label-lg text-label-lg text-center leading-snug">Spiritual & Nilai Kehidupan</span>
+                    <span class="text-xs text-on-surface-variant text-center mt-1.5">Kompas moral & makna hidup</span>
+                </button>
+                <button
+                    class="pillar-card flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] bg-[#FFF3E0] aspect-square transition-all duration-500 opacity-100 translate-y-0 border border-[#FF9800]"
+                    style="transition-delay: 50ms; box-shadow: 0 4px 16px rgba(255,152,0,0.25);"
+                    data-pillar="karakter">
+                    <div class="mb-4 text-4xl">🦁</div>
+                    <span class="font-label-lg text-label-lg text-center leading-snug">Karakter & Mental</span>
+                    <span class="text-xs text-on-surface-variant text-center mt-1.5">Tangguh & bertanggung jawab</span>
+                </button>
+                <button
+                    class="pillar-card flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] bg-[#E3F2FD] aspect-square transition-all duration-500 opacity-100 translate-y-0 border border-[#2196F3]"
+                    style="transition-delay: 100ms; box-shadow: 0 4px 16px rgba(33,150,243,0.25);"
+                    data-pillar="kreatifitas">
+                    <div class="mb-4 text-4xl">📚</div>
+                    <span class="font-label-lg text-label-lg text-center leading-snug">Kreatifitas & Inovasi</span>
+                    <span class="text-xs text-on-surface-variant text-center mt-1.5">Suka belajar & rasa ingin tahu</span>
+                </button>
+                <button
+                    class="pillar-card flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] bg-[#F3E5F5] aspect-square transition-all duration-500 opacity-100 translate-y-0 border border-[#9C27B0]"
+                    style="transition-delay: 150ms; box-shadow: 0 4px 16px rgba(156,39,176,0.25);"
+                    data-pillar="disiplin">
+                    <div class="mb-4 text-4xl">🧠</div>
+                    <span class="font-label-lg text-label-lg text-center leading-snug">Disiplin & Kebiasaan Baik</span>
+                    <span class="text-xs text-on-surface-variant text-center mt-1.5">Fokus & atur diri sendiri</span>
+                </button>
+                <button
+                    class="pillar-card flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] bg-[#E8EAF6] aspect-square transition-all duration-500 opacity-100 translate-y-0 border border-[#3F51B5]"
+                    style="transition-delay: 200ms; box-shadow: 0 4px 16px rgba(63,81,181,0.25);"
+                    data-pillar="kemandirian">
+                    <div class="mb-4 text-4xl">🧹</div>
+                    <span class="font-label-lg text-label-lg text-center leading-snug">Kemandirian & Life Skills</span>
+                    <span class="text-xs text-on-surface-variant text-center mt-1.5">Mandiri mengurus diri</span>
+                </button>
+                <button
+                    class="pillar-card flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] bg-[#EFEBE9] aspect-square transition-all duration-500 opacity-100 translate-y-0 border border-[#8D6E63]"
+                    style="transition-delay: 250ms; box-shadow: 0 4px 16px rgba(141,110,99,0.25);"
+                    data-pillar="sosial">
+                    <div class="mb-4 text-4xl">🤝</div>
+                    <span class="font-label-lg text-label-lg text-center leading-snug">Sosial & Komunikasi</span>
+                    <span class="text-xs text-on-surface-variant text-center mt-1.5">Bergaul & bekerja sama</span>
+                </button>
+                <button
+                    class="pillar-card flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] bg-[#FFEBEE] aspect-square transition-all duration-500 opacity-100 translate-y-0 border border-[#F44336]"
+                    style="transition-delay: 300ms; box-shadow: 0 4px 16px rgba(244,67,54,0.25);"
+                    data-pillar="emosi">
+                    <div class="mb-4 text-4xl">❤️</div>
+                    <span class="font-label-lg text-label-lg text-center leading-snug">Pengelolaan Emosi & Keluarga</span>
+                    <span class="text-xs text-on-surface-variant text-center mt-1.5">Dicintai, aman & dekat keluarga</span>
+                </button>
+                <button
+                    class="pillar-card flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] bg-[#E0F2F1] aspect-square transition-all duration-500 opacity-100 translate-y-0 border border-[#009688]"
+                    style="transition-delay: 350ms; box-shadow: 0 4px 16px rgba(0,150,136,0.25);"
+                    data-pillar="kesehatan">
+                    <div class="mb-4 text-4xl">💪</div>
+                    <span class="font-label-lg text-label-lg text-center leading-snug">Kesehatan & Olahraga</span>
+                    <span class="text-xs text-on-surface-variant text-center mt-1.5">Tubuh sehat & aktif bergerak</span>
+                </button>
+            </div>
+            <!-- Sub-list container for each pillar -->
+            <div id="pillar-sub-list" class="sub-list-container mt-stack-lg">
+                <button onclick="closePilarSub()" class="flex items-center gap-2 text-primary font-label-lg mb-4 hover:opacity-80 transition-opacity">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Kembali
+                </button>
+                <h3 id="sub-list-title" class="font-headline-md text-headline-md mb-2"></h3>
+                <p id="sub-list-desc" class="font-body-md text-body-md text-on-surface-variant mb-stack-lg"></p>
+                <div id="sub-list-grid" class="flex flex-col gap-3"></div>
+            </div>
+            <div class="mt-stack-lg mb-8" id="refleksi-section">
+                <div
+                    class="bg-white rounded-[40px] p-6 md:p-8 soft-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 border border-growth-green">
+                    <div class="md:max-w-[65%]">
+                        <h3 class="font-headline-md text-headline-md mb-2">Refleksi Hari Ini</h3>
+                        <p class="font-body-md text-body-md text-on-surface-variant">Bagaimana perasaan Bunda hari ini
+                            dalam mendampingi si kecil?</p>
+                    </div>
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-primary-fixed flex items-center justify-center border border-growth-green shrink-0">
+                        <span class="material-symbols-outlined text-primary text-3xl">edit_note</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- PROGRESS TAB -->
+        <div class="tab-content px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto" id="progress-tab">
+            <h2 class="font-headline-md text-headline-md mb-4">Laporan Perkembangan</h2>
+            <div class="bg-white p-6 md:p-8 rounded-[40px] soft-shadow mb-4">
+                <p class="text-on-surface-variant font-body-md">Grafik perkembangan akan tampil di sini.</p>
+            </div>
+        </div>
+        <!-- TOOLS TAB -->
+        <div class="tab-content px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto" id="tools-tab">
+            <h2 class="font-headline-md text-headline-md mb-stack-lg">Alat Bantu Bunda</h2>
+            <!-- Daily Schedule Section -->
+            <div class="mb-stack-lg grid md:grid-cols-2 gap-4 md:gap-6">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-label-lg text-label-lg flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">schedule</span> Jadwal Harian
+                        </h3>
+                        <button
+                            class="text-primary text-sm font-bold bg-success-soft px-4 py-1.5 rounded-full">Ubah</button>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-white p-5 rounded-[32px] flex items-center justify-between soft-shadow">
+                            <div class="flex items-center gap-3">
+                                <span class="font-label-sm text-on-surface-variant">07:00</span>
+                                <span class="font-body-md">Sarapan & Persiapan Sekolah</span>
+                            </div>
+                            <span class="material-symbols-outlined text-growth-green">check_circle</span>
+                        </div>
+                        <div class="bg-white p-5 rounded-[32px] flex items-center justify-between soft-shadow">
+                            <div class="flex items-center gap-3">
+                                <span class="font-label-sm text-on-surface-variant">16:00</span>
+                                <span class="font-body-md">Waktu Bermain Bebas</span>
+                            </div>
+                            <span class="material-symbols-outlined text-outline-variant">radio_button_unchecked</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Quran Memorization Tracker -->
+                <div>
+                    <h3 class="font-label-lg text-label-lg flex items-center gap-2 mb-4">
+                        <span class="material-symbols-outlined text-secondary">menu_book</span> Tracker Hafalan Qur'an
+                    </h3>
+                    <div class="bg-white p-6 rounded-[40px] soft-shadow">
+                        <div class="flex justify-between items-end mb-3">
+                            <div>
+                                <p class="text-sm text-on-surface-variant mb-1">Target Minggu Ini:</p>
+                                <p class="font-headline-md text-primary">An-Naba (Ayat 1-10)</p>
+                            </div>
+                            <p class="font-label-lg text-primary">60%</p>
+                        </div>
+                        <div class="w-full bg-surface-container rounded-full h-2">
+                            <div class="bg-growth-green h-2 rounded-full" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Daily Checklist -->
+            <div class="mb-stack-lg">
+                <h3 class="font-label-lg text-label-lg flex items-center gap-2 mb-4">
+                    <span class="material-symbols-outlined text-friendly-sky">fact_check</span> Checklist Harian
+                </h3>
+                <div class="bg-white p-6 rounded-[40px] soft-shadow space-y-4">
+                    <label class="flex items-center gap-4 cursor-pointer">
+                        <input checked=""
+                            class="w-5 h-5 rounded-md border-outline-variant text-growth-green focus:ring-growth-green"
+                            type="checkbox">
+                        <span class="font-body-md">Membaca buku sebelum tidur</span>
+                    </label>
+                    <label class="flex items-center gap-4 cursor-pointer">
+                        <input
+                            class="w-5 h-5 rounded-md border-outline-variant text-growth-green focus:ring-growth-green"
+                            type="checkbox">
+                        <span class="font-body-md">Merapiakan mainan sendiri</span>
+                    </label>
+                    <label class="flex items-center gap-4 cursor-pointer">
+                        <input
+                            class="w-5 h-5 rounded-md border-outline-variant text-growth-green focus:ring-growth-green"
+                            type="checkbox">
+                        <span class="font-body-md">Minum air putih cukup</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <!-- POIN TAB -->
+        <div class="tab-content px-margin-mobile md:px-margin-desktop mt-stack-md max-w-2xl mx-auto" id="poin-tab">
+            <h2 class="font-headline-md text-headline-md mb-stack-lg text-center">Point</h2>
+            <!-- Flower Growth Visualization -->
+            <div
+                class="relative bg-white rounded-[40px] p-6 md:p-8 soft-shadow flex flex-col items-center overflow-hidden min-h-[360px] justify-center">
+                <!-- Background Sun Rays -->
+                <div class="absolute top-0 w-full h-32 bg-gradient-to-b from-yellow-50 to-transparent"></div>
+                <!-- Growth State: Sprout -->
+                <div class="relative z-10 flex flex-col items-center mt-auto">
+                    <div class="text-7xl md:text-8xl mb-2 animate-bounce">🌱</div>
+                    <div class="w-32 h-4 bg-secondary-fixed-dim/30 rounded-full blur-md"></div>
+                    <div class="mt-8 text-center">
+                        <h3 class="font-headline-md text-primary mb-2">Benih Kebaikan</h3>
+                        <p class="text-on-surface-variant font-body-md max-w-[240px] mx-auto">
+                            Lakukan tantangan hari ini untuk menyiram bungamu hingga mekar!
+                        </p>
+                    </div>
+                </div>
+                <!-- Progress Circle -->
+                <div class="mt-8 flex gap-3">
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="w-14 h-14 rounded-full border-4 border-growth-green flex items-center justify-center text-growth-green font-bold text-lg">
+                            120</div>
+                        <span class="text-[10px] font-bold text-on-surface-variant mt-1 uppercase tracking-wider">Total
+                            Poin</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-stack-lg grid grid-cols-2 gap-4 mb-8 max-w-sm mx-auto">
+                <div class="bg-white p-6 rounded-[32px] soft-shadow text-center">
+                    <p class="text-sm text-on-surface-variant mb-1">Misi Selesai</p>
+                    <p class="font-headline-md text-growth-green">8</p>
+                </div>
+                <div class="bg-white p-6 rounded-[32px] soft-shadow text-center">
+                    <p class="text-sm text-on-surface-variant mb-1">Level</p>
+                    <p class="font-headline-md text-secondary">Tunas</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- BottomNavBar -->
+    <nav
+        class="mobile-nav fixed bottom-0 w-full z-50 rounded-t-[32px] bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.04)] flex justify-around items-center h-20 px-2 pb-safe">
+        <!-- Pilar -->
+        <button
+            class="nav-btn flex flex-col items-center justify-center bg-success-soft text-primary rounded-2xl px-5 py-2 active:scale-95 transition-all duration-150"
+            data-tab="pilar">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+            <span class="font-label-sm text-label-sm mt-0.5">Home</span>
+        </button>
+        <!-- Progress -->
+        <button
+            class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low rounded-2xl px-5 py-2 active:scale-95 transition-all duration-150"
+            data-tab="progress">
+            <span class="material-symbols-outlined">auto_graph</span>
+            <span class="font-label-sm text-label-sm mt-0.5">Progress</span>
+        </button>
+        <!-- Tools -->
+        <button
+            class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low rounded-2xl px-5 py-2 active:scale-95 transition-all duration-150"
+            data-tab="tools">
+            <span class="material-symbols-outlined">build</span>
+            <span class="font-label-sm text-label-sm mt-0.5">Tools</span>
+        </button>
+        <!-- Poin -->
+        <button
+            class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low rounded-2xl px-5 py-2 active:scale-95 transition-all duration-150"
+            data-tab="poin">
+            <span class="material-symbols-outlined">star</span>
+            <span class="font-label-sm text-label-sm mt-0.5">Point</span>
+        </button>
+    </nav>
+    <script>
+        const tabs = document.querySelectorAll('.tab-content');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const sidebarBtns = document.querySelectorAll('.sidebar-btn');
+        const pageTitle = document.getElementById('page-title');
+
+        function switchTab(target) {
+            tabs.forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`${target}-tab`).classList.add('active');
+
+            // Update mobile nav
+            navBtns.forEach(b => {
+                b.classList.remove('bg-success-soft', 'text-primary');
+                b.classList.add('text-on-surface-variant');
+                b.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 0";
+            });
+            const activeNavBtn = document.querySelector(`.nav-btn[data-tab="${target}"]`);
+            if (activeNavBtn) {
+                activeNavBtn.classList.add('bg-success-soft', 'text-primary');
+                activeNavBtn.classList.remove('text-on-surface-variant');
+                activeNavBtn.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1";
+            }
+
+            // Update sidebar
+            sidebarBtns.forEach(b => {
+                b.classList.remove('bg-success-soft', 'text-primary');
+                b.classList.add('text-on-surface-variant');
+            });
+            const activeSidebarBtn = document.querySelector(`.sidebar-btn[data-tab="${target}"]`);
+            if (activeSidebarBtn) {
+                activeSidebarBtn.classList.add('bg-success-soft', 'text-primary');
+                activeSidebarBtn.classList.remove('text-on-surface-variant');
+            }
+
+            if (target === 'pilar') pageTitle.innerText = 'Home';
+            else if (target === 'progress') pageTitle.innerText = 'Statistik';
+            else if (target === 'tools') pageTitle.innerText = 'Buku Alat';
+            else if (target === 'poin') pageTitle.innerText = 'Point';
+
+            window.scrollTo(0, 0);
+        }
+
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.getAttribute('data-tab');
+                switchTab(target);
+            });
+        });
+
+        sidebarBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.getAttribute('data-tab');
+                switchTab(target);
+            });
+        });
+
+        // Initialize first tab
+        switchTab('pilar');
+
+        // Micro-interaction for cards
+        document.querySelectorAll('.pillar-card').forEach(card => {
+            card.addEventListener('touchstart', () => {
+                card.style.transform = 'scale(0.95)';
+            });
+            card.addEventListener('touchend', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simple observer for fade-in effect on pillar cards
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.pillar-card').forEach((el, index) => {
+            el.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-500');
+            el.style.transitionDelay = `${index * 50}ms`;
+            observer.observe(el);
+        });
+
+        const pillarData = {
+            spiritual: {
+                title: 'Spiritual & Nilai Kehidupan',
+                desc: 'Pilih fokus karakter untuk aktivitas bersama si kecil.',
+                color: '#4CAF50',
+                bg: '#E8F5E9',
+                items: [
+                    { emoji: '🤲', title: 'Bersyukur', desc: 'Anak belajar mengucap syukur atas nikmat kecil.' },
+                    { emoji: '🤝', title: 'Jujur', desc: 'Anak belajar berkata jujur meskipun sulit.' },
+                    { emoji: '💛', title: 'Peduli Sesama', desc: 'Anak belajar membantu orang di sekitarnya.' },
+                    { emoji: '🙏', title: 'Menghormati Orang Tua', desc: 'Anak belajar sopan dan patuh.' }
+                ]
+            },
+            karakter: {
+                title: 'Karakter & Mental',
+                desc: 'Pilih fokus karakter untuk aktivitas bersama si kecil.',
+                color: '#FF9800',
+                bg: '#FFF3E0',
+                items: [
+                    { emoji: '💪', title: 'Tidak Mudah Menyerah', desc: 'Anak belajar mencoba lagi saat gagal.' },
+                    { emoji: '🗣', title: 'Berani Bicara', desc: 'Anak belajar menyampaikan pendapat.' },
+                    { emoji: '🔥', title: 'Berani Mencoba', desc: 'Anak belajar menghadapi tantangan baru.' },
+                    { emoji: '🎯', title: 'Menyelesaikan Tugas', desc: 'Anak belajar bertanggung jawab.' }
+                ]
+            },
+            kreatifitas: {
+                title: 'Kreatifitas & Inovasi',
+                desc: 'Pilih fokus karakter untuk aktivitas bersama si kecil.',
+                color: '#2196F3',
+                bg: '#E3F2FD',
+                items: [
+                    { emoji: '🎨', title: 'Berpikir Kreatif', desc: 'Anak belajar menemukan ide baru.' },
+                    { emoji: '🔬', title: 'Eksperimen', desc: 'Anak belajar mencoba hal baru dengan rasa ingin tahu.' },
+                    { emoji: '🧩', title: 'Memecahkan Masalah', desc: 'Anak belajar mencari solusi sendiri.' },
+                    { emoji: '✨', title: 'Berimajinasi', desc: 'Anak belajar menggunakan daya imajinasinya.' }
+                ]
+            },
+            disiplin: {
+                title: 'Disiplin & Kebiasaan Baik',
+                desc: 'Pilih fokus karakter untuk aktivitas bersama si kecil.',
+                color: '#9C27B0',
+                bg: '#F3E5F5',
+                items: [
+                    { emoji: '🎯', title: 'Fokus', desc: 'Anak belajar berkonsentrasi pada satu hal.' },
+                    { emoji: '⏰', title: 'Atur Waktu', desc: 'Anak belajar mengelola waktunya.' },
+                    { emoji: '📖', title: 'Rutin Belajar', desc: 'Anak belajar konsisten belajar setiap hari.' },
+                    { emoji: '✅', title: 'Patuh Aturan', desc: 'Anak belajar mengikuti kesepakatan.' }
+                ]
+            },
+            kemandirian: {
+                title: 'Kemandirian & Life Skills',
+                desc: 'Pilih fokus karakter untuk aktivitas bersama si kecil.',
+                color: '#3F51B5',
+                bg: '#E8EAF6',
+                items: [
+                    { emoji: '🍳', title: 'Masak Sederhana', desc: 'Anak belajar menyiapkan makanan sendiri.' },
+                    { emoji: '🧹', title: 'Beres-beres', desc: 'Anak belajar merapikan barangnya.' },
+                    { emoji: '🚿', title: 'Kebersihan Diri', desc: 'Anak belajar mandi dan sikat gigi sendiri.' },
+                    { emoji: '💰', title: 'Mengatur Uang', desc: 'Anak belajar menabung dan berhemat.' }
+                ]
+            },
+            sosial: {
+                title: 'Sosial & Komunikasi',
+                desc: 'Pilih fokus karakter untuk aktivitas bersama si kecil.',
+                color: '#8D6E63',
+                bg: '#EFEBE9',
+                items: [
+                    { emoji: '🎁', title: 'Berbagi', desc: 'Anak belajar membagi dengan orang lain.' },
+                    { emoji: '👫', title: 'Kerja Sama', desc: 'Anak belajar bekerja sama dalam tim.' },
+                    { emoji: '👂', title: 'Mendengarkan', desc: 'Anak belajar mendengarkan orang lain.' },
+                    { emoji: '💗', title: 'Empati', desc: 'Anak belajar memahami perasaan orang lain.' }
+                ]
+            },
+            emosi: {
+                title: 'Pengelolaan Emosi & Keluarga',
+                desc: 'Pilih fokus karakter untuk aktivitas bersama si kecil.',
+                color: '#F44336',
+                bg: '#FFEBEE',
+                items: [
+                    { emoji: '😊', title: 'Mengenali Emosi', desc: 'Anak belajar mengenal perasaannya.' },
+                    { emoji: '😤', title: 'Mengelola Marah', desc: 'Anak belajar menenangkan diri.' },
+                    { emoji: '👨‍👩‍👧', title: 'Quality Time', desc: 'Anak belajar menikmati waktu bersama keluarga.' },
+                    { emoji: '💬', title: 'Komunikasi Keluarga', desc: 'Anak belajar bercerita ke orang tua.' }
+                ]
+            },
+            kesehatan: {
+                title: 'Kesehatan & Olahraga',
+                desc: 'Pilih fokus karakter untuk aktivitas bersama si kecil.',
+                color: '#009688',
+                bg: '#E0F2F1',
+                items: [
+                    { emoji: '🏃', title: 'Olahraga Teratur', desc: 'Anak belajar aktif bergerak setiap hari.' },
+                    { emoji: '🥗', title: 'Makan Sehat', desc: 'Anak belajar memilih makanan bergizi.' },
+                    { emoji: '😴', title: 'Tidur Cukup', desc: 'Anak belajar tidur tepat waktu.' },
+                    { emoji: '🌿', title: 'Kebersihan Lingkungan', desc: 'Anak belajar menjaga kebersihan sekitar.' }
+                ]
+            }
+        };
+
+        function openPilarSub(pilarKey) {
+            const data = pillarData[pilarKey];
+            if (!data) return;
+
+            document.getElementById('sub-list-title').textContent = data.title;
+            document.getElementById('sub-list-desc').textContent = data.desc;
+
+            const grid = document.getElementById('sub-list-grid');
+            grid.innerHTML = '';
+            data.items.forEach(item => {
+                grid.innerHTML += `
+                    <div class="bento-card group bg-white p-5 rounded-[28px] soft-shadow flex items-center gap-4 transition-all hover:shadow-xl cursor-pointer border" style="border-color: ${data.color}">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0" style="background: ${data.bg}">${item.emoji}</div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-label-lg text-label-lg text-primary mb-0.5">${item.title}</h3>
+                            <p class="text-xs leading-snug text-on-surface-variant">${item.desc}</p>
+                        </div>
+                        <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors shrink-0">chevron_right</span>
+                    </div>`;
+            });
+
+            document.querySelector('#pilar-tab .grid').style.display = 'none';
+            document.getElementById('refleksi-section').style.display = 'none';
+            document.querySelector('#pilar-tab .mb-stack-lg').style.display = 'none';
+            document.getElementById('pillar-sub-list').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function closePilarSub() {
+            document.getElementById('pillar-sub-list').classList.remove('active');
+            document.querySelector('#pilar-tab .grid').style.display = '';
+            document.getElementById('refleksi-section').style.display = '';
+            document.querySelector('#pilar-tab .mb-stack-lg').style.display = '';
+        }
+
+        document.querySelectorAll('.pillar-card[data-pillar]').forEach(card => {
+            card.addEventListener('click', () => {
+                openPilarSub(card.getAttribute('data-pillar'));
+            });
+        });
+    </script>
+
+</body>
+
+</html>
