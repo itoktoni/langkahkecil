@@ -411,7 +411,6 @@ export const aktivitasData = [
       {
         title: 'Teka-Teki Logika',
         image: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400&h=600&fit=crop',
-        desc: 'Asah otak dengan teka-teki logika yang seru!',
         questions: [
           { q: 'Aku punya kepala tapi tidak punya badan. Siapa aku?', a: 'Koin! (Kepala koin)', hint: 'Benda yang ada di dompet', emoji: '🪙' },
           { q: 'Semakin diambil, semakin besar. Apakah itu?', a: 'Lubang!', hint: 'Bayangkan menggali tanah', emoji: '🕳' },
@@ -421,7 +420,6 @@ export const aktivitasData = [
       {
         title: 'Puzzle Pola',
         image: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400&h=600&fit=crop',
-        desc: 'Temukan pola yang tersembunyi!',
         questions: [
           { q: 'Lengkapi pola: 🔴🔵🔴🔵🔴...', a: '🔵', hint: 'Perhatikan pola berulang', emoji: '🔴' },
           { q: 'Lengkapi pola: 2, 4, 6, 8, ...', a: '10', hint: 'Tambah 2 setiap kali', emoji: '🔢' },

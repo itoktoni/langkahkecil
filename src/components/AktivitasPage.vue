@@ -38,11 +38,9 @@
     <!-- Grid Cards (remaining items) -->
     <div class="grid grid-cols-2 gap-3">
       <div v-for="(item, index) in aktivitasData.slice(1)" :key="item.key"
-        class="bento-card group bg-white rounded-[24px] soft-shadow overflow-hidden cursor-pointer transition-all hover:shadow-xl flex flex-col border"
-        :style="{ borderColor: item.color + '60' }"
+        class="bento-card group bg-white rounded-[24px] soft-shadow overflow-hidden cursor-pointer transition-all hover:shadow-xl flex flex-col border-2"
+        :style="{ borderColor: item.color + '80', boxShadow: `0 4px 16px ${item.color}30` }"
         @click="$emit('selectAktivitas', item)">
-        <!-- Color Bar -->
-        <div class="h-2 w-full" :style="{ background: item.color }"></div>
         <div class="p-4 flex flex-col flex-1">
           <div class="flex items-start justify-between mb-3">
             <div class="w-12 h-12 rounded-[16px] flex items-center justify-center text-2xl"

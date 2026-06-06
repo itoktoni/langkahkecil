@@ -210,11 +210,6 @@
         <div class="p-5 pt-3 flex flex-col flex-1">
           <h3 class="font-headline-md text-headline-md mb-2">{{ pz.title }}</h3>
           <p class="text-sm text-on-surface-variant mb-3">{{ pz.desc }}</p>
-          <div class="flex flex-wrap gap-2 mb-3">
-            <span v-for="q in pz.questions.slice(0, 3)" :key="q.q" class="bg-surface-container-low rounded-full px-3 py-1 text-xs text-on-surface-variant">
-              {{ q.q.slice(0, 30) }}...
-            </span>
-          </div>
           <!-- Footer -->
           <div class="flex items-center gap-2 text-primary font-label-lg mt-auto pt-3 border-t border-outline-variant">
             <span class="material-symbols-outlined text-xl">psychology</span>
