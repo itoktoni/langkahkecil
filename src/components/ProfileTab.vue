@@ -1,0 +1,314 @@
+<template>
+  <div class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+
+    <div class="bg-white rounded-[28px] p-6 soft-shadow">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 rounded-full bg-[#E8F5E9] flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+          <img alt="Avatar" class="w-full h-full object-cover"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzJNpRkogQwczNStctNhENEVUYGd8K9gvJsJHTF4dEc8EJ0f7gqUIejr4bQpYMLUPW5IXczrErhaApGFrTVwP_x6ydST_7zIETJf3sBbPA_SJkfU6g7oBaRxYDJiZEVtiDkwNnpiHti6_c1CUO8EyBmmilPhrfKepTN-4SeBHs_ll75dnAePuOcw-mydodKV12Zwo6rVBVVPdjjo1ZFFuREjTkuDmc4lifG7lewY_DLtHTp4RUKAG66H77zbFeqqZi-xuHnx8k2Ew">
+        </div>
+        <div class="flex-1 min-w-0">
+          <div v-if="!editingName">
+            <h3 class="font-headline-sm text-text-main">{{ userName }}</h3>
+            <p class="text-sm text-on-surface-variant truncate">{{ userEmail }}</p>
+          </div>
+          <div v-else class="flex items-center gap-2">
+            <input v-model="editNameValue"
+              class="flex-1 px-3 py-2 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
+              placeholder="Nama baru" @keyup.enter="saveName" />
+            <button @click="saveName"
+              class="px-3 py-2 rounded-lg bg-[#2E7D32] text-white text-sm font-medium hover:bg-[#2E7D32]/90 transition-colors">
+              Simpan
+            </button>
+          </div>
+        </div>
+        <button v-if="!editingName" @click="startEditName"
+          class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+          <span class="material-symbols-outlined text-xl">edit</span>
+        </button>
+      </div>
+      <div class="mt-4 pt-4 border-t border-outline-variant">
+        <button v-if="!showPasswordForm" @click="showPasswordForm = true"
+          class="flex items-center gap-3 text-sm text-on-surface-variant hover:text-primary transition-colors w-full">
+          <span class="material-symbols-outlined text-lg">lock</span>
+          <span>Ganti Password</span>
+          <span class="ml-auto material-symbols-outlined text-base">chevron_right</span>
+        </button>
+        <div v-else class="space-y-3">
+          <div class="flex items-center gap-3 text-sm text-on-surface-variant">
+            <span class="material-symbols-outlined text-lg">lock</span>
+            <span class="font-medium">Ganti Password</span>
+          </div>
+          <input v-model="oldPassword" type="password"
+            class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
+            placeholder="Masukkan password lama" />
+          <input v-model="newPassword" type="password"
+            class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
+            placeholder="Masukkan password baru" />
+          <div class="flex gap-2">
+            <button @click="cancelPassword"
+              class="flex-1 py-2.5 rounded-lg border border-outline-variant text-sm font-medium text-on-surface-variant hover:bg-gray-50 transition-colors">
+              Batal
+            </button>
+            <button @click="savePassword"
+              class="flex-1 py-2.5 rounded-lg bg-[#2E7D32] text-white text-sm font-medium hover:bg-[#2E7D32]/90 transition-colors">
+              Simpan
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-headline-sm text-text-main">Anak</h3>
+        <button @click="tambahAnak"
+          class="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+          :class="{ 'opacity-40 pointer-events-none': !canAddAnak }">
+          <span class="material-symbols-outlined text-lg">person_add</span>
+          <span>Tambah</span>
+        </button>
+      </div>
+      <p v-if="addAnakError" class="text-xs text-red-500 mb-2">{{ addAnakError }}</p>
+      <div class="space-y-3">
+        <div v-for="anak in anakList" :key="anak.id"
+          class="bg-white rounded-2xl p-4 soft-shadow flex items-center gap-4 cursor-pointer hover:shadow-md transition-shadow"
+          @click="$emit('select-anak', anak)">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" :style="{ background: anak.bg }">
+            {{ anak.emoji }}
+          </div>
+          <div class="flex-1">
+            <p class="font-label-lg text-text-main">{{ anak.nama }}</p>
+            <p class="text-sm text-on-surface-variant">{{ anak.usia }}</p>
+          </div>
+          <button @click.stop="openEditAnak(anak)"
+            class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+            <span class="material-symbols-outlined text-base">more_vert</span>
+          </button>
+        </div>
+        <div v-if="anakList.length === 0"
+          class="bg-white rounded-2xl p-6 soft-shadow text-center text-on-surface-variant text-sm">
+          Belum ada data anak
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <div class="bg-white rounded-[28px] p-6 soft-shadow">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center"
+            :class="currentPlan === 'free' ? 'bg-[#FFF3E0]' : 'bg-[#E8F5E9]'">
+            <span class="material-symbols-outlined"
+              :class="currentPlan === 'free' ? 'text-[#FF9800]' : 'text-[#2E7D32]'"
+              :style="fillIcon">workspace_premium</span>
+          </div>
+          <div>
+            <p class="font-label-lg text-text-main">Billing</p>
+            <p class="text-sm text-on-surface-variant">
+              Paket saat ini: <span class="font-medium capitalize">{{ currentPlan }}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div v-for="plan in plans" :key="plan.id"
+            class="text-center p-4 rounded-xl border-2 transition-all cursor-pointer"
+            :class="selectedPlan === plan.id
+              ? 'border-[#2E7D32] bg-[#E8F5E9]'
+              : 'border-outline-variant bg-white hover:border-gray-300'"
+            @click="selectedPlan = plan.id">
+            <p class="text-2xl mb-1">{{ plan.emoji }}</p>
+            <p class="text-sm font-bold" :class="selectedPlan === plan.id ? 'text-[#2E7D32]' : 'text-on-surface-variant'">{{ plan.label }}</p>
+            <p class="text-xs text-on-surface-variant mt-0.5">{{ plan.price }}</p>
+            <p class="text-[10px] text-on-surface-variant mt-1">{{ plan.desc }}</p>
+          </div>
+        </div>
+
+        <button v-if="currentPlan !== selectedPlan"
+          @click="upgradePlan"
+          class="w-full py-3 rounded-xl font-label-lg bg-[#2E7D32] text-white hover:bg-[#2E7D32]/90 shadow-lg shadow-green-900/20 transition-all duration-200">
+          {{ currentPlan === 'free' ? 'Upgrade Sekarang' : 'Ubah Paket' }}
+        </button>
+        <div v-else class="text-center text-sm text-on-surface-variant py-2">
+          Paket aktif
+        </div>
+      </div>
+    </div>
+
+    <div v-if="editAnak" class="fixed inset-0 z-[100] flex items-end justify-center lg:items-center">
+      <div class="absolute inset-0 bg-black/40" @click="closeEditAnak"></div>
+      <div class="relative bg-white rounded-t-[28px] lg:rounded-[28px] w-full max-w-md p-6 pb-8 lg:mb-0">
+        <div class="w-10 h-1 bg-outline-variant rounded-full mx-auto mb-5 lg:hidden"></div>
+        <h3 class="font-headline-sm text-text-main mb-5">Edit Profil Anak</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Nama</label>
+            <input v-model="editAnakForm.nama"
+              class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
+              placeholder="Nama anak" />
+          </div>
+          <div>
+            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Tanggal Lahir</label>
+            <div class="grid grid-cols-3 gap-2">
+              <select v-model="editAnakForm.tanggal"
+                class="px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white appearance-none">
+                <option value="" disabled>Tgl</option>
+                <option v-for="d in 31" :key="d" :value="d">{{ d }}</option>
+              </select>
+              <select v-model="editAnakForm.bulan"
+                class="px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white appearance-none">
+                <option value="" disabled>Bulan</option>
+                <option v-for="(m, i) in months" :key="i" :value="i + 1">{{ m }}</option>
+              </select>
+              <select v-model="editAnakForm.tahun"
+                class="px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white appearance-none">
+                <option value="" disabled>Tahun</option>
+                <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+          <button @click="closeEditAnak"
+            class="flex-1 py-3 rounded-xl border border-outline-variant text-sm font-medium text-on-surface-variant hover:bg-gray-50 transition-colors">
+            Batal
+          </button>
+          <button @click="saveEditAnak"
+            class="flex-1 py-3 rounded-xl bg-[#2E7D32] text-white text-sm font-medium hover:bg-[#2E7D32]/90 transition-colors shadow-lg shadow-green-900/20">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const props = defineProps({
+  anakList: { type: Array, default: () => [] }
+})
+
+defineEmits(['select-anak'])
+
+const fillIcon = { fontVariationSettings: "'FILL' 1" }
+
+const userName = ref('Bunda Sarah')
+const userEmail = ref('sarah@email.com')
+const editingName = ref(false)
+const editNameValue = ref('')
+
+const showPasswordForm = ref(false)
+const oldPassword = ref('')
+const newPassword = ref('')
+
+const editAnak = ref(null)
+const editAnakForm = ref({ nama: '', tanggal: '', bulan: '', tahun: '' })
+
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
+
+const currentYear = new Date().getFullYear()
+const years = Array.from({ length: currentYear - 1999 }, (_, i) => currentYear - i)
+
+const currentPlan = ref('free')
+
+const plans = [
+  { id: 'premium', label: 'Premium', emoji: '👑', price: 'Rp99.000/bulan', desc: '1 anak, semua fitur' },
+  { id: 'family', label: 'Family', emoji: '👨‍👩‍👧‍👦', price: 'Rp299.000/bulan', desc: 'Maks 5 anak' }
+]
+
+const selectedPlan = ref('premium')
+const addAnakError = ref('')
+
+const maxAnak = computed(() => currentPlan.value === 'family' ? 5 : 1)
+
+const canAddAnak = computed(() => {
+  if (currentPlan.value === 'free') return false
+  return props.anakList.length < maxAnak.value
+})
+
+function startEditName() {
+  editNameValue.value = userName.value
+  editingName.value = true
+}
+
+function saveName() {
+  if (editNameValue.value.trim()) {
+    userName.value = editNameValue.value.trim()
+  }
+  editingName.value = false
+}
+
+function cancelPassword() {
+  showPasswordForm.value = false
+  oldPassword.value = ''
+  newPassword.value = ''
+}
+
+function savePassword() {
+  if (!oldPassword.value || !newPassword.value) return
+  cancelPassword()
+}
+
+function openEditAnak(anak) {
+  editAnak.value = anak
+  editAnakForm.value = {
+    nama: anak.nama,
+    tanggal: anak.tanggal || '',
+    bulan: anak.bulan || '',
+    tahun: anak.tahun || ''
+  }
+}
+
+function closeEditAnak() {
+  editAnak.value = null
+}
+
+function saveEditAnak() {
+  if (!editAnakForm.value.nama.trim()) return
+  const anak = editAnak.value
+  anak.nama = editAnakForm.value.nama.trim()
+  anak.tanggal = editAnakForm.value.tanggal
+  anak.bulan = editAnakForm.value.bulan
+  anak.tahun = editAnakForm.value.tahun
+  if (anak.tanggal && anak.bulan && anak.tahun) {
+    const age = currentYear - anak.tahun
+    anak.usia = `${age} tahun`
+  }
+  closeEditAnak()
+}
+
+function tambahAnak() {
+  addAnakError.value = ''
+
+  if (currentPlan.value === 'free') {
+    addAnakError.value = 'Upgrade ke Premium atau Family untuk menambah anak.'
+    return
+  }
+
+  if (props.anakList.length >= maxAnak.value) {
+    addAnakError.value = currentPlan.value === 'premium'
+      ? 'Batas 1 anak. Upgrade ke Family untuk menambah hingga 5 anak.'
+      : `Batas maksimal ${maxAnak.value} anak.`
+    return
+  }
+
+  const emojis = ['👦', '👧']
+  const bgs = ['#E3F2FD', '#FCE4EC', '#E8F5E9', '#FFF3E0', '#F3E5F5']
+  const idx = props.anakList.length
+  props.anakList.push({
+    id: Date.now(),
+    nama: `Anak ${idx + 1}`,
+    usia: '0 tahun',
+    emoji: emojis[idx % 2],
+    bg: bgs[idx % bgs.length]
+  })
+}
+
+function upgradePlan() {
+  currentPlan.value = selectedPlan.value
+  addAnakError.value = ''
+}
+</script>

@@ -10,11 +10,11 @@
       <template v-for="(pilar, index) in pilars" :key="pilar.key">
         <button
           class="w-full flex items-center gap-4 p-5 md:p-6 rounded-[24px] transition-all duration-300 border-2 text-left"
-          :style="{
-            backgroundColor: pilar.bg,
-            borderColor: selectedPilar === pilar.key ? pilar.color : `${pilar.color}40`,
-            boxShadow: selectedPilar === pilar.key ? `0 6px 24px ${pilar.color}50` : `0 2px 12px ${pilar.color}20`,
-          }" @click="togglePilar(pilar.key)">
+            :style="{
+              backgroundColor: pilar.bg,
+              borderColor: selectedPilar === pilar.key ? pilar.color : `${pilar.color}40`,
+              boxShadow: selectedPilar === pilar.key ? `0 6px 24px ${pilar.color}50` : `0 2px 12px ${pilar.color}20`,
+            }" @click="togglePilar(pilar.key)">
           <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-3xl shrink-0"
             :style="{ background: 'white' }">{{ pilar.emoji }}</div>
           <div class="flex-1 min-w-0">
@@ -69,33 +69,45 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, watch } from 'vue'
 import AktivitasPage from './AktivitasPage.vue'
 import AktivitasDetailPage from './AktivitasDetailPage.vue'
 import { pilars, pillarSubs } from '../data/pilars.js'
 
-const selectedPilar = ref(null)
+const props = defineProps({
+  selectedPilar: { type: String, default: null }
+})
+
+const emit = defineEmits(['select-pilar', 'close-pilar'])
+
 const selectedSub = ref(null)
 const selectedAktivitas = ref(null)
 const collapseEl = ref(null)
 
+watch(() => props.selectedPilar, (val) => {
+  if (!val) {
+    selectedSub.value = null
+    selectedAktivitas.value = null
+  }
+})
+
 const subData = computed(() => {
-  if (!selectedPilar.value) return null
-  return pillarSubs[selectedPilar.value] || null
+  if (!props.selectedPilar) return null
+  return pillarSubs[props.selectedPilar] || null
 })
 
 function togglePilar(key) {
-  if (selectedPilar.value === key) {
+  if (props.selectedPilar === key) {
     closePilar()
   } else {
-    selectedPilar.value = key
+    emit('select-pilar', key)
     selectedSub.value = null
     selectedAktivitas.value = null
   }
 }
 
 function closePilar() {
-  selectedPilar.value = null
+  emit('close-pilar')
   selectedSub.value = null
   selectedAktivitas.value = null
 }

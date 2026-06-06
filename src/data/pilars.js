@@ -104,7 +104,7 @@ export const tabs = [
   { id: 'pilar', label: 'Home', icon: 'home' },
   { id: 'progress', label: 'Progress', icon: 'auto_graph' },
   { id: 'tools', label: 'Tools', icon: 'build' },
-  { id: 'poin', label: 'Point', icon: 'star' }
+  { id: 'profile', label: 'Profile', icon: 'person' }
 ]
 
 export const schedules = [
