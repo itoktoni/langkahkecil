@@ -88,13 +88,20 @@ export default {
         "headline-lg-mobile": ["Nunito Sans"]
       },
       fontSize: {
-        "headline-md": ["20px", { lineHeight: "28px", fontWeight: "700" }],
-        "label-sm": ["12px", { lineHeight: "16px", fontWeight: "600" }],
-        "headline-lg": ["30px", { lineHeight: "38px", fontWeight: "800" }],
-        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
-        "body-lg": ["18px", { lineHeight: "26px", fontWeight: "400" }],
-        "label-lg": ["14px", { lineHeight: "20px", letterSpacing: "0.02em", fontWeight: "700" }],
-        "headline-lg-mobile": ["24px", { lineHeight: "32px", fontWeight: "800" }]
+        "xs": ["13px", { lineHeight: "18px" }],
+        "sm": ["15px", { lineHeight: "22px" }],
+        "base": ["17px", { lineHeight: "26px" }],
+        "lg": ["19px", { lineHeight: "28px" }],
+        "xl": ["21px", { lineHeight: "30px" }],
+        "2xl": ["25px", { lineHeight: "34px" }],
+        "3xl": ["31px", { lineHeight: "38px" }],
+        "headline-md": ["22px", { lineHeight: "30px", fontWeight: "700" }],
+        "label-sm": ["13px", { lineHeight: "18px", fontWeight: "600" }],
+        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "800" }],
+        "body-md": ["17px", { lineHeight: "26px", fontWeight: "400" }],
+        "body-lg": ["19px", { lineHeight: "28px", fontWeight: "400" }],
+        "label-lg": ["15px", { lineHeight: "22px", letterSpacing: "0.02em", fontWeight: "700" }],
+        "headline-lg-mobile": ["26px", { lineHeight: "34px", fontWeight: "800" }]
       }
     },
   },

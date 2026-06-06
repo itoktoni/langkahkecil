@@ -120,7 +120,7 @@
             <p class="text-2xl mb-1">{{ plan.emoji }}</p>
             <p class="text-sm font-bold" :class="selectedPlan === plan.id ? 'text-[#2E7D32]' : 'text-on-surface-variant'">{{ plan.label }}</p>
             <p class="text-xs text-on-surface-variant mt-0.5">{{ plan.price }}</p>
-            <p class="text-[10px] text-on-surface-variant mt-1">{{ plan.desc }}</p>
+            <p class="text-xs text-on-surface-variant mt-1">{{ plan.desc }}</p>
           </div>
         </div>
 

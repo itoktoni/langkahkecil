@@ -9,39 +9,21 @@
         <p class="font-body-md text-body-md text-on-surface-variant">Pilih area yang ingin dikembangkan bersama si kecil.</p>
       </section>
 
-      <template v-for="(pilar, index) in pilars" :key="pilar.key">
-        <div v-if="index === 0"
-          class="bento-card group relative overflow-hidden rounded-[32px] cursor-pointer transition-all hover:shadow-xl border-2 mb-3"
-          :style="{ background: `linear-gradient(135deg, ${pilar.color}20, ${pilar.color}08)`, borderColor: selectedPilar === pilar.key ? pilar.color : `${pilar.color}60`, boxShadow: selectedPilar === pilar.key ? `0 8px 32px ${pilar.color}40` : `0 4px 16px ${pilar.color}20` }"
+      <template v-for="pilar in pilars" :key="pilar.key">
+        <div
+          class="bento-card group relative bg-white rounded-[24px] soft-shadow overflow-hidden cursor-pointer transition-all hover:shadow-xl border-2 mb-3"
+          :style="{ borderColor: selectedPilar === pilar.key ? pilar.color : pilar.color + '30', boxShadow: selectedPilar === pilar.key ? `0 6px 24px ${pilar.color}40` : `0 2px 12px ${pilar.color}10` }"
           @click="togglePilar(pilar.key)">
-          <div class="flex items-center gap-5 p-6 md:p-8">
-            <div class="w-20 h-20 rounded-[24px] flex items-center justify-center text-5xl shrink-0 shadow-lg"
-              :style="{ background: `linear-gradient(135deg, ${pilar.color}, ${pilar.color}CC)` }">
-              {{ pilar.emoji }}
-            </div>
-            <div class="flex-1 min-w-0">
-              <span class="text-[10px] font-bold uppercase tracking-widest" :style="{ color: pilar.color }">Pilar 1</span>
-              <h3 class="font-headline-md text-headline-md text-text-main mt-1">{{ pilar.title }}</h3>
-              <p class="text-sm text-on-surface-variant mt-1">{{ pilar.subtitle }}</p>
-            </div>
-            <span class="material-symbols-outlined text-3xl text-outline-variant group-hover:text-primary transition-all shrink-0"
-              :class="{ 'rotate-180': selectedPilar === pilar.key }">expand_more</span>
-          </div>
-          <div class="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-10" :style="{ background: pilar.color }"></div>
-        </div>
-
-        <div v-else
-          class="bento-card group bg-white rounded-[24px] soft-shadow overflow-hidden cursor-pointer transition-all hover:shadow-xl border-2 mb-3"
-          :style="{ borderColor: selectedPilar === pilar.key ? pilar.color : pilar.color + '40', boxShadow: selectedPilar === pilar.key ? `0 6px 24px ${pilar.color}40` : `0 2px 12px ${pilar.color}15` }"
-          @click="togglePilar(pilar.key)">
-          <div class="flex items-center gap-4 p-4 md:p-5">
-            <div class="w-12 h-12 rounded-[16px] flex items-center justify-center text-2xl shrink-0"
-              :style="{ background: pilar.bg }">
+          <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-[24px]" :style="{ background: pilar.color }"></div>
+          <div class="absolute -bottom-6 -right-6 w-24 h-24 rounded-full opacity-[0.07]" :style="{ background: pilar.color }"></div>
+          <div class="flex items-center gap-4 p-4 md:p-5 pl-5">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0"
+              :style="{ background: pilar.bg, color: pilar.color }">
               {{ pilar.emoji }}
             </div>
             <div class="flex-1 min-w-0">
               <h3 class="font-label-lg text-label-lg text-text-main">{{ pilar.title }}</h3>
-              <p class="text-xs text-on-surface-variant">{{ pilar.subtitle }}</p>
+              <p class="text-xs text-on-surface-variant mt-0.5">{{ pilar.subtitle }}</p>
             </div>
             <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-lg shrink-0"
               :class="{ 'rotate-180': selectedPilar === pilar.key }">expand_more</span>

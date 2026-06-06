@@ -35,7 +35,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-text-main">{{ sp.title }}</p>
-                  <p class="text-[11px] text-on-surface-variant">{{ getPilarName(sp.pilar) }}</p>
+                  <p class="text-xs text-on-surface-variant">{{ getPilarName(sp.pilar) }}</p>
                 </div>
                 <span class="text-xs font-bold" :style="{ color: sp.color }">{{ sp.progress }}%</span>
               </div>
@@ -43,7 +43,7 @@
                 <div class="h-full rounded-full transition-all duration-700" :style="{ width: sp.progress + '%', background: sp.color }"></div>
               </div>
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-1 text-[11px] text-on-surface-variant">
+                <div class="flex items-center gap-1 text-xs text-on-surface-variant">
                   <span class="material-symbols-outlined text-xs">check_circle</span>
                   <span>{{ Math.round(sp.progress / 20) }} dari 5 aktivitas</span>
                 </div>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-text-main">{{ sp.title }}</p>
-                  <p class="text-[11px] text-on-surface-variant">{{ getPilarName(sp.pilar) }}</p>
+                  <p class="text-xs text-on-surface-variant">{{ getPilarName(sp.pilar) }}</p>
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-2xl text-green-600">check_circle</span>
@@ -101,7 +101,7 @@
             <div class="flex-1">
               <p class="text-sm font-medium" :style="{ color: h.color }">{{ h.anakNama }}</p>
               <p class="text-sm text-text-main">{{ h.action }}</p>
-              <p class="text-[11px] text-on-surface-variant">{{ h.date }}</p>
+              <p class="text-xs text-on-surface-variant">{{ h.date }}</p>
             </div>
           </div>
         </div>

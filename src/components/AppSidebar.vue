@@ -15,7 +15,7 @@
     </div>
 
     <div class="px-4 mb-2">
-      <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider px-3">Menu</p>
+      <p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-3">Menu</p>
     </div>
 
     <nav class="flex-1 px-3 space-y-2">
@@ -38,7 +38,7 @@
         <span class="material-symbols-outlined text-primary text-xl">lightbulb</span>
         <div>
           <p class="text-xs font-bold text-primary">Tips Hari Ini</p>
-          <p class="text-[11px] text-on-surface-variant leading-snug mt-0.5">Fokus pada satu hal kecil untuk dampak besar.</p>
+          <p class="text-xs text-on-surface-variant leading-snug mt-0.5">Fokus pada satu hal kecil untuk dampak besar.</p>
         </div>
       </div>
     </div>
@@ -47,7 +47,7 @@
       <div class="flex items-center gap-3 px-6 py-4">
         <span class="material-symbols-outlined text-on-surface-variant text-xl">notifications</span>
         <span class="font-label-lg text-on-surface-variant">Notifikasi</span>
-        <span class="ml-auto w-5 h-5 rounded-full bg-error text-on-error text-[10px] font-bold flex items-center justify-center">3</span>
+        <span class="ml-auto w-5 h-5 rounded-full bg-error text-on-error text-xs font-bold flex items-center justify-center">3</span>
       </div>
     </div>
   </aside>

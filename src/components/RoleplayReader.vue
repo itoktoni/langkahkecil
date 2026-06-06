@@ -50,7 +50,7 @@
                   {{ getRoleEmoji(d.role) }}
                 </div>
                 <div class="max-w-[75%]">
-                  <span class="text-[10px] font-bold mb-1 block"
+                  <span class="text-xs font-bold mb-1 block"
                     :class="isRightRole(d.role) ? 'text-right' : ''"
                     :style="{ color: getRoleColor(d.role).text }">
                     {{ d.role }}

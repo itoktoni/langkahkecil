@@ -16,7 +16,7 @@
       <div class="mt-8 flex gap-3">
         <div class="flex flex-col items-center">
           <div class="w-14 h-14 rounded-full border-4 border-growth-green flex items-center justify-center text-growth-green font-bold text-lg">120</div>
-          <span class="text-[10px] font-bold text-on-surface-variant mt-1 uppercase tracking-wider">Total Poin</span>
+          <span class="text-xs font-bold text-on-surface-variant mt-1 uppercase tracking-wider">Total Poin</span>
         </div>
       </div>
     </div>

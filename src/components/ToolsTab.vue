@@ -56,14 +56,14 @@
         <div v-for="(items, cat) in historyByCategory" :key="cat">
           <div class="flex items-center gap-2 mb-2">
             <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">{{ cat }}</h4>
-            <span class="text-[10px] font-bold text-on-surface-variant bg-surface-container-low px-1.5 py-0.5 rounded-full">{{ items.length }}</span>
+            <span class="text-xs font-bold text-on-surface-variant bg-surface-container-low px-1.5 py-0.5 rounded-full">{{ items.length }}</span>
           </div>
           <div class="space-y-2">
             <div v-for="h in items" :key="h.id"
               class="bg-white rounded-2xl p-4 soft-shadow flex items-center gap-3">
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-text-main">{{ h.title }}</p>
-                <p class="text-[11px] text-on-surface-variant">Dimulai {{ h.startDate }} · Selesai {{ h.completedDate }}</p>
+                <p class="text-xs text-on-surface-variant">Dimulai {{ h.startDate }} · Selesai {{ h.completedDate }}</p>
               </div>
               <span class="material-symbols-outlined text-green-600 text-xl">check_circle</span>
             </div>

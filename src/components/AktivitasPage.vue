@@ -25,7 +25,7 @@
             {{ aktivitasData[0].emoji }}
           </div>
           <div class="flex-1 min-w-0">
-            <span class="text-[10px] font-bold uppercase tracking-widest" :style="{ color: aktivitasData[0].color }">Populer</span>
+            <span class="text-xs font-bold uppercase tracking-widest" :style="{ color: aktivitasData[0].color }">Populer</span>
             <h3 class="font-headline-md text-headline-md text-text-main mt-1">{{ aktivitasData[0].title }}</h3>
             <p class="text-sm text-on-surface-variant mt-1 line-clamp-2">{{ aktivitasData[0].desc }}</p>
           </div>
@@ -50,7 +50,7 @@
             <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-lg">chevron_right</span>
           </div>
           <h3 class="font-label-lg text-label-lg text-text-main mb-1">{{ item.title }}</h3>
-          <p class="text-[11px] leading-snug text-on-surface-variant line-clamp-2 mt-auto">{{ item.desc }}</p>
+          <p class="text-xs leading-snug text-on-surface-variant line-clamp-2 mt-auto">{{ item.desc }}</p>
         </div>
       </div>
     </div>
