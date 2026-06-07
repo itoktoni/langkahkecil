@@ -1,0 +1,17 @@
+{
+  "title": "Cumi-Cumi yang Pemalu",
+  "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=600&fit=crop",
+  "desc": "Cumi-cumi bernama Cleo belajar bahwa keberanian bisa dikembangkan.",
+  "moral": "Kita bisa belajar untuk menjadi berani.",
+  "ages": [4, 5, 6, 7, 8],
+  "skills": ["keberanian", "pengembangan_diri"],
+  "pages": [
+    { "num": 1, "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=600&fit=crop", "text": "Cleo si cumi-cumi tinggal di gua gelap dan sangat pemalu." },
+    { "num": 2, "image": "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=400&h=600&fit=crop", "text": "Cleo selalu menyembunyikan diri saat ada yang datang." },
+    { "num": 3, "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=600&fit=crop", "text": "Suatu hari, teman-temannya mengundang Cleo untuk explore gua baru." },
+    { "num": 4, "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=600&fit=crop", "text": "Cleo takut tapi memutuskan untuk mencoba mengikuti mereka." },
+    { "num": 5, "image": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=600&fit=crop", "text": "Di gua baru, Cleo melihat keindahan yang menakjubkan." },
+    { "num": 6, "image": "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=400&h=600&fit=crop", "text": "Cleo menemukan kemampuan uniknya - bisa menyamar dengan tinta." },
+    { "num": 7, "image": "https://images.unsplash.com/photo-1505881502353-a1986add3762?w=400&h=600&fit=crop", "text": "Sejak itu Cleo tidak pemalu lagi. Dia bangga dengan kelebihannya." }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "title": "Bintang Laut yang Sabar",
+  "image": "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=400&h=600&fit=crop",
+  "desc": "Bintang laut bernama Stella bersabar menunggu pasangannya yang tersesat.",
+  "moral": "Kesabaran dan kesetiaan adalah tanda cinta sejati.",
+  "ages": [4, 5, 6, 7, 8],
+  "skills": ["kesabaran", "kesetiaan"],
+  "pages": [
+    { "num": 1, "image": "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=400&h=600&fit=crop", "text": "Stella si bintang laut tinggal di terumbu karang yang Colorful." },
+    { "num": 2, "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=600&fit=crop", "text": "Stella memiliki pasangan bernama Sam yang pergi mencari makanan." },
+    { "num": 3, "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=600&fit=crop", "text": "Sam tidak kembali selama berhari-hari. Stella merasa khawatir." },
+    { "num": 4, "image": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=600&fit=crop", "text": "Stella tidak menyerah. Dia terus mencari Sam di seluruh karang." },
+    { "num": 5, "image": "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=400&h=600&fit=crop", "text": "Setelah seminggu, Stella menemukan Sam yang terperangkap di gua kecil." },
+    { "num": 6, "image": "https://images.unsplash.com/photo-1505881502353-a1986add3762?w=400&h=600&fit=crop", "text": "Stella membantu Sam keluar dengan susah payah. Mereka bahagia bisa reunited." },
+    { "num": 7, "image": "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=400&h=600&fit=crop", "text": "Sam berkata, 'Terima kasih sudah tidak menyerah mencari aku.'" }
+  ]
+}

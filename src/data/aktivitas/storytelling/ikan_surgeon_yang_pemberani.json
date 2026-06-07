@@ -1,0 +1,17 @@
+{
+  "title": "Ikan Surgeon yang Pemberani",
+  "image": "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=400&h=600&fit=crop",
+  "desc": "Ikan surgeon bernama Surge tidak takut menghadapi bahaya untuk menyelamatkan teman.",
+  "moral": "Keberanian sejati adalah melindungi orang lain.",
+  "ages": [5, 6, 7, 8],
+  "skills": ["keberanian", "perlindungan"],
+  "pages": [
+    { "num": 1, "image": "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=400&h=600&fit=crop", "text": "Surge si ikan surgeon tinggal di terumbu karang yang Colorful." },
+    { "num": 2, "image": "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=400&h=600&fit=crop", "text": "Surge dikenal berani dan selalu melindungi ikan-ikan kecil." },
+    { "num": 3, "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=600&fit=crop", "text": "Suatu malam, gurita besar menangkap很多 ikan kecil." },
+    { "num": 4, "image": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=600&fit=crop", "text": "Surge melihat teman-temannya dalam bahaya. Dia langsung bertindak." },
+    { "num": 5, "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=600&fit=crop", "text": "Surge menggunakan duri tajamnya untuk memotong tentakel gurita." },
+    { "num": 6, "image": "https://images.unsplash.com/photo-1505881502353-a1986add3762?w=400&h=600&fit=crop", "text": "Gurita kesakitan dan melepaskan semua ikan. Semua selamat." },
+    { "num": 7, "image": "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=400&h=600&fit=crop", "text": "Ikan-ikan kecil围着 Surge dengan grateful. 'Kau pahlawan kami!'" }
+  ]
+}

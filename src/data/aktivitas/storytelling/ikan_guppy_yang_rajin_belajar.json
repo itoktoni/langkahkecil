@@ -1,0 +1,17 @@
+{
+  "title": "Ikan Guppy yang Rajin Belajar",
+  "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=400&h=600&fit=crop",
+  "desc": "Ikan guppy bernama Guppy membuktikan bahwa rajin belajar membuat kita Pintar.",
+  "moral": "Ilmu adalah harta yang tidak akan pernah habis.",
+  "ages": [4, 5, 6, 7, 8],
+  "skills": ["kerajinanan", "belajar"],
+  "pages": [
+    { "num": 1, "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=400&h=600&fit=crop", "text": "Guppy si ikan guppy kecil sangat rajin belajar hal-hal baru." },
+    { "num": 2, "image": "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=400&h=600&fit=crop", "text": "Setiap malam, Guppy membaca buku di perpustakaan karang." },
+    { "num": 3, "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=600&fit=crop", "text": "Ikan lain却说 bahwa ikan tidak butuh belajar. Guppy tidak peduli." },
+    { "num": 4, "image": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=600&fit=crop", "text": "Suatu hari, penyakit misterius menyerang ikan-ikan di sungai." },
+    { "num": 5, "image": "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=400&h=600&fit=crop", "text": "Guppy ingat pernah membaca tentang tanaman obat di bukunya." },
+    { "num": 6, "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=600&fit=crop", "text": "Guppy mencari tanaman itu dan membuat obat untuk semua ikan." },
+    { "num": 7, "image": "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=400&h=600&fit=crop", "text": "Semua ikan sembuh. Mereka berkata, 'Belajar itu worth it! Terima kasih, Guppy!'" }
+  ]
+}
