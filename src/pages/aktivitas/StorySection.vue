@@ -5,7 +5,11 @@
       :style="{ borderColor: color }"
       @click="$emit('open-story', story)">
       <div class="h-48 overflow-hidden relative shrink-0">
-        <img :src="story.image" :alt="story.title" class="w-full h-full object-cover" />
+        <img v-if="!failedImages.has(story.title)" :src="story.image" :alt="story.title" class="w-full h-full object-cover" @error="onImgError(story)" />
+        <div v-else class="w-full h-full bg-gray-100 flex flex-col items-center justify-center text-on-surface-variant">
+          <span class="material-symbols-outlined text-4xl mb-1">broken_image</span>
+          <span class="text-xs">Gambar tidak tersedia</span>
+        </div>
         <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
         <div class="absolute top-3 right-3 bg-white/90 rounded-full px-3 py-1 text-xs font-bold text-primary">
           {{ story.pages.length }} halaman
@@ -28,9 +32,16 @@
 </template>
 
 <script setup>
+import { reactive } from 'vue'
+
 defineProps({
   stories: { type: Array, required: true },
   color: { type: String, default: '#4CAF50' }
 })
 defineEmits(['open-story'])
+
+const failedImages = reactive(new Set())
+function onImgError(story) {
+  failedImages.add(story.title)
+}
 </script>

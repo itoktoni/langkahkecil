@@ -1,5 +1,5 @@
 const meta = {
-  storytelling: { emoji: '📖', title: 'Story Telling', desc: 'Anak belajar bercerita dan menyampaikan ide secara verbal.', color: '#4CAF50', bg: '#E8F5E9', feature: 'story', skills: ['spiritual', 'karakter', 'kreatifitas', 'emosi', 'sosial'] },
+  storytelling: { emoji: '📖', title: 'Story Telling', desc: 'Anak belajar mendengar, bercerita dan menyampaikan ide secara verbal.', color: '#4CAF50', bg: '#E8F5E9', feature: 'story', skills: ['spiritual', 'karakter', 'kreatifitas', 'emosi', 'sosial'] },
   bermain_peran: { emoji: '🎭', title: 'Bermain Peran', desc: 'Anak belajar memahami perspektif orang lain melalui peran.', color: '#FF9800', bg: '#FFF3E0', feature: 'roleplay', skills: ['karakter', 'sosial', 'emosi', 'kreatifitas'] },
   permainan: { emoji: '🎲', title: 'Permainan', desc: 'Anak belajar aturan, kerja sama, dan sportivitas.', color: '#E91E63', bg: '#FCE4EC', feature: 'game', skills: ['disiplin', 'sosial', 'karakter', 'kreatifitas'] },
   monolog: { emoji: '🎤', title: 'Monolog', desc: 'Anak belajar berani tampil dan berbicara di depan umum.', color: '#9C27B0', bg: '#F3E5F5', feature: 'monolog', skills: ['karakter', 'sosial', 'kreatifitas'] },

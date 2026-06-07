@@ -34,8 +34,8 @@
 
   <AppModal v-model="showForm" title="Tambah Jadwal">
     <div class="space-y-4">
-      <AppInput v-model="newLabel" label="Nama Aktivitas" placeholder="Contoh: Belajar Membaca" />
-      <AppInput v-model="newTime" label="Waktu" type="time" placeholder="08:00" />
+      <AppInput v-model="newLabel" label="Nama Aktivitas" placeholder="Contoh: Belajar Membaca" :error="labelError" />
+      <AppInput v-model="newTime" label="Waktu" type="time" placeholder="08:00" :error="timeError" />
     </div>
     <div class="flex gap-3 mt-6">
       <AppButton variant="outline" block @click="closeForm">Batal</AppButton>
@@ -59,6 +59,8 @@ const emit = defineEmits(['add-schedule', 'remove-schedule'])
 const showForm = ref(false)
 const newLabel = ref('')
 const newTime = ref('')
+const labelError = ref('')
+const timeError = ref('')
 
 onMounted(() => {
   const today = new Date().toISOString().slice(0, 10)
@@ -73,10 +75,23 @@ function closeForm() {
   showForm.value = false
   newLabel.value = ''
   newTime.value = ''
+  labelError.value = ''
+  timeError.value = ''
 }
 
 function addSchedule() {
-  if (!newLabel.value.trim() || !newTime.value) return
+  labelError.value = ''
+  timeError.value = ''
+  let valid = true
+  if (!newLabel.value.trim()) {
+    labelError.value = 'Nama aktivitas wajib diisi'
+    valid = false
+  }
+  if (!newTime.value) {
+    timeError.value = 'Waktu wajib diisi'
+    valid = false
+  }
+  if (!valid) return
   emit('add-schedule', { time: newTime.value, label: newLabel.value.trim(), done: false })
   closeForm()
 }

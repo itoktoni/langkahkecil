@@ -1,0 +1,26 @@
+{
+  "title": "Teka-Teki Hewan",
+  "image": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400&h=600&fit=crop",
+  "ages": [3, 4, 5, 6, 7, 8, 9, 10, 11],
+  "skills": ["berpikir_kreatif", "berani_mencoba"],
+  "questions": [
+    {
+      "q": "Aku berbulu, main di darat, tapi suka berenang. Aku juga punya belakang lebar. Siapa aku?",
+      "a": "Harimau!",
+      "hint": "Binatang predator",
+      "emoji": "🐅"
+    },
+    {
+      "q": "Aku memiliki kumis panjang dan hidung yang besar. Aku sering berbunyi 'Moo'. Siapa aku?",
+      "a": "Sapi!",
+      "hint": "Binatang ternak",
+      "emoji": "🐄"
+    },
+    {
+      "q": "Aku punya daun seperti burung, saya bisa terbang. Siapa aku?",
+      "a": "Burung!",
+      "hint": "Tweet tweet",
+      "emoji": "🐦"
+    }
+  ]
+}

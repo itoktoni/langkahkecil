@@ -105,12 +105,12 @@
 
   <AppModal v-model="showAddForm" title="Tambah Challenge">
     <div class="space-y-4">
-      <AppSelect v-model="form.category" label="Kategori" placeholder="Pilih kategori">
+      <AppSelect v-model="form.category" label="Kategori" placeholder="Pilih kategori" :error="errors.category">
         <option v-for="(_, key) in kategoriChallenge" :key="key" :value="key">{{ key }}</option>
       </AppSelect>
-      <AppInput v-model="form.title" label="Nama Challenge" placeholder="Contoh: Perkalian 1-10" />
+      <AppInput v-model="form.title" label="Nama Challenge" placeholder="Contoh: Perkalian 1-10" :error="errors.title" />
       <AppTextarea v-model="form.notes" label="Catatan" placeholder="Catatan tambahan..." :rows="2" />
-      <AppInput v-model.number="form.maxPoints" label="Target Poin" type="number" placeholder="10" />
+      <AppInput v-model.number="form.maxPoints" label="Target Poin" type="number" placeholder="10" :error="errors.maxPoints" />
     </div>
     <div class="flex gap-3 mt-6">
       <AppButton variant="outline" block @click="closeForm">Batal</AppButton>
@@ -120,12 +120,12 @@
 
   <AppModal v-model="showEditForm" title="Edit Challenge">
     <div class="space-y-4">
-      <AppSelect v-model="editForm.category" label="Kategori" placeholder="Pilih kategori">
+      <AppSelect v-model="editForm.category" label="Kategori" placeholder="Pilih kategori" :error="errors.category">
         <option v-for="(_, key) in kategoriChallenge" :key="key" :value="key">{{ key }}</option>
       </AppSelect>
-      <AppInput v-model="editForm.title" label="Nama Challenge" placeholder="Contoh: Perkalian 1-10" />
+      <AppInput v-model="editForm.title" label="Nama Challenge" placeholder="Contoh: Perkalian 1-10" :error="errors.title" />
       <AppTextarea v-model="editForm.notes" label="Catatan" placeholder="Catatan tambahan..." :rows="2" />
-      <AppInput v-model.number="editForm.maxPoints" label="Target Poin" type="number" placeholder="10" />
+      <AppInput v-model.number="editForm.maxPoints" label="Target Poin" type="number" placeholder="10" :error="errors.maxPoints" />
     </div>
     <div class="flex gap-3 mt-6">
       <AppButton variant="outline" block @click="closeEdit">Batal</AppButton>
@@ -166,6 +166,8 @@ const showHistory = ref(false)
 const showAddForm = ref(false)
 const showEditForm = ref(false)
 const editingId = ref(null)
+
+const errors = ref({ category: '', title: '', maxPoints: '' })
 
 const categoryEmojis = kategoriChallenge
 
@@ -224,10 +226,11 @@ function openEdit(c) {
 function closeEdit() {
   showEditForm.value = false
   editingId.value = null
+  errors.value = { category: '', title: '', maxPoints: '' }
 }
 
 function saveEdit() {
-  if (!editForm.value.category || !editForm.value.title.trim()) return
+  if (!validateForm(editForm.value)) return
   const cat = categoryEmojis[editForm.value.category] || categoryEmojis['Lainnya']
   emit('edit-challenge', {
     id: editingId.value,
@@ -245,10 +248,30 @@ function saveEdit() {
 function closeForm() {
   showAddForm.value = false
   form.value = { ...defaultForm }
+  errors.value = { category: '', title: '', maxPoints: '' }
+}
+
+function validateForm(data) {
+  errors.value = { category: '', title: '', maxPoints: '' }
+  let valid = true
+  if (!data.category) {
+    errors.value.category = 'Kategori wajib dipilih'
+    valid = false
+  }
+  if (!data.title || !data.title.trim()) {
+    errors.value.title = 'Nama challenge wajib diisi'
+    valid = false
+  }
+  const pts = Number(data.maxPoints)
+  if (!data.maxPoints || !Number.isInteger(pts) || pts < 1) {
+    errors.value.maxPoints = 'Target poin harus angka bulat minimal 1'
+    valid = false
+  }
+  return valid
 }
 
 function saveForm() {
-  if (!form.value.category || !form.value.title.trim()) return
+  if (!validateForm(form.value)) return
   const max = Number(form.value.maxPoints) || 10
   const cat = categoryEmojis[form.value.category] || categoryEmojis['Lainnya']
   emit('add-challenge', {

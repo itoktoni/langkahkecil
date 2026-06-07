@@ -4,6 +4,12 @@
     <h2 class="font-headline-md text-headline-md mb-6">Laporan Perkembangan</h2>
 
     <div class="space-y-4">
+      <div v-if="!anakList.length" class="bg-white rounded-[28px] border border-outline-variant shadow-md p-8 text-center">
+        <div class="text-5xl mb-3">👶</div>
+        <p class="font-label-lg text-text-main mb-1">Belum ada data anak</p>
+        <p class="text-sm text-on-surface-variant">Tambahkan anak terlebih dahulu di menu Profil untuk mulai melihat perkembangan.</p>
+      </div>
+
       <div v-for="anak in anakList" :key="anak.id" class="bg-white rounded-[28px] border border-outline-variant shadow-md overflow-hidden">
         <button class="w-full flex items-center gap-4 p-5 text-left hover:bg-gray-50 transition-colors"
           @click="toggle(anak.id)">

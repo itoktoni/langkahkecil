@@ -1,7 +1,7 @@
 <template>
   <div class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
 
-    <div class="bg-white rounded-[28px] p-6 soft-shadow">
+    <div class="bg-white rounded-[28px] p-6 soft-shadow border border-outline-variant">
       <div class="flex items-center gap-4">
         <div class="w-16 h-16 rounded-full bg-[#E8F5E9] flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
           <span class="text-4xl">{{ userGender === 'Ayah' ? '👨' : '👩' }}</span>
@@ -16,6 +16,7 @@
             <input v-model="editNameValue"
               class="w-full px-3 py-2 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
               placeholder="Nama baru" @keyup.enter="saveName" />
+            <p v-if="nameError" class="text-xs text-error mt-1">{{ nameError }}</p>
             <div class="flex gap-2">
               <button @click="setGender('Bunda')"
                 class="flex-1 py-2 rounded-lg text-xs font-bold border-2 transition-all"
@@ -57,6 +58,7 @@
           <input v-model="newPassword" type="password"
             class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
             placeholder="Masukkan password baru" />
+          <p v-if="passwordError" class="text-xs text-error">{{ passwordError }}</p>
           <div class="flex gap-2">
             <button @click="cancelPassword"
               class="flex-1 py-2.5 rounded-lg border border-outline-variant text-sm font-medium text-on-surface-variant hover:bg-gray-50 transition-colors">
@@ -115,7 +117,7 @@
           </div>
         </div>
         <div v-if="anakList.length === 0"
-          class="bg-white rounded-2xl p-6 soft-shadow text-center text-on-surface-variant text-sm">
+          class="bg-white rounded-2xl p-6 soft-shadow text-center border border-outline-variant text-on-surface-variant text-sm">
           Belum ada data anak
         </div>
       </div>
@@ -179,6 +181,7 @@
       <div class="relative bg-white rounded-t-[28px] lg:rounded-[28px] w-full max-w-md p-6 pb-8 lg:mb-0">
         <div class="w-10 h-1 bg-outline-variant rounded-full mx-auto mb-5 lg:hidden"></div>
         <h3 class="font-headline-sm text-text-main mb-5">Edit Profil Anak</h3>
+        <p v-if="editAnakError" class="text-xs text-error mb-3">{{ editAnakError }}</p>
         <div class="space-y-4">
           <div>
             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Nama</label>
@@ -265,9 +268,12 @@ const openMenuId = ref(null)
 const showPasswordForm = ref(false)
 const oldPassword = ref('')
 const newPassword = ref('')
+const passwordError = ref('')
 
 const editAnak = ref(null)
 const editAnakForm = ref({ nama: '', gender: '', tanggal: '', bulan: '', tahun: '' })
+const editAnakError = ref('')
+const nameError = ref('')
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
 const currentYear = new Date().getFullYear()
@@ -330,11 +336,14 @@ function startEditName() {
 function setGender(g) { editGender.value = g }
 
 function saveName() {
-  if (editNameValue.value.trim()) {
-    userName.value = editNameValue.value.trim()
-    app.userName = editNameValue.value.trim()
-    saveSetting('userName', userName.value)
+  nameError.value = ''
+  if (!editNameValue.value.trim()) {
+    nameError.value = 'Nama wajib diisi'
+    return
   }
+  userName.value = editNameValue.value.trim()
+  app.userName = editNameValue.value.trim()
+  saveSetting('userName', userName.value)
   userGender.value = editGender.value
   saveSetting('userGender', userGender.value)
   editingName.value = false
@@ -344,10 +353,19 @@ function cancelPassword() {
   showPasswordForm.value = false
   oldPassword.value = ''
   newPassword.value = ''
+  passwordError.value = ''
 }
 
 function savePassword() {
-  if (!oldPassword.value || !newPassword.value) return
+  passwordError.value = ''
+  if (!oldPassword.value || !newPassword.value) {
+    passwordError.value = 'Password lama dan baru wajib diisi'
+    return
+  }
+  if (newPassword.value.length < 6) {
+    passwordError.value = 'Password baru minimal 6 karakter'
+    return
+  }
   cancelPassword()
 }
 
@@ -361,10 +379,25 @@ function openEditAnak(anak) {
   editAnakForm.value = { nama: anak.nama, gender: anak.gender || '', tanggal: anak.tanggal || '', bulan: anak.bulan || '', tahun: anak.tahun || '' }
 }
 
-function closeEditAnak() { editAnak.value = null }
+function closeEditAnak() {
+  editAnak.value = null
+  editAnakError.value = ''
+}
 
 async function saveEditAnak() {
-  if (!editAnakForm.value.nama.trim()) return
+  editAnakError.value = ''
+  if (!editAnakForm.value.nama.trim()) {
+    editAnakError.value = 'Nama anak wajib diisi'
+    return
+  }
+  if (!editAnakForm.value.gender) {
+    editAnakError.value = 'Gender wajib dipilih'
+    return
+  }
+  if (!editAnakForm.value.tanggal || !editAnakForm.value.bulan || !editAnakForm.value.tahun) {
+    editAnakError.value = 'Tanggal lahir wajib diisi lengkap'
+    return
+  }
   const anak = editAnak.value
   anak.nama = editAnakForm.value.nama.trim()
   anak.gender = editAnakForm.value.gender

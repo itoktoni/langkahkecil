@@ -50,7 +50,7 @@
 
   <AppModal v-model="showForm" title="Tambah Checklist">
     <div class="space-y-4">
-      <AppInput v-model="newTitle" label="Nama Checklist" placeholder="Contoh: Pagi Hari" />
+      <AppInput v-model="newTitle" label="Nama Checklist" placeholder="Contoh: Pagi Hari" :error="titleError" />
     </div>
     <div class="flex gap-3 mt-6">
       <AppButton variant="outline" block @click="closeForm">Batal</AppButton>
@@ -60,7 +60,7 @@
 
   <AppModal v-model="showItemForm" title="Tambah Item">
     <div class="space-y-4">
-      <AppInput v-model="newItemLabel" label="Nama Aktivitas" placeholder="Contoh: Sikat gigi" />
+      <AppInput v-model="newItemLabel" label="Nama Aktivitas" placeholder="Contoh: Sikat gigi" :error="itemError" />
     </div>
     <div class="flex gap-3 mt-6">
       <AppButton variant="outline" block @click="closeItemForm">Batal</AppButton>
@@ -85,8 +85,10 @@ const emit = defineEmits(['add-checklist', 'remove-checklist', 'add-item', 'remo
 
 const showForm = ref(false)
 const newTitle = ref('')
+const titleError = ref('')
 const showItemForm = ref(false)
 const newItemLabel = ref('')
+const itemError = ref('')
 const activeChecklistId = ref(null)
 
 function checked(cl) {
@@ -101,10 +103,15 @@ function percent(cl) {
 function closeForm() {
   showForm.value = false
   newTitle.value = ''
+  titleError.value = ''
 }
 
 function addChecklist() {
-  if (!newTitle.value.trim()) return
+  titleError.value = ''
+  if (!newTitle.value.trim()) {
+    titleError.value = 'Nama checklist wajib diisi'
+    return
+  }
   emit('add-checklist', { id: Date.now(), title: newTitle.value.trim(), items: [] })
   closeForm()
 }
@@ -117,11 +124,17 @@ function openAddItem(cl) {
 function closeItemForm() {
   showItemForm.value = false
   newItemLabel.value = ''
+  itemError.value = ''
   activeChecklistId.value = null
 }
 
 function addItem() {
-  if (!newItemLabel.value.trim() || !activeChecklistId.value) return
+  itemError.value = ''
+  if (!newItemLabel.value.trim()) {
+    itemError.value = 'Nama aktivitas wajib diisi'
+    return
+  }
+  if (!activeChecklistId.value) return
   emit('add-item', { checklistId: activeChecklistId.value, item: { label: newItemLabel.value.trim(), done: false } })
   closeItemForm()
 }

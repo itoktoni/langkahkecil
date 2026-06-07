@@ -39,7 +39,7 @@
               class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-4 transition-all"
               :class="showHint ? 'bg-[#D7EDFF] text-on-tertiary-fixed' : 'bg-surface-container-low text-on-surface-variant'">
               <span class="material-symbols-outlined text-lg">{{ showHint ? 'visibility_off' : 'visibility' }}</span>
-              {{ showHint ? 'Sembunyikan Hint' : 'Lihat Hint' }}
+              {{ showHint ? 'Sembunyikan Petunjuk' : 'Lihat Petunjuk' }}
             </button>
             <div v-if="showHint" class="w-full bg-[#D7EDFF] rounded-2xl p-4 mb-6 fade-in-up">
               <p class="text-sm text-on-tertiary-fixed text-center">💡 {{ currentQuestion.hint }}</p>
