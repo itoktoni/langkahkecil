@@ -89,6 +89,8 @@ const showInstallBar = computed(() => canInstall.value && !app.installDismissed)
 async function seedAndLoad() {
   const savedName = await getSetting('userName')
   if (savedName) app.userName = savedName
+  const savedGender = await getSetting('userGender')
+  if (savedGender) app.userGender = savedGender
   await anak.loadAnakList()
   await tools.loadToolsData(anak.anakList)
   if (!app.selectedAnakId && anak.anakList.length) {

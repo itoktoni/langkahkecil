@@ -4,23 +4,8 @@
   "ages": [3, 4, 5, 6, 7, 8, 9, 10, 11],
   "skills": ["berpikir_kreatif", "berani_mencoba"],
   "questions": [
-    {
-      "q": "Aku berbulu, main di darat, tapi suka berenang. Aku juga punya belakang lebar. Siapa aku?",
-      "a": "Harimau!",
-      "hint": "Binatang predator",
-      "emoji": "🐅"
-    },
-    {
-      "q": "Aku memiliki kumis panjang dan hidung yang besar. Aku sering berbunyi 'Moo'. Siapa aku?",
-      "a": "Sapi!",
-      "hint": "Binatang ternak",
-      "emoji": "🐄"
-    },
-    {
-      "q": "Aku punya daun seperti burung, saya bisa terbang. Siapa aku?",
-      "a": "Burung!",
-      "hint": "Tweet tweet",
-      "emoji": "🐦"
-    }
+    { "q": "Aku belang hitam oranye, buas dan suka sendirian. Siapa aku?", "a": "Harimau!", "hint": "Raja hutan yang punya loreng di tubuhnya", "emoji": "🐅" },
+    { "q": "Aku bertanduk, suka makan rumah, dan menghasilkan susu. Siapa aku?", "a": "Sapi!", "hint": "Hewan ternak yang sering dipelihara petani", "emoji": "🐄" },
+    { "q": "Aku punya sayap dan bisa terbang tinggi di langit. Siapa aku?", "a": "Burung!", "hint": "Hewan yang bersarang di pohon dan suka berkicau", "emoji": "🐦" }
   ]
 }

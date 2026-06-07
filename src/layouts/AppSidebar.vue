@@ -19,10 +19,10 @@
 
     <nav class="flex-1 px-3 space-y-2">
       <button v-for="tab in tabs" :key="tab.id"
-        class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200"
+        class="w-full flex items-center gap-3 px-4 py-3 border-2 shadow-sm rounded-2xl transition-all duration-200"
         :class="activeTab === tab.id
-          ? 'bg-primary text-on-primary shadow-md'
-          : 'bg-canvas-cream text-on-surface-variant border-2 border-[#B7D9BC] hover:shadow-md hover:border-primary/30'"
+          ? 'bg-primary text-on-primary'
+          : 'bg-canvas-cream text-on-surface-variant border-2 shadow-sm border-[#B7D9BC]  hover:border-primary/30'"
         @click="$emit('switch', tab.id)">
         <span class="material-symbols-outlined text-xl" :style="iconStyle(tab.id)">
           {{ tab.icon }}

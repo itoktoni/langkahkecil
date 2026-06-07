@@ -57,6 +57,8 @@
       <PuzzleSection v-else-if="selectedType.feature === 'puzzle'" :puzzles="sortedItems" :color="selectedType.color" :bg="selectedType.bg" @open-puzzle="openPuzzle" />
       <MindfulnessSection v-else-if="selectedType.feature === 'mindfulness'" :exercises="sortedItems" :color="selectedType.color" />
       <OutdoorSection v-else-if="selectedType.feature === 'outdoor'" :activities="sortedItems" :color="selectedType.color" />
+      <IlmuPengetahuanSection v-else-if="selectedType.feature === 'ilmu_pengetahuan'" :items="sortedItems" :color="selectedType.color" />
+      <WorksheetPage v-else-if="selectedType.feature === 'worksheet'" />
     </div>
 
     <StoryReader v-if="activeStory" :story="activeStory" :color="selectedType.color" :bg="selectedType.bg" @close="activeStory = null" />
@@ -79,6 +81,8 @@ import MusicSection from './aktivitas/MusicSection.vue'
 import PuzzleSection from './aktivitas/PuzzleSection.vue'
 import MindfulnessSection from './aktivitas/MindfulnessSection.vue'
 import OutdoorSection from './aktivitas/OutdoorSection.vue'
+import IlmuPengetahuanSection from './aktivitas/IlmuPengetahuanSection.vue'
+import WorksheetPage from './WorksheetPage.vue'
 import StoryReader from './StoryReader.vue'
 import RoleplayReader from './RoleplayReader.vue'
 import ProjectReader from './ProjectReader.vue'
@@ -105,7 +109,8 @@ watch(() => app.switchCounter, () => {
 const contentKeyMap = {
   story: 'stories', roleplay: 'roles', game: 'games',
   monolog: 'scripts', project: 'projects', music: 'songs',
-  puzzle: 'puzzles', mindfulness: 'exercises', outdoor: 'activities'
+  puzzle: 'puzzles', mindfulness: 'exercises', outdoor: 'activities',
+  ilmu_pengetahuan: 'experiments'
 }
 
 function getItems(type) {

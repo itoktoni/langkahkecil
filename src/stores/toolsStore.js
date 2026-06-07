@@ -4,14 +4,15 @@ import {
   getChallenges, saveChallenge as dbSaveChallenge, removeChallenge as dbRemoveChallenge,
   getChallengeHistory, saveChallengeHistory as dbSaveChallengeHistory,
   getChecklists, saveChecklist as dbSaveChecklist, removeChecklist as dbRemoveChecklist,
-  getSchedules, saveSchedule as dbSaveSchedule, removeSchedule as dbRemoveSchedule
+  getSchedules, saveSchedule as dbSaveSchedule, removeSchedule as dbRemoveSchedule,
+  getWorksheets, saveWorksheet as dbSaveWorksheet, removeWorksheet as dbRemoveWorksheet
 } from '../db.js'
 
 export const useToolsStore = defineStore('tools', () => {
   const anakToolsData = ref({})
   const toolsAnakId = ref(null)
 
-  const emptyToolsData = { challenges: [], challengeHistory: [], checklists: [], schedules: [] }
+  const emptyToolsData = { challenges: [], challengeHistory: [], checklists: [], schedules: [], worksheets: [] }
 
   function getAnakToolsData(anakId) {
     if (!anakToolsData.value[anakId]) {
@@ -28,7 +29,8 @@ export const useToolsStore = defineStore('tools', () => {
       const challengeHistory = await getChallengeHistory(anak.id)
       const checklists = await getChecklists(anak.id)
       const schedules = await getSchedules(anak.id)
-      anakToolsData.value[anak.id] = { challenges, challengeHistory, checklists, schedules }
+      const worksheets = await getWorksheets(anak.id)
+      anakToolsData.value[anak.id] = { challenges, challengeHistory, checklists, schedules, worksheets }
     }
     if (anakList.length && !toolsAnakId.value) {
       toolsAnakId.value = anakList[0].id
@@ -120,11 +122,28 @@ export const useToolsStore = defineStore('tools', () => {
     }
   }
 
+  // Worksheet
+  async function addWorksheet(item) {
+    const id = await dbSaveWorksheet({ ...item, anakId: toolsAnakId.value })
+    item.id = id
+    toolsData.value.worksheets.push(item)
+    return id
+  }
+
+  function removeWorksheetItem(id) {
+    const idx = toolsData.value.worksheets.findIndex(w => w.id === id)
+    if (idx > -1) {
+      toolsData.value.worksheets.splice(idx, 1)
+      dbRemoveWorksheet(id)
+    }
+  }
+
   return {
     toolsAnakId, toolsData,
     loadToolsData,
     addChallenge, addPoint, removePoint, editChallenge, deleteChallenge, addChallengeHistory,
     addChecklist, removeChecklist, addChecklistItem, removeChecklistItem,
-    addSchedule, removeSchedule
+    addSchedule, removeSchedule,
+    addWorksheet, removeWorksheetItem
   }
 })

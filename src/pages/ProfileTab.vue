@@ -364,6 +364,7 @@ function saveName() {
   app.userName = editNameValue.value.trim()
   saveSetting('userName', userName.value)
   userGender.value = editGender.value
+  app.userGender = editGender.value
   saveSetting('userGender', userGender.value)
   editingName.value = false
 }

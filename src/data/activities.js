@@ -7,7 +7,9 @@ const meta = {
   musik_gerak: { emoji: '🎵', title: 'Musik & Gerak', desc: 'Anak belajar ritme, koordinasi, dan ekspresi tubuh.', color: '#FF5722', bg: '#FBE9E7', feature: 'music', skills: ['kreatifitas', 'kesehatan', 'emosi', 'disiplin'] },
   puzzle: { emoji: '🧩', title: 'Puzzle & Problem Solving', desc: 'Anak belajar berpikir logis dan memecahkan masalah.', color: '#673AB7', bg: '#EDE7F6', feature: 'puzzle', skills: ['kreatifitas', 'disiplin', 'kemandirian'] },
   mindfulness: { emoji: '🧘', title: 'Mindfulness & Refleksi', desc: 'Anak belajar mengenali perasaan dan menenangkan diri.', color: '#795548', bg: '#EFEBE9', feature: 'mindfulness', skills: ['emosi', 'spiritual', 'disiplin'] },
-  outdoor: { emoji: '🌿', title: 'Outdoor Exploration', desc: 'Anak belajar mengenal alam dan lingkungan sekitar.', color: '#009688', bg: '#E0F2F1', feature: 'outdoor', skills: ['kesehatan', 'kemandirian', 'kreatifitas', 'spiritual'] }
+  outdoor: { emoji: '🌿', title: 'Outdoor Exploration', desc: 'Anak belajar mengenal alam dan lingkungan sekitar.', color: '#009688', bg: '#E0F2F1', feature: 'outdoor', skills: ['kesehatan', 'kemandirian', 'kreatifitas', 'spiritual'] },
+  ilmu_pengetahuan: { emoji: '🔬', title: 'Ilmu Pengetahuan & Literasi', desc: 'Anak belajar sains, eksperimen, dan meningkatkan kemampuan literasi.', color: '#0D47A1', bg: '#E3F2FD', feature: 'ilmu_pengetahuan', skills: ['kreatifitas', 'disiplin', 'fokus', 'berani_mencoba'] },
+  worksheet: { emoji: '📝', title: 'Worksheet Anak', desc: 'Worksheet latihan menulis kutipan inspiratif untuk anak. Bisa dicetak!', color: '#176c33', bg: '#E1F2E5', feature: 'worksheet', skills: ['disiplin', 'fokus', 'kreatifitas'] }
 }
 
 const globs = {
@@ -19,11 +21,18 @@ const globs = {
   musik_gerak: import.meta.glob('./aktivitas/musik_gerak/*.json', { eager: true }),
   puzzle: import.meta.glob('./aktivitas/puzzle/*.json', { eager: true }),
   mindfulness: import.meta.glob('./aktivitas/mindfulness/*.json', { eager: true }),
-  outdoor: import.meta.glob('./aktivitas/outdoor/*.json', { eager: true })
+  outdoor: import.meta.glob('./aktivitas/outdoor/*.json', { eager: true }),
+  ilmu_pengetahuan: import.meta.glob('./aktivitas/ilmu_pengetahuan/*.json', { eager: true })
 }
 
 function loadItems(globObj) {
-  return Object.values(globObj).map(m => m.default || m)
+  const result = []
+  for (const m of Object.values(globObj)) {
+    const item = m.default || m
+    if (Array.isArray(item)) result.push(...item)
+    else result.push(item)
+  }
+  return result
 }
 
 function collectAges(items) {
@@ -47,7 +56,8 @@ function buildAktivitasData() {
       musik_gerak: 'songs',
       puzzle: 'puzzles',
       mindfulness: 'exercises',
-      outdoor: 'activities'
+      outdoor: 'activities',
+      ilmu_pengetahuan: 'experiments'
     }[key]
     return { key, ...m, ages, [contentKey]: items }
   })
@@ -60,7 +70,8 @@ export function filterActivities(childAge, skillKey) {
     const contentKey = {
       storytelling: 'stories', bermain_peran: 'roles', permainan: 'games',
       monolog: 'scripts', proyek_kreatif: 'projects', musik_gerak: 'songs',
-      puzzle: 'puzzles', mindfulness: 'exercises', outdoor: 'activities'
+      puzzle: 'puzzles', mindfulness: 'exercises', outdoor: 'activities',
+      ilmu_pengetahuan: 'experiments'
     }[a.key]
     const items = (a[contentKey] || []).filter(item => {
       const ageOk = childAge == null || (item.ages && item.ages.includes(childAge))
@@ -69,10 +80,12 @@ export function filterActivities(childAge, skillKey) {
     })
     return { ...a, [contentKey]: items }
   }).filter(a => {
+    if (a.key === 'worksheet') return true
     const contentKey = {
       storytelling: 'stories', bermain_peran: 'roles', permainan: 'games',
       monolog: 'scripts', proyek_kreatif: 'projects', musik_gerak: 'songs',
-      puzzle: 'puzzles', mindfulness: 'exercises', outdoor: 'activities'
+      puzzle: 'puzzles', mindfulness: 'exercises', outdoor: 'activities',
+      ilmu_pengetahuan: 'experiments'
     }[a.key]
     return (a[contentKey] || []).length > 0
   })

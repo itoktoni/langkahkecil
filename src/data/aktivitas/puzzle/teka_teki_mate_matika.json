@@ -4,23 +4,8 @@
   "ages": [5, 6, 7, 8, 9, 10, 11],
   "skills": ["memecahkan_masalah", "fokus"],
   "questions": [
-    {
-      "q": "Jika saya memiliki 5 apel dan saya membelinya 3 lagi, berapa apel yang saya miliki sekarang?",
-      "a": "8",
-      "hint": "Tambahkan 5 dan 3",
-      "emoji": "🍎"
-    },
-    {
-      "q": "Ayah memberikan 12 permen kepada 3 anaknya secara merata. Berapa permen yang diterima masing-masing anak?",
-      "a": "4",
-      "hint": "Bagi 12 dengan 3",
-      "emoji": "🍬"
-    },
-    {
-      "q": "Anita memiliki 20 stiker. Ia memberikan 7 stiker kepada Budi. Berapa stiker yang masih dimiliki Anita?",
-      "a": "13",
-      "hint": "Kurangi 7 dari 20",
-      "emoji": "⭐"
-    }
+    { "q": "Jika saya memiliki 5 apel dan membeli 3 lagi, berapa apel yang saya miliki sekarang?", "a": "8", "hint": "Jumlahkan 5 ditambah 3", "emoji": "🍎" },
+    { "q": "Ayah memberikan 12 permen kepada 3 anaknya secara merata. Berapa permen yang diterima masing-masing?", "a": "4", "hint": "Bagi 12 menjadi 3 bagian sama besar", "emoji": "🍬" },
+    { "q": "Anita memiliki 20 stiker. Ia memberikan 7 stiker kepada Budi. Berapa stiker yang masih dimiliki Anita?", "a": "13", "hint": "Kurangi 20 dengan 7", "emoji": "⭐" }
   ]
 }

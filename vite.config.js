@@ -5,6 +5,25 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   return {
+    server: {
+      proxy: {
+        '/api/quotes': {
+          target: 'https://quotes.liupurnomo.com',
+          changeOrigin: true,
+          rewrite: (path) => path
+        },
+        '/api/bukuacak': {
+          target: 'https://bukuacak.vercel.app',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/bukuacak/, '/api')
+        },
+        '/api/pixabay': {
+          target: 'https://pixabay.com',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/pixabay/, '/api')
+        }
+      }
+    },
     plugins: [
       vue(),
       VitePWA({

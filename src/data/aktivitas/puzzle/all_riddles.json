@@ -5,66 +5,16 @@
     "ages": [3, 4, 5, 6, 7, 8],
     "skills": ["berpikir_kreatif", "peduli_sesama"],
     "questions": [
-      {
-        "q": "Aku punya lele tak bersiul, mata dua tapi buta. Siapa aku?",
-        "a": "Ikan!",
-        "hint": "lihat petunjuk",
-        "emoji": "🐠"
-      },
-      {
-        "q": "Aku memiliki cangkel khas, suka makan bunga. Siapa aku?",
-        "a": "Kupu-kupu!",
-        "hint": "lihat petunjuk",
-        "emoji": "🦋"
-      },
-      {
-        "q": "Aku besar di ekor, kecil di kepala. Siapa aku?",
-        "a": "Lebah!",
-        "hint": "lihat petunjuk",
-        "emoji": "🐝"
-      },
-      {
-        "q": "Aku bisa terbang tanpa sayap, punya perut tapi tidak makan. Siapa aku?",
-        "a": "Awan!",
-        "hint": "lihat petunjuk",
-        "emoji": "☁️"
-      },
-      {
-        "q": "Aku hidup di air tapi bukan ikan, punya cangkel tapi tidak berjalan. Siapa aku?",
-        "a": "Katak!",
-        "hint": "lihat petunjuk",
-        "emoji": "🐸"
-      },
-      {
-        "q": "Aku memiliki belakang legap, tapi tidak bertempat. Siapa aku?",
-        "a": "Kuda!",
-        "hint": "lihat petunjuk",
-        "emoji": "🐴"
-      },
-      {
-        "q": "Aku bisa melompat tinggi, hidup di hutan. Siapa aku?",
-        "a": "Kera!",
-        "hint": "lihat petunjuk",
-        "emoji": "🐒"
-      },
-      {
-        "q": "Aku memiliki paruparan banyak, tak bisa bicara. Siapa aku?",
-        "a": "Ular!",
-        "hint": "lihat petunjuk",
-        "emoji": "🐍"
-      },
-      {
-        "q": "Aku sangat besar, tapi tidak berani mengambil makanan. Siapa aku?",
-        "a": "Gajah!",
-        "hint": "lihat petunjuk",
-        "emoji": "🐘"
-      },
-      {
-        "q": "Aku punya taring tapi tidak makan daging, lincah di dinding. Siapa aku?",
-        "a": "Kucing!",
-        "hint": "lihat petunjuk",
-        "emoji": "🐱"
-      }
+      { "q": "Aku punya sisik tapi bersirip, hidup di air tapi bukan ikan. Siapa aku?", "a": "Ikan!", "hint": "Hewan air yang berenang menggunakan sirip", "emoji": "🐠" },
+      { "q": "Aku punya sayap indah, suka hinggap di bunga. Siapa aku?", "a": "Kupu-kupu!", "hint": "Serangga cantik yang berubah dari ulat", "emoji": "🦋" },
+      { "q": "Aku kecil tapi rajin, suka mengumpulkan madu. Siapa aku?", "a": "Lebah!", "hint": "Serangga yang bisa menyengat dan membuat madu", "emoji": "🐝" },
+      { "q": "Aku bisa terbang tanpa sayap, punya perut tapi tidak makan. Siapa aku?", "a": "Awan!", "hint": "Lihat ke langit, aku mengambang di atas sana", "emoji": "☁️" },
+      { "q": "Aku hidup di air dan di darat, suka melompat. Siapa aku?", "a": "Katak!", "hint": "Hewan hijau yang suka berkumur di kolam", "emoji": "🐸" },
+      { "q": "Aku kuat berlari, punya surai di leher. Siapa aku?", "a": "Kuda!", "hint": "Hewan yang bisa ditunggangi manusia", "emoji": "🐴" },
+      { "q": "Aku bisa melompat tinggi, hidup di hutan, suka makan pisang. Siapa aku?", "a": "Kera!", "hint": "Hewan yang mirip manusia dan tinggal di pohon", "emoji": "🐒" },
+      { "q": "Aku panjang melata, tidak punya kaki. Siapa aku?", "a": "Ular!", "hint": "Hewan yang merayap di tanah dan bisa menggigit", "emoji": "🐍" },
+      { "q": "Aku sangat besar, punya belalai panjang. Siapa aku?", "a": "Gajah!", "hint": "Hewan darat terbesar di dunia", "emoji": "🐘" },
+      { "q": "Aku punya kumis panjang, suka mengejar tikus. Siapa aku?", "a": "Kucing!", "hint": "Hewan peliharaan yang suka mengeong", "emoji": "🐱" }
     ]
   },
   {
@@ -73,66 +23,16 @@
     "ages": [3, 4, 5, 6, 7],
     "skills": ["berpikir_kreatif", "mengenali_emosi"],
     "questions": [
-      {
-        "q": "Aku berwarna orange, berbentuk bulat, ada binti-binti kecil. Siapa aku?",
-        "a": "Jeruk!",
-        "hint": "lihat petunjuk",
-        "emoji": "🍊"
-      },
-      {
-        "q": "Aku hijau, berbentuk panjang, punya biji banyak. Siapa aku?",
-        "a": "Mangga!",
-        "hint": "lihat petunjuk",
-        "emoji": "🥭"
-      },
-      {
-        "q": "Aku merah lebar, ada mata kecil di tengah. Siapa aku?",
-        "a": "Strawberry!",
-        "hint": "lihat petunjuk",
-        "emoji": "🍓"
-      },
-      {
-        "q": "Aku kuning, berbentuk panjang, ada cangkang tapi tidak membuat telur. Siapa aku?",
-        "a": "Pisang!",
-        "hint": "lihat petunjuk",
-        "emoji": "🍌"
-      },
-      {
-        "q": "Aku berbentuk bulet, punya kulit tipis, isinya merah atau hijau. Siapa aku?",
-        "a": "Anggur!",
-        "hint": "lihat petunjuk",
-        "emoji": "🍇"
-      },
-      {
-        "q": "Aku berwarna hijau, punya daun tapi bukan pohon. Siapa aku?",
-        "a": "Bayam!",
-        "hint": "lihat petunjuk",
-        "emoji": "🥬"
-      },
-      {
-        "q": "Aku oranye, berbentuk pipi, ada kulit tapi tidak bisa berjalan. Siapa aku?",
-        "a": "Wortel!",
-        "hint": "lihat petunjuk",
-        "emoji": "🥕"
-      },
-      {
-        "q": "Aku punya banyak kakinya, warnanya oranye kehijauan. Siapa aku?",
-        "a": "Kentang!",
-        "hint": "lihat petunjuk",
-        "emoji": "🥔"
-      },
-      {
-        "q": "Aku berwarna merah, bertoga, punya biji besar. Siapa aku?",
-        "a": "Tomat!",
-        "hint": "lihat petunjuk",
-        "emoji": "🍅"
-      },
-      {
-        "q": "Aku ungu, berbentuk panjang, ada biji tapi tidak buat meja. Siapa aku?",
-        "a": "Ubi!",
-        "hint": "lihat petunjuk",
-        "emoji": "🍠"
-      }
+      { "q": "Aku berwarna oranye, berbentuk bulat, rasanya manis asam. Siapa aku?", "a": "Jeruk!", "hint": "Buah yang bisa dibuat jus dan kaya vitamin C", "emoji": "🍊" },
+      { "q": "Aku hijau atau kuning, dagingku lembut dan manis. Siapa aku?", "a": "Mangga!", "hint": "Buah tropis yang harum dan legit rasanya", "emoji": "🥭" },
+      { "q": "Aku merah kecil, berbiji di luar, rasanya manis asam. Siapa aku?", "a": "Strawberry!", "hint": "Buah merah yang sering dijadikan selai atau kue", "emoji": "🍓" },
+      { "q": "Aku kuning, berbentuk melengkup, mudah dikupas. Siapa aku?", "a": "Pisang!", "hint": "Buah yang disukai monyet dan kaya kalium", "emoji": "🍌" },
+      { "q": "Aku kecil-kecil bergerombol, bisa ungu atau hijau. Siapa aku?", "a": "Anggur!", "hint": "Buah kecil yang sering dijadikan minuman atau kismis", "emoji": "🍇" },
+      { "q": "Aku hijau, berdaun lebar, kaya zat besi. Siapa aku?", "a": "Bayam!", "hint": "Sayuran hijau yang membuat Popeye kuat", "emoji": "🥬" },
+      { "q": "Aku oranye, panjang seperti jari, renyah saat digigit. Siapa aku?", "a": "Wortel!", "hint": "Sayuran yang bagus untuk kesehatan mata", "emoji": "🥕" },
+      { "q": "Aku bulat coklat, bisa digoreng atau dibuat kentang goreng. Siapa aku?", "a": "Kentang!", "hint": "Umbi-umbian yang bisa dijadikan banyak masakan", "emoji": "🥔" },
+      { "q": "Aku merah, berair, sering dijadikan saus atau sambal. Siapa aku?", "a": "Tomat!", "hint": "Buah merah yang sering dipakai di masakan", "emoji": "🍅" },
+      { "q": "Aku ungu, manis, legit, sering dijadikan kolak. Siapa aku?", "a": "Ubi!", "hint": "Umbi ungu yang enak dibakar atau dikukus", "emoji": "🍠" }
     ]
   },
   {
@@ -141,66 +41,16 @@
     "ages": [4, 5, 6, 7, 8],
     "skills": ["memecahkan_masalah", "fokus"],
     "questions": [
-      {
-        "q": "Semakin diambil, semakin kecil. Apakah itu?",
-        "a": "Lubang!",
-        "hint": "lihat petunjuk",
-        "emoji": "🕳"
-      },
-      {
-        "q": "Aku punya kaki tapi tidak bisa jalan, punya ekor tapi tidak bisa lompat. Siapa aku?",
-        "a": "Meja!",
-        "hint": "lihat petunjuk",
-        "emoji": "🪑"
-      },
-      {
-        "q": "Aku bisa menulis tapi tidak punya tangan, punya buku tapi tidak bisa membaca. Siapa aku?",
-        "a": "Pensil!",
-        "hint": "lihat petunjuk",
-        "emoji": "✏️"
-      },
-      {
-        "q": "Aku ditempatkan di dinding, punya wajah tapi tidak bicara. Siapa aku?",
-        "a": "Jam!",
-        "hint": "lihat petunjuk",
-        "emoji": "🕒"
-      },
-      {
-        "q": "Aku panas dalam waktu dingin, aku dingin dalam waktu panas. Siapa aku?",
-        "a": "Api dan air!",
-        "hint": "lihat petunjuk",
-        "emoji": "🔥💧"
-      },
-      {
-        "q": "Aku bisa mengikis kaca, punya gigi tapi bukan binatang. Siapa aku?",
-        "a": "Waktu!",
-        "hint": "lihat petunjuk",
-        "emoji": "⏳"
-      },
-      {
-        "q": "Aku bisa mengikis batu, tapi tidak punya tenaga. Siapa aku?",
-        "a": "Air!",
-        "hint": "lihat petunjuk",
-        "emoji": "💧"
-      },
-      {
-        "q": "Aku bisa menembus dinding, tapi bukan roh. Siapa aku?",
-        "a": "Cahaya!",
-        "hint": "lihat petunjuk",
-        "emoji": "💡"
-      },
-      {
-        "q": "Aku punya mata tapi tidak bisa lihat, punya air tapi tidak bisa minum. Siapa aku?",
-        "a": "Benua!",
-        "hint": "lihat petunjuk",
-        "emoji": "🌍"
-      },
-      {
-        "q": "Aku berada di kaki, punya mata tapi tidak bisa dilihat. Siapa aku?",
-        "a": "Gunung!",
-        "hint": "lihat petunjuk",
-        "emoji": "⛰️"
-      }
+      { "q": "Semakin diambil, semakin kecil. Apakah itu?", "a": "Lubang!", "hint": "Bayangkan menggali tanah, makin dikeruk makin dalam", "emoji": "🕳️" },
+      { "q": "Aku punya kaki tapi tidak bisa jalan, punya puncak tapi tidak bisa naik. Siapa aku?", "a": "Meja!", "hint": "Furniture yang digunakan untuk menulis atau makan", "emoji": "🪑" },
+      { "q": "Aku bisa menulis tapi tidak punya tangan. Siapa aku?", "a": "Pensil!", "hint": "Alat tulis yang dipegang tangan untuk menulis", "emoji": "✏️" },
+      { "q": "Aku punya wajah tapi tidak bisa bicara, berjalan tanpa kaki. Siapa aku?", "a": "Jam!", "hint": "Benda yang menunjukkan waktu, ada di dinding atau tangan", "emoji": "🕒" },
+      { "q": "Aku panas saat dingin, dingin saat panas. Siapa aku?", "a": "Api dan air!", "hint": "Api menghangatkan di dingin, air menyegarkan di panas", "emoji": "🔥💧" },
+      { "q": "Aku punya gigi tapi bukan binatang, bisa menggigit tanpa mulut. Siapa aku?", "a": "Sisir!", "hint": "Alat untuk merapikan rambut setiap pagi", "emoji": "⏳" },
+      { "q": "Aku bisa mengikis batu, tapi tidak punya tenaga. Siapa aku?", "a": "Air!", "hint": "Cairan yang mengalir di sungai dan bisa melubangi batu", "emoji": "💧" },
+      { "q": "Aku bisa menembus kaca, tapi bukan peluru. Siapa aku?", "a": "Cahaya!", "hint": "Datang dari matahari dan lampu, menerangi ruangan", "emoji": "💡" },
+      { "q": "Aku punya mata tapi tidak bisa lihat, punya mulut tapi tidak bisa bicara. Siapa aku?", "a": "Gunung!", "hint": "Tinggi menjulang, ada puncak dan kaki", "emoji": "🌍" },
+      { "q": "Aku ada di kaki tapi bukan sepatu, bisa melindungi dari hujan. Siapa aku?", "a": "Kaos kaki!", "hint": "Pakaian yang dipakai sebelum sepatu", "emoji": "⛰️" }
     ]
   },
   {
@@ -209,78 +59,18 @@
     "ages": [5, 6, 7, 8, 9],
     "skills": ["memecahkan_masalah", "tidak_mudah_menyerah"],
     "questions": [
-      {
-        "q": "5 buah apel ditambah 3 buah apel lagi. Total ada berapa?",
-        "a": "8",
-        "hint": "lihat petunjuk",
-        "emoji": "🍎"
-      },
-      {
-        "q": "Saya punya 10 permen, diberikan 4 ke teman. Sisa berapa?",
-        "a": "6",
-        "hint": "lihat petunjuk",
-        "emoji": "🍬"
-      },
-      {
-        "q": "Jika ada 3 ayam, masing-masing punya 2 kaki, total kaki ada berapa?",
-        "a": "6",
-        "hint": "lihat petunjuk",
-        "emoji": "🐔"
-      },
-      {
-        "q": "Saya punya 15 buku, dibagikan 3 orang secara merata. Masing-masing dapat berapa?",
-        "a": "5",
-        "hint": "lihat petunjuk",
-        "emoji": "📚"
-      },
-      {
-        "q": "Jam 2 belajar dimulai, durasi 3 jam. Pukul berapa selesai?",
-        "a": "Pukul 5",
-        "hint": "lihat petunjuk",
-        "emoji": "⏰"
-      },
-      {
-        "q": "Saya punya 8 kelereng, 3 lagi diberikan. Ditambah lagi 2. Total ada berapa?",
-        "a": "13",
-        "hint": "lihat petunjuk",
-        "emoji": "⚪"
-      },
-      {
-        "q": "Belajar 2 jam, istirahat 30 menit, kembali belajar 1 jam. Total waktu belajar berapa?",
-        "a": "3 jam",
-        "hint": "lihat petunjuk",
-        "emoji": "📖"
-      },
-      {
-        "q": "Saya beli 12 buah jeruk, makan 4 buah. Sisa buah jeruk ada berapa?",
-        "a": "8",
-        "hint": "lihat petunjuk",
-        "emoji": "🍊"
-      },
-      {
-        "q": "Ada 20 kue, dibagikan ke 4 orang. Masing-masing dapat berapa kue?",
-        "a": "5",
-        "hint": "lihat petunjuk",
-        "emoji": "🍰"
-      },
-      {
-        "q": "Saya punya 9 pensil, 3 diberikan. Lalu dapat 4 lagi. Total ada berapa?",
-        "a": "10",
-        "hint": "lihat petunjuk",
-        "emoji": "✏️"
-      },
-      {
-        "q": "Ayah punya 24 kue, ibu beli 6 lagi. Total kue ada berapa?",
-        "a": "30",
-        "hint": "lihat petunjuk",
-        "emoji": "🧁"
-      },
-      {
-        "q": "4 ekor ayam bertelur masing-masing 3 butir. Total telur ada berapa?",
-        "a": "12",
-        "hint": "lihat petunjuk",
-        "emoji": "🥚"
-      }
+      { "q": "5 buah apel ditambah 3 buah apel lagi. Total ada berapa?", "a": "8", "hint": "Jumlahkan 5 dan 3 menggunakan jari", "emoji": "🍎" },
+      { "q": "Saya punya 10 permen, diberikan 4 ke teman. Sisa berapa?", "a": "6", "hint": "Kurangi 10 dengan 4", "emoji": "🍬" },
+      { "q": "Jika ada 3 ayam, masing-masing punya 2 kaki, total kaki ada berapa?", "a": "6", "hint": "Kalikan 3 ayam dengan 2 kaki setiap ayam", "emoji": "🐔" },
+      { "q": "Saya punya 15 buku, dibagikan ke 3 orang secara merata. Masing-masing dapat berapa?", "a": "5", "hint": "Bagi 15 menjadi 3 bagian sama besar", "emoji": "📚" },
+      { "q": "Jam 2 belajar dimulai, durasi 3 jam. Pukul berapa selesai?", "a": "Pukul 5", "hint": "Hitung 2 ditambah 3", "emoji": "⏰" },
+      { "q": "Saya punya 8 kelereng, dapat 3 lagi, lalu dapat 2 lagi. Total ada berapa?", "a": "13", "hint": "Jumlahkan 8 + 3 + 2", "emoji": "⚪" },
+      { "q": "Belajar 2 jam, istirahat 30 menit, kembali belajar 1 jam. Total waktu belajar berapa?", "a": "3 jam", "hint": "Jumlahkan waktu belajar saja, tanpa istirahat", "emoji": "📖" },
+      { "q": "Saya beli 12 jeruk, makan 4. Sisa jeruk ada berapa?", "a": "8", "hint": "Kurangi 12 dengan 4", "emoji": "🍊" },
+      { "q": "Ada 20 kue, dibagikan ke 4 orang. Masing-masing dapat berapa?", "a": "5", "hint": "Bagi 20 menjadi 4 bagian sama besar", "emoji": "🍰" },
+      { "q": "Saya punya 9 pensil, berikan 3. Lalu dapat 4 lagi. Total ada berapa?", "a": "10", "hint": "Hitung 9 - 3 + 4", "emoji": "✏️" },
+      { "q": "Ayah punya 24 kue, ibu beli 6 lagi. Total kue ada berapa?", "a": "30", "hint": "Jumlahkan 24 dan 6", "emoji": "🧁" },
+      { "q": "4 ekor ayam bertelur masing-masing 3 butir. Total telur ada berapa?", "a": "12", "hint": "Kalikan 4 ayam dengan 3 telur setiap ayam", "emoji": "🥚" }
     ]
   },
   {
@@ -289,66 +79,16 @@
     "ages": [3, 4, 5, 6, 7],
     "skills": ["berpikir_kreatif", "fokus"],
     "questions": [
-      {
-        "q": "Aku digunakan untuk menulis tapi tidak bisa menulis sendiri. Siapa aku?",
-        "a": "Pena!",
-        "hint": "lihat petunjuk",
-        "emoji": "🖊️"
-      },
-      {
-        "q": "Aku buat mengunci pintu, ada kunci tapi tidak bisa buka sendiri. Siapa aku?",
-        "a": "Gembok!",
-        "hint": "lihat petunjuk",
-        "emoji": "🔒"
-      },
-      {
-        "q": "Aku bergoyang saat ditiup, bukan tarian. Siapa aku?",
-        "a": "Seruling!",
-        "hint": "lihat petunjuk",
-        "emoji": "🎷"
-      },
-      {
-        "q": "Aku buat menggiling kopi, ada gigi tapi tidak makan. Siapa aku?",
-        "a": "Tumbuk!",
-        "hint": "lihat petunjuk",
-        "emoji": "☕"
-      },
-      {
-        "q": "Aku bisa terbang tanpa sayap, bisa dimakan tanpa gigi. Siapa aku?",
-        "a": "Waktu!",
-        "hint": "lihat petunjuk",
-        "emoji": "⏳"
-      },
-      {
-        "q": "Aku bicara tanpa mulut, mendengar tanpa telinga. Siapa aku?",
-        "a": "Radio!",
-        "hint": "lihat petunjuk",
-        "emoji": "📻"
-      },
-      {
-        "q": "Aku muncul di kamar mandi, ada air tapi tidak bisa minum. Siapa aku?",
-        "a": "Shampo!",
-        "hint": "lihat petunjuk",
-        "emoji": "🧴"
-      },
-      {
-        "q": "Aku buat tidur nyenyak, punya sprei tapi tidak bisa tidur. Siapa aku?",
-        "a": "Tempat tidur!",
-        "hint": "lihat petunjuk",
-        "emoji": "🛏️"
-      },
-      {
-        "q": "Aku di kepala, bukan topi. Siapa aku?",
-        "a": "Rambut!",
-        "hint": "lihat petunjuk",
-        "emoji": "💇"
-      },
-      {
-        "q": "Aku buat dingin, punya es tapi tidak bisa mencairkan. Siapa aku?",
-        "a": "Kulkas!",
-        "hint": "lihat petunjuk",
-        "emoji": "❄️"
-      }
+      { "q": "Aku digunakan untuk menulis di kertas. Siapa aku?", "a": "Pena!", "hint": "Alat tulis yang menggunakan tinta", "emoji": "🖊️" },
+      { "q": "Aku digunakan untuk mengunci pintu. Siapa aku?", "a": "Gembok!", "hint": "Benda yang dipasang di pintu agar tidak bisa dibuka sembarangan", "emoji": "🔒" },
+      { "q": "Aku mengeluarkan suara saat ditiup, berasal dari logam. Siapa aku?", "a": "Seruling!", "hint": "Alat musik tiup yang terbuat dari bambu atau logam", "emoji": "🎷" },
+      { "q": "Aku digunakan untuk membuat kopi bubuk. Siapa aku?", "a": "Tumbuk!", "hint": "Alat dapur untuk menghaluskan bumbu atau kopi", "emoji": "☕" },
+      { "q": "Aku berjalan tanpa kaki, tidak pernah berhenti. Siapa aku?", "a": "Waktu!", "hint": "Terus bergerak maju, tidak bisa dimundurkan", "emoji": "⏳" },
+      { "q": "Aku bisa bicara tanpa mulut, mengeluarkan musik. Siapa aku?", "a": "Radio!", "hint": "Elektronik yang mengeluarkan suara dan lagu", "emoji": "📻" },
+      { "q": "Aku digunakan untuk mencuci rambut di kamar mandi. Siapa aku?", "a": "Shampo!", "hint": "Cairan wangi yang dipakai saat keramas", "emoji": "🧴" },
+      { "q": "Aku tempat tidur, punya bantal dan guling. Siapa aku?", "a": "Tempat tidur!", "hint": "Furniture untuk istirahat dan tidur malam", "emoji": "🛏️" },
+      { "q": "Aku tumbuh di kepala, bisa panjang atau pendek. Siapa aku?", "a": "Rambut!", "hint": "Tumbuh di atas kepala, bisa disisir dan dipotong", "emoji": "💇" },
+      { "q": "Aku membuat makanan tetap dingin dan segar. Siapa aku?", "a": "Kulkas!", "hint": "Elektronik besar di dapur yang menyimpan makanan", "emoji": "❄️" }
     ]
   },
   {
@@ -357,66 +97,16 @@
     "ages": [4, 5, 6, 7, 8, 9],
     "skills": ["peduli_sesama", "menghormati_ortu"],
     "questions": [
-      {
-        "q": "Aku orang tua pertama, bukan nenek atau kakek. Siapa aku?",
-        "a": "Ayah dan Ibu!",
-        "hint": "lihat petunjuk",
-        "emoji": "👨‍👩"
-      },
-      {
-        "q": "Aku saudara tulis berbeda, tetapi sama rumah. Siapa aku?",
-        "a": "Saudara!",
-        "hint": "lihat petunjuk",
-        "emoji": "👨‍👩‍👧‍👦"
-      },
-      {
-        "q": "Aku lahir setelah kamu, tapi lebih tua. Siapa aku?",
-        "a": "Adik!",
-        "hint": "lihat petunjuk",
-        "emoji": "👶"
-      },
-      {
-        "q": "Aku bicara manja, tapi bukan boneka. Siapa aku?",
-        "a": "Bayi!",
-        "hint": "lihat petunjuk",
-        "emoji": "👶"
-      },
-      {
-        "q": "Aku orang tua kedua, biasa dipanggil dengan hormat. Siapa aku?",
-        "a": "Kakek atau Nenek!",
-        "hint": "lihat petunjuk",
-        "emoji": "👴👵"
-      },
-      {
-        "q": "Aku saudara kandung tapi lebih tua, biasa dipanggil kakak. Siapa aku?",
-        "a": "Kakak!",
-        "hint": "lihat petunjuk",
-        "emoji": "👦👧"
-      },
-      {
-        "q": "Aku lahir sebelum adik, tapi tidak cuma. Siapa aku?",
-        "a": "Kakak!",
-        "hint": "lihat petunjuk",
-        "emoji": "👦"
-      },
-      {
-        "q": "Aku ibu yang bukan ibu, tapi disanjung. Siapa aku?",
-        "a": "Ibu jari!",
-        "hint": "lihat petunjuk",
-        "emoji": "🖐️"
-      },
-      {
-        "q": "Aku bapak tanpa wajah, ada tangan tapi tidak pegang. Siapa aku?",
-        "a": "Ayah jari!",
-        "hint": "lihat petunjuk",
-        "emoji": "✋"
-      },
-      {
-        "q": "Aku keluarga ke-3, bukan saudara tapi dekat. Siapa aku?",
-        "a": "Sepupu!",
-        "hint": "lihat petunjuk",
-        "emoji": "🤝"
-      }
+      { "q": "Aku yang melahirkanmu ke dunia. Siapa aku?", "a": "Ibu!", "hint": "Orang tua perempuan yang merawatmu setiap hari", "emoji": "👩" },
+      { "q": "Aku tinggal serumah tapi bukan orang tua. Kita main bersama. Siapa aku?", "a": "Saudara!", "hint": "Anak-anak yang punya ayah dan ibu yang sama", "emoji": "👨‍👩‍👧‍👦" },
+      { "q": "Aku lahir setelahmu, lebih muda darimu. Siapa aku?", "a": "Adik!", "hint": "Anak kecil yang kamu jaga dan sayangi", "emoji": "👶" },
+      { "q": "Aku masih sangat kecil, belum bisa bicara, sering menangis. Siapa aku?", "a": "Bayi!", "hint": "Manusia yang baru lahir dan minum susu", "emoji": "👶" },
+      { "q": "Aku orang tua dari ayah atau ibumu. Siapa aku?", "a": "Kakek atau Nenek!", "hint": "Orang tua yang lebih tua, sering bercerita", "emoji": "👴👵" },
+      { "q": "Aku lebih tua darimu, satu ayah dan ibu. Siapa aku?", "a": "Kakak!", "hint": "Saudara yang lahir duluan sebelum kamu", "emoji": "👦👧" },
+      { "q": "Aku yang mengajarimu sopan santun dan berdoa. Siapa aku?", "a": "Ayah!", "hint": "Orang tua laki-laki yang bekerja keras untuk keluarga", "emoji": "👨" },
+      { "q": "Aku jari yang paling besar dan bisa berdiri sendiri. Siapa aku?", "a": "Ibu jari!", "hint": "Jari pertama yang digunakan untuk memberi acungan jempol", "emoji": "🖐️" },
+      { "q": "Aku anggota keluarga yang tinggal bersama kakek nenek. Siapa aku?", "a": "Paman atau Bibi!", "hint": "Adik atau kakak dari ayah atau ibu", "emoji": "🤝" },
+      { "q": "Aku anak dari paman atau bibimu. Siapa aku?", "a": "Sepupu!", "hint": "Teman bermain saat berkumpul keluarga besar", "emoji": "👫" }
     ]
   }
 ]

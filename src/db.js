@@ -2,12 +2,13 @@ import Dexie from 'dexie'
 
 const db = new Dexie('HaloBunda')
 
-db.version(1).stores({
+db.version(2).stores({
   anak: '++id, nama',
   challenges: '++id, anakId, category',
   challengeHistory: '++id, anakId, category',
   checklists: '++id, anakId',
   schedules: '++id, anakId',
+  worksheets: '++id, anakId',
   settings: 'key'
 })
 
@@ -84,4 +85,16 @@ export async function getSetting(key) {
 
 export async function saveSetting(key, value) {
   return db.settings.put({ key, value })
+}
+
+export async function getWorksheets(anakId) {
+  return db.worksheets.where('anakId').equals(anakId).toArray()
+}
+
+export async function saveWorksheet(item) {
+  return db.worksheets.put(item)
+}
+
+export async function removeWorksheet(id) {
+  return db.worksheets.delete(id)
 }

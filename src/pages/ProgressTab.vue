@@ -67,7 +67,7 @@
                     <span class="material-symbols-outlined text-base">delete</span>
                   </button>
                   <button @click.stop="openEvaluasi(anak, sp)"
-                    class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all active:scale-95"
+                    class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-white transition-all active:scale-95"
                     :style="{ background: sp.color }">
                     <span class="material-symbols-outlined text-sm">rate_review</span>
                     Evaluasi
