@@ -4,7 +4,7 @@
     <h2 class="font-headline-md text-headline-md mb-6">Laporan Perkembangan</h2>
 
     <div class="space-y-4">
-      <div v-for="anak in anakList" :key="anak.id" class="bg-white rounded-[28px] soft-shadow overflow-hidden">
+      <div v-for="anak in anakList" :key="anak.id" class="bg-white rounded-[28px] border border-outline-variant shadow-md overflow-hidden">
         <button class="w-full flex items-center gap-4 p-5 text-left hover:bg-gray-50 transition-colors"
           @click="toggle(anak.id)">
           <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl shrink-0" :style="{ background: anak.bg }">
@@ -16,7 +16,7 @@
           </div>
           <div class="flex items-center gap-2">
             <span v-if="anak.subpilars" class="text-xs font-bold text-on-surface-variant bg-surface-container-low px-2 py-1 rounded-full">
-              {{ anak.subpilars.length }} pilar
+              {{ anak.subpilars.length }} skills
             </span>
             <span class="material-symbols-outlined text-on-surface-variant transition-transform duration-200"
               :class="{ 'rotate-180': openId === anak.id }">expand_more</span>
@@ -26,13 +26,9 @@
         <div v-show="openId === anak.id" class="px-5 pb-5 space-y-5 border-t border-outline-variant">
 
           <div v-if="anak.subpilars && anak.subpilars.length" class="pt-4 space-y-3">
-            <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Sub Pilar Aktif</h4>
-            <div v-for="sp in anak.subpilars" :key="sp.key" class="bg-canvas-cream rounded-2xl p-4">
+            <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Skills Aktif</h4>
+            <div v-for="sp in anak.subpilars" :key="sp.key" class="bg-canvas-cream rounded-2xl p-4 border border-outline-variant shadow-sm">
               <div class="flex items-center gap-3 mb-3">
-                <div class="w-9 h-9 rounded-full flex items-center justify-center text-base"
-                  :style="{ background: getPilarBg(sp.pilar) }">
-                  {{ sp.emoji }}
-                </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-text-main">{{ sp.title }}</p>
                   <p class="text-xs text-on-surface-variant">{{ getPilarName(sp.pilar) }}</p>
@@ -65,52 +61,34 @@
           </div>
 
           <div v-else class="pt-4 text-center text-sm text-on-surface-variant py-4">
-            Belum ada sub pilar aktif
+            Belum ada skills aktif
           </div>
 
-          <div v-if="anak.completedSubpilars && anak.completedSubpilars.length">
-            <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">Sub Pilar Selesai</h4>
+          <div class="" v-if="anak.completedSubpilars && anak.completedSubpilars.length">
+            <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">Skills Selesai</h4>
             <div class="space-y-2">
               <div v-for="sp in anak.completedSubpilars" :key="sp.key"
-                class="flex items-center gap-3 bg-canvas-cream rounded-2xl p-3">
-                <div class="w-9 h-9 rounded-full flex items-center justify-center text-base"
-                  :style="{ background: getPilarBg(sp.pilar) }">
-                  {{ sp.emoji }}
-                </div>
+                class="flex items-center gap-3 bg-canvas-cream rounded-2xl p-3 border border-outline-variant shadow-sm">
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-text-main">{{ sp.title }}</p>
                   <p class="text-xs text-on-surface-variant">{{ getPilarName(sp.pilar) }}</p>
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="material-symbols-outlined text-2xl text-green-600">check_circle</span>
                   <button @click="$emit('reset-subpilar', { anak, subpilar: sp })"
-                    class="w-6 h-6 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
-                    style="background: #C62828; color: #fff; opacity: 0.7;">
-                    <span class="material-symbols-outlined text-sm">delete</span>
+                    class="h-8 w-8 rounded-lg flex items-center justify-center border-2 transition-all active:scale-95"
+                    style="border-color: #C6282860; color: #C62828;">
+                    <span class="material-symbols-outlined text-base">delete</span>
+                  </button>
+                  <button @click.stop="shareEvalDirect(anak, sp)"
+                    class="h-8 w-8 rounded-lg flex items-center justify-center border-2 transition-all active:scale-95"
+                    :style="{ borderColor: (sp.color || '#4CAF50') + '60', color: sp.color || '#4CAF50' }">
+                    <span class="material-symbols-outlined text-base">share</span>
                   </button>
                 </div>
               </div>
             </div>
           </div>
 
-        </div>
-      </div>
-    </div>
-
-    <div v-if="history.length" class="mt-6">
-      <h3 class="font-headline-sm text-text-main mb-3">Riwayat Aktivitas</h3>
-      <div class="bg-white rounded-[28px] p-5 soft-shadow">
-        <div class="relative">
-          <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-100"></div>
-          <div v-for="(h, i) in history" :key="i"
-            class="relative flex items-start gap-3 pb-3 last:pb-0">
-            <div class="relative z-10 w-2 h-2 rounded-full mt-2 shrink-0" :style="{ background: h.color }"></div>
-            <div class="flex-1">
-              <p class="text-sm font-medium" :style="{ color: h.color }">{{ h.anakNama }}</p>
-              <p class="text-sm text-text-main">{{ h.action }}</p>
-              <p class="text-xs text-on-surface-variant">{{ h.date }}</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -124,12 +102,12 @@
       <div v-if="evalQuestions.length" class="space-y-2 mb-5">
         <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Panduan Penilaian</p>
         <div v-for="(q, i) in evalQuestions" :key="i"
-          class="bg-canvas-cream rounded-xl p-3 text-sm text-text-main">
+          class="bg-canvas-cream rounded-xl p-3 text-sm text-text-main border border-outline-variant">
           {{ i + 1 }}. {{ q }}
         </div>
       </div>
 
-      <div class="bg-canvas-cream rounded-2xl p-4">
+      <div class="bg-canvas-cream rounded-2xl p-4 shadow-sm border border-outline-variant">
         <div class="flex items-center justify-between mb-2">
           <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Penilaian Orang Tua</span>
           <span class="text-xs font-bold" :style="{ color: evalColor }">{{ evalPoints }}/{{ evalMax }}</span>
@@ -180,7 +158,6 @@ import { playAddSound, playRemoveSound } from '../utils/sound.js'
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] },
-  history: { type: Array, default: () => [] },
   selectedAnakId: { type: Number, default: null }
 })
 
