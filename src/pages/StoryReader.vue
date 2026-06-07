@@ -1,116 +1,118 @@
 <template>
-  <div class="fixed inset-0 z-[100] bg-black/50 flex items-end lg:items-center justify-center" @click.self="$emit('close')">
-    <div class="bg-canvas-cream w-full h-full lg:rounded-[32px] lg:max-w-2xl lg:max-h-[85vh] lg:h-auto flex flex-col overflow-hidden soft-shadow lg:mx-4"
-      style="box-shadow: 0 25px 60px rgba(0,0,0,0.15);">
+  <div class="fixed inset-0 z-[100] bg-black/40 flex items-end lg:items-center justify-center p-2 lg:p-4">
+    <div class="w-full max-w-md bg-canvas-cream rounded-[40px] shadow-2xl border-8 border-[#B7D9BC] overflow-hidden flex flex-col h-[100dvh] lg:h-[852px] relative">
 
       <!-- Header -->
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-outline-variant bg-white shrink-0">
-        <button @click="$emit('close')" class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center hover:bg-surface-container transition-colors">
-          <span class="material-symbols-outlined">close</span>
+      <div class="px-4 pt-4 pb-2 flex justify-between items-center z-10 shrink-0">
+        <button @click="$emit('close')"
+          class="w-11 h-11 bg-error border-4 border-white text-white rounded-full flex items-center justify-center text-xl shadow-md hover:scale-105 active:scale-95 transition-all">
+          ✕
         </button>
-        <h3 class="font-headline-md text-headline-md text-center flex-1 px-2 truncate">{{ story.title }}</h3>
-        <span class="text-sm font-bold text-on-surface-variant bg-surface-container-low rounded-full px-3 py-1">
-          {{ isFinished ? 'Selesai' : `${currentPage.num}/${story.pages.length}` }}
-        </span>
+        <div class="bg-primary text-on-primary px-5 py-1.5 rounded-full border-4 border-white shadow-md text-base font-semibold truncate max-w-[180px]">
+          {{ story.title }}
+        </div>
+        <div class="w-11 h-11 bg-friendly-sky border-4 border-white text-white rounded-full flex items-center justify-center text-xs font-bold shadow-md">
+          {{ isFinished ? '✓' : `${currentPage.num}/${story.pages.length}` }}
+        </div>
       </div>
 
-      <!-- Page Content with Swipe -->
-      <div v-if="!isFinished" class="flex-1 overflow-hidden relative select-none"
+      <!-- Page Content -->
+      <div v-if="!isFinished" class="flex-1 flex flex-col justify-center px-4 gap-4 overflow-hidden"
         @mousedown="onDragStart"
         @mousemove="onDragMove"
         @mouseup="onDragEnd"
         @mouseleave="onDragEnd"
         @touchstart="onDragStart"
-        @touchmove="onDragMove"
+        @touchmove.passive="onDragMove"
         @touchend="onDragEnd">
-        <div class="h-full overflow-y-auto"
-          :style="{ transform: `translateX(${dragOffset}px)`, transition: isDragging ? 'none' : 'transform 0.3s ease' }">
-          <div class="flex flex-col items-center">
-            <!-- Image -->
-            <div class="w-full">
-              <ImageWrapper :src="currentPage.image" :alt="currentPage.text" height="350px" />
-            </div>
-            <!-- Text -->
-            <div class="px-6 lg:px-10 py-6 max-w-lg w-full">
-              <p class="font-body-lg text-body-lg text-on-surface leading-relaxed text-center">
-                {{ currentPage.text }}
-              </p>
-            </div>
+
+        <!-- Illustration -->
+        <div class="w-full aspect-[4/3] bg-success-soft rounded-[32px] border-4 border-white shadow-lg overflow-hidden relative floating-illustration"
+          :style="{ transform: `translateX(${dragOffset}px)`, transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)' }">
+          <ImageWrapper :src="currentPage.image" :alt="currentPage.text" height="100%" />
+          <div class="absolute top-3 right-3 bg-primary text-on-primary border-2 border-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold shadow">
+            {{ currentPage.num }}
           </div>
+        </div>
+
+        <!-- Speech Bubble -->
+        <div class="bg-white rounded-[32px] border-4 border-[#B7D9BC] p-5 shadow-md relative">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-b-[14px] border-b-white"></div>
+          <p class="text-text-main text-base lg:text-lg text-center leading-relaxed font-medium">
+            {{ currentPage.text }}
+          </p>
+        </div>
+
+        <!-- TTS Button -->
+        <div class="flex justify-center">
+          <button @click="toggleSpeech"
+            class="border-4 border-white px-5 py-2.5 rounded-full flex items-center gap-2 text-base font-semibold shadow-lg hover:scale-105 active:scale-95 transition-all"
+            :class="isSpeaking ? 'bg-error text-on-error' : 'bg-primary text-on-primary'">
+            <span class="material-symbols-outlined text-xl" :class="isSpeaking ? '' : 'animate-pulse'">{{ isSpeaking ? 'stop' : 'volume_up' }}</span>
+            {{ isSpeaking ? 'Berhenti' : 'Dengarkan' }}
+          </button>
         </div>
       </div>
 
       <!-- Finished / Moral Screen -->
-      <div v-else class="flex-1 overflow-y-auto">
-        <div class="flex flex-col items-center px-6 lg:px-10 py-10 max-w-lg mx-auto">
-          <!-- Celebration -->
-          <div class="w-20 h-20 rounded-full bg-success-soft flex items-center justify-center text-5xl mb-6">
+      <div v-else class="flex-1 flex flex-col justify-center px-5 gap-5 overflow-y-auto py-6">
+        <div class="flex flex-col items-center">
+          <div class="w-20 h-20 bg-primary rounded-full border-4 border-white flex items-center justify-center text-5xl shadow-lg floating-illustration mb-1">
             🎉
           </div>
-          <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-text-main text-center mb-2">
-            Cerita Selesai!
-          </h2>
-          <p class="font-body-md text-body-md text-on-surface-variant text-center mb-8">
-            {{ story.title }}
-          </p>
-          <!-- Moral Card -->
-          <div class="w-full bg-white rounded-[28px] p-6 soft-shadow border" :style="{ borderColor: color }">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
-                :style="{ background: bg }">💬</div>
-              <h3 class="font-headline-md text-headline-md">Pelajaran</h3>
-            </div>
-            <p class="font-body-lg text-body-lg text-on-surface leading-relaxed">
-              {{ story.moral }}
-            </p>
+          <p class="text-primary text-xs mt-2 font-bold">Cerita Selesai!</p>
+        </div>
+
+        <div class="bg-white rounded-[32px] border-4 border-[#B7D9BC] p-5 shadow-md relative">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-b-[14px] border-b-white"></div>
+          <div class="flex items-center gap-2 mb-3 justify-center">
+            <span class="text-xl">💬</span>
+            <p class="text-primary text-base font-bold">Pelajaran</p>
           </div>
-          <!-- TTS for Moral -->
+          <p class="text-text-main text-base text-center leading-relaxed font-medium" style="font-style: italic;">
+            {{ story.moral }}
+          </p>
+        </div>
+
+        <div class="flex justify-center">
           <button @click="speakMoral"
-            class="mt-6 flex items-center gap-2 px-5 py-2.5 rounded-full font-label-lg transition-all"
-            :class="isSpeakingMoral ? 'bg-error text-on-error' : 'bg-success-soft text-primary'">
+            class="border-4 border-white px-5 py-2.5 rounded-full flex items-center gap-2 text-base font-semibold shadow-lg hover:scale-105 active:scale-95 transition-all"
+            :class="isSpeakingMoral ? 'bg-error text-on-error' : 'bg-primary text-on-primary'">
             <span class="material-symbols-outlined text-xl">{{ isSpeakingMoral ? 'stop' : 'volume_up' }}</span>
             {{ isSpeakingMoral ? 'Berhenti' : 'Dengarkan Pelajaran' }}
           </button>
         </div>
       </div>
 
-      <!-- TTS Button (only when reading) -->
-      <div v-if="!isFinished" class="flex justify-center px-5 py-2 bg-white border-t border-outline-variant shrink-0">
-        <button @click="toggleSpeech"
-          class="flex items-center gap-2 px-5 py-2 rounded-full font-label-lg transition-all"
-          :class="isSpeaking ? 'bg-error text-on-error' : 'bg-success-soft text-primary'">
-          <span class="material-symbols-outlined text-xl">{{ isSpeaking ? 'stop' : 'volume_up' }}</span>
-          {{ isSpeaking ? 'Berhenti' : 'Dengarkan' }}
-        </button>
-      </div>
-
       <!-- Bottom Navigation -->
-      <div class="border-t border-outline-variant bg-white px-4 py-3 shrink-0">
-        <div v-if="!isFinished" class="flex items-center justify-center gap-1.5 mb-3 py-1 overflow-x-auto px-2">
+      <div class="p-4 bg-success-soft rounded-t-[40px] border-t-4 border-[#B7D9BC] flex flex-col gap-4 items-center shrink-0">
+        <!-- Page Dots -->
+        <div v-if="!isFinished" class="flex gap-1.5 flex-wrap justify-center">
           <button v-for="page in story.pages" :key="page.num"
             @click="goToPage(page.num - 1)"
-            class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200 shrink-0"
+            class="w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold shadow transition-all"
             :class="currentPageIndex === page.num - 1
-              ? 'text-white scale-110'
-              : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'"
-            :style="currentPageIndex === page.num - 1 ? { background: color } : {}">
+              ? 'bg-primary border-white text-on-primary transform -translate-y-1'
+              : 'bg-white border-[#B7D9BC] text-on-surface-variant'">
             {{ page.num }}
           </button>
         </div>
-        <div class="flex items-center justify-between gap-3">
+
+        <!-- Nav Buttons -->
+        <div class="w-full flex gap-3">
           <button @click="isFinished ? backToLastPage() : prevPage()" :disabled="!isFinished && currentPageIndex === 0"
-            class="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-label-lg transition-all"
+            class="flex-1 py-3 px-4 rounded-2xl font-semibold text-base flex items-center justify-center gap-2 transition-all"
             :class="!isFinished && currentPageIndex === 0
-              ? 'bg-surface-container-low text-outline-variant cursor-not-allowed'
-              : 'bg-surface-container-low text-primary hover:bg-surface-container'">
-            <span class="material-symbols-outlined">arrow_back</span>
-            {{ isFinished ? 'Baca Lagi' : 'Sebelumnya' }}
+              ? 'text-on-surface-variant btn-pop-gray opacity-60 cursor-not-allowed'
+              : 'text-text-main btn-pop-gray'">
+            <span class="material-symbols-outlined text-xl">arrow_back</span>
+            {{ isFinished ? 'Baca Lagi' : 'Kembali' }}
           </button>
+
           <button @click="nextPage"
-            class="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-label-lg text-white transition-all"
-            :style="{ background: color }">
-            {{ isFinished ? 'Tutup' : currentPageIndex === story.pages.length - 1 ? 'Selesai' : 'Selanjutnya' }}
-            <span class="material-symbols-outlined">{{ isFinished ? 'close' : currentPageIndex === story.pages.length - 1 ? 'check' : 'arrow_forward' }}</span>
+            class="flex-1 py-3 px-4 rounded-2xl text-white font-semibold text-base btn-pop-green flex items-center justify-center gap-2">
+            {{ isFinished ? 'Tutup' : currentPageIndex === story.pages.length - 1 ? 'Selesai ✨' : 'Lanjut' }}
+            <span class="material-symbols-outlined text-xl">{{ isFinished ? 'close' : currentPageIndex === story.pages.length - 1 ? 'check' : 'arrow_forward' }}</span>
           </button>
         </div>
       </div>
@@ -157,7 +159,6 @@ function onDragStart(e) {
 
 function onDragMove(e) {
   if (!isDragging.value) return
-  e.preventDefault()
   dragOffset.value = getClientX(e) - dragStartX.value
 }
 
@@ -259,3 +260,32 @@ function stopSpeech() {
 
 onUnmounted(() => stopSpeech())
 </script>
+
+<style scoped>
+.btn-pop-green {
+  background-color: #6DBE7B;
+  box-shadow: 0 6px 0 #176c33;
+  transition: all 0.1s ease;
+}
+.btn-pop-green:active {
+  transform: translateY(6px);
+  box-shadow: 0 0px 0 #176c33;
+}
+.btn-pop-gray {
+  background-color: #E5E7EB;
+  box-shadow: 0 6px 0 #9CA3AF;
+  transition: all 0.1s ease;
+}
+.btn-pop-gray:active {
+  transform: translateY(6px);
+  box-shadow: 0 0px 0 #9CA3AF;
+}
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+.floating-illustration {
+  animation: float 4s ease-in-out infinite;
+}
+</style>
