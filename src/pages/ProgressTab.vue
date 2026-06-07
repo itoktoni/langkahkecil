@@ -38,10 +38,20 @@
               <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
                 <div class="h-full rounded-full transition-all duration-700" :style="{ width: sp.progress + '%', background: sp.color }"></div>
               </div>
+
+              <div v-if="sp.activities && sp.activities.length" class="mb-3 space-y-1.5">
+                <div v-for="act in sp.activities" :key="act.title"
+                  class="flex items-center gap-2 px-3 py-2 bg-white rounded-xl text-xs border border-outline-variant">
+                  <span class="text-base">{{ act.emoji }}</span>
+                  <span class="flex-1 font-medium text-text-main">{{ act.title }}</span>
+                  <span class="text-on-surface-variant">{{ act.date }}</span>
+                </div>
+              </div>
+
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-1 text-xs text-on-surface-variant">
                   <span class="material-symbols-outlined text-xs">check_circle</span>
-                  <span>{{ Math.round(sp.progress / 20) }} dari 5 aktivitas</span>
+                  <span>{{ (sp.activities || []).length }} aktivitas</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <button @click.stop="openEvaluasi(anak, sp)"
@@ -149,7 +159,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { pilars } from '../data/pilars.js'
-import { evaluasiData } from '../data/evaluasi.js'
+import { getEvaluasi } from '../data/skills.js'
 import { ageLabel } from '../utils/age.js'
 import { shareProgress } from '../utils/share.js'
 import AppModal from '../components/AppModal.vue'
@@ -203,8 +213,8 @@ const evalPercent = computed(() => Math.min(100, Math.round((evalPoints.value / 
 function openEvaluasi(anak, sp) {
   evalAnak.value = anak
   evalSkill.value = sp
-  const data = evaluasiData[sp.key]
-  evalQuestions.value = data ? data.questions : []
+  const data = getEvaluasi(sp.key)
+  evalQuestions.value = data ? data.evaluasi : []
   evalPoints.value = 0
   showEvaluasi.value = true
 }

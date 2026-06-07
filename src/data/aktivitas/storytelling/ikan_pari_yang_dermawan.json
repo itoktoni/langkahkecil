@@ -1,0 +1,17 @@
+{
+  "title": "Ikan Pari yang Dermawan",
+  "image": "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=400&h=600&fit=crop",
+  "desc": "Ikan pari bernama Pari berbagi makanannya dengan ikan-ikan kecil yang lapar.",
+  "moral": "Berbagi itu membuat hati bahagia.",
+  "ages": [2, 3, 4, 5, 6, 7],
+  "skills": ["berbagi", "kebaikan"],
+  "pages": [
+    { "num": 1, "image": "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=400&h=600&fit=crop", "text": "Pari si ikan pari memiliki sayap yang indah seperti layangan." },
+    { "num": 2, "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=600&fit=crop", "text": "Setiap pagi, Pari berenang mencari makan di laut yang dalam." },
+    { "num": 3, "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=600&fit=crop", "text": "Suatu hari, Pari melihat ikan-ikan kecil yang terlihat sedih dan lapar." },
+    { "num": 4, "image": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=600&fit=crop", "text": "Pari tidak makan sendirian. Dia berbagi makanan dengan semua ikan kecil itu." },
+    { "num": 5, "image": "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=400&h=600&fit=crop", "text": "Ikan-ikan kecil sangat senang dan围着 Pari minum." },
+    { "num": 6, "image": "https://images.unsplash.com/photo-1505881502353-a1986add3762?w=400&h=600&fit=crop", "text": "Sejak itu, ikan-ikan kecil selalu menjaga Pari dari bahaya." },
+    { "num": 7, "image": "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=400&h=600&fit=crop", "text": "Pari belajar bahwa semakin banyak yang kita bagi, semakin banyak teman yang kita miliki." }
+  ]
+}

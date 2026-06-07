@@ -1,0 +1,24 @@
+<template>
+  <div class="space-y-4">
+    <div v-for="ex in exercises" :key="ex.title" class="bg-white rounded-[28px] p-6 soft-shadow border" :style="{ borderColor: color }">
+      <h3 class="font-headline-md text-headline-md mb-3">🧘 {{ ex.title }}</h3>
+      <ol class="space-y-3 mb-4">
+        <li v-for="(step, i) in ex.steps" :key="i" class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0" :style="{ background: color }">{{ i + 1 }}</div>
+          <p class="font-body-md text-body-md text-on-surface-variant pt-1">{{ step }}</p>
+        </li>
+      </ol>
+      <div class="bg-success-soft rounded-2xl p-4">
+        <p class="font-label-lg text-label-lg text-primary mb-1">✨ Manfaat</p>
+        <p class="text-sm text-on-surface-variant">{{ ex.benefit }}</p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+defineProps({
+  exercises: { type: Array, required: true },
+  color: { type: String, default: '#795548' }
+})
+</script>

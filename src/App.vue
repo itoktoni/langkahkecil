@@ -5,7 +5,7 @@
     <AppHeader :title="app.pageTitle" :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" @switch="app.switchTab" />
 
     <main class="content-wrapper pb-24 lg:pb-8">
-      <PilarTab ref="pilarTabRef" v-show="app.activeTab === 'pilar'" :anak-list="anak.anakList" :selected-pilar="app.selectedPilar" :selected-anak-id="app.selectedAnakId" @select-pilar="app.openPilarSub" @close-pilar="app.closePilarSub" @update:anak-id="app.selectedAnakId = $event" />
+      <PilarTab ref="pilarTabRef" v-show="app.activeTab === 'pilar'" :anak-list="anak.anakList" :selected-pilar="app.selectedPilar" :selected-anak-id="app.selectedAnakId" @select-pilar="app.openPilarSub" @close-pilar="app.closePilarSub" @update:anak-id="app.selectedAnakId = $event" @go-profile="app.switchTab('profile')" />
       <ProgressTab v-show="app.activeTab === 'progress'" :anak-list="anak.anakList" :selected-anak-id="app.selectedAnakId" @reset-skill="anak.resetSkill" />
       <ToolsTab v-show="app.activeTab === 'tools'" :anak-list="anak.anakList" />
       <ProfileTab v-show="app.activeTab === 'profile'" :anak-list="anak.anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" />
@@ -54,7 +54,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { tabs } from './data/pilars.js'
+import { tabs } from './data/tabs.js'
 import { useInstall } from './composables/useInstall.js'
 import { getSetting } from './db.js'
 import { useAppStore } from './stores/appStore.js'

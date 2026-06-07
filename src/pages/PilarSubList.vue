@@ -36,15 +36,21 @@
 <script setup>
 import { computed } from 'vue'
 import AnakSelector from '../components/AnakSelector.vue'
-import { pillarSubs } from '../data/pilars.js'
+import { pilars } from '../data/pilars.js'
+import { getSkillsByPilar } from '../data/skills.js'
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] },
   selectedAnakId: { type: Number, default: null },
-  pilarKey: { type: String, required: true }
+  pilarKey: { type: String, required: true },
+  childAge: { type: Number, default: null }
 })
 
 defineEmits(['back', 'selectSub', 'update:anak-id'])
 
-const data = computed(() => pillarSubs[props.pilarKey] || {})
+const data = computed(() => {
+  const pilar = pilars.find(p => p.key === props.pilarKey)
+  if (!pilar) return {}
+  return { title: pilar.title, desc: `Pilih fokus karakter untuk aktivitas bersama si kecil.`, color: pilar.color, bg: pilar.bg, items: getSkillsByPilar(props.pilarKey, props.childAge) }
+})
 </script>

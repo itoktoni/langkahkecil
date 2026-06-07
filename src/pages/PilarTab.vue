@@ -12,7 +12,36 @@
         </div>
       </section>
 
-      <template v-for="pilar in pilars" :key="pilar.key">
+      <div v-if="!anakList.length"
+        class="bg-white rounded-[28px] p-8 soft-shadow text-center border-2 border-dashed border-outline-variant">
+        <div class="text-5xl mb-4">👶</div>
+        <h3 class="font-headline-sm text-text-main mb-2">Belum Ada Data Anak</h3>
+        <p class="text-sm text-on-surface-variant mb-5">Tambahkan data anak terlebih dahulu sebelum memilih aktivitas.</p>
+        <button @click="$emit('go-profile')"
+          class="px-6 py-3 rounded-2xl bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors active:scale-95">
+          + Tambah Anak
+        </button>
+      </div>
+
+      <div v-else-if="!selectedAnakId"
+        class="bg-white rounded-[28px] p-8 soft-shadow text-center border-2 border-dashed border-outline-variant">
+        <div class="text-5xl mb-4">👆</div>
+        <h3 class="font-headline-sm text-text-main mb-2">Pilih Anak Terlebih Dahulu</h3>
+        <p class="text-sm text-on-surface-variant">Gunakan dropdown di atas untuk memilih anak yang ingin dikembangkan.</p>
+      </div>
+
+      <div v-else-if="!selectedChild.tahun"
+        class="bg-white rounded-[28px] p-8 soft-shadow text-center border-2 border-dashed border-outline-variant">
+        <div class="text-5xl mb-4">📅</div>
+        <h3 class="font-headline-sm text-text-main mb-2">Set Tanggal Lahir Anak</h3>
+        <p class="text-sm text-on-surface-variant mb-5">Untuk menampilkan aktivitas yang sesuai usia, silakan set tanggal lahir anak di Profil.</p>
+        <button @click="$emit('go-profile')"
+          class="px-6 py-3 rounded-2xl bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors active:scale-95">
+          Ke Profil
+        </button>
+      </div>
+
+      <template v-else v-for="pilar in filteredPilars" :key="pilar.key">
         <div
           class="bento-card group relative bg-white rounded-[24px] soft-shadow overflow-hidden cursor-pointer transition-all hover:shadow-xl border-2 mb-3"
           :style="{ borderColor: selectedPilar === pilar.key ? pilar.color : pilar.color + '30', boxShadow: selectedPilar === pilar.key ? `0 6px 24px ${pilar.color}40` : `0 2px 12px ${pilar.color}10` }"
@@ -47,7 +76,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div v-for="item in getSubData(pilar.key).items" :key="item.title"
                 class="group bg-white p-4 rounded-[20px] soft-shadow flex items-center gap-3 transition-all hover:shadow-xl cursor-pointer border-2"
-                :style="{ borderColor: getSubData(pilar.key).color + '40' }" @click.stop="openAktivitas(item.title)">
+                :style="{ borderColor: getSubData(pilar.key).color + '40' }" @click.stop="openAktivitas(item, pilar.key)">
                 <div class="w-11 h-11 rounded-xl flex items-center justify-center text-2xl shrink-0"
                   :style="{ background: getSubData(pilar.key).bg }">{{ item.emoji }}</div>
                 <div class="flex-1 min-w-0">
@@ -78,7 +107,7 @@
       <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-white/20 rounded-full blur-3xl"></div>
     </div>
 
-    <AktivitasPage v-if="selectedSub && !selectedAktivitas" :title="selectedSub" @back="closeAktivitas"
+    <AktivitasPage v-if="selectedSub && !selectedAktivitas" :title="selectedSub" :child-age="childAge" :skill-key="selectedSkillKey" @back="closeAktivitas"
       @select-aktivitas="openDetail" />
 
     <AktivitasDetailPage v-if="selectedAktivitas" ref="detailPageRef" :item="selectedAktivitas" @back="closeDetail" />
@@ -91,7 +120,12 @@ import { ref, computed, watch } from 'vue'
 import AktivitasPage from './AktivitasPage.vue'
 import AktivitasDetailPage from './AktivitasDetailPage.vue'
 import AnakSelector from '../components/AnakSelector.vue'
-import { pilars, pillarSubs } from '../data/pilars.js'
+import { useAnakStore } from '../stores/anakStore.js'
+import { pilars, filterPilars } from '../data/pilars.js'
+import { getSkillsByPilar } from '../data/skills.js'
+import { calcAge } from '../utils/age.js'
+
+const anak = useAnakStore()
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] },
@@ -99,11 +133,17 @@ const props = defineProps({
   selectedAnakId: { type: Number, default: null }
 })
 
-const emit = defineEmits(['select-pilar', 'close-pilar', 'update:anak-id'])
+const emit = defineEmits(['select-pilar', 'close-pilar', 'update:anak-id', 'go-profile'])
 
 const selectedSub = ref(null)
 const selectedAktivitas = ref(null)
+const selectedPilarKey = ref(null)
+
+const selectedChild = computed(() => props.anakList.find(a => a.id === props.selectedAnakId))
+const childAge = computed(() => selectedChild.value ? calcAge(selectedChild.value.tahun, selectedChild.value.bulan, selectedChild.value.tanggal) : null)
+const filteredPilars = computed(() => filterPilars(childAge.value))
 const detailPageRef = ref(null)
+const selectedSkillKey = ref(null)
 
 watch(() => props.selectedPilar, (val) => {
   if (!val) {
@@ -113,7 +153,10 @@ watch(() => props.selectedPilar, (val) => {
 })
 
 function getSubData(key) {
-  return pillarSubs[key] || null
+  const pilar = pilars.find(p => p.key === key)
+  if (!pilar) return null
+  const items = getSkillsByPilar(key, childAge.value)
+  return { title: pilar.title, desc: `Pilih fokus karakter untuk aktivitas bersama si kecil.`, color: pilar.color, bg: pilar.bg, items }
 }
 
 function togglePilar(key) {
@@ -121,6 +164,7 @@ function togglePilar(key) {
     closePilar()
   } else {
     emit('select-pilar', key)
+    selectedPilarKey.value = key
     selectedSub.value = null
     selectedAktivitas.value = null
   }
@@ -132,8 +176,19 @@ function closePilar() {
   selectedAktivitas.value = null
 }
 
-function openAktivitas(subTitle) {
-  selectedSub.value = subTitle
+function openAktivitas(item, pilarKey) {
+  if (props.selectedAnakId) {
+    const skillKey = item.title.toLowerCase().replace(/\s+/g, '_')
+    anak.addSkill(props.selectedAnakId, {
+      key: skillKey,
+      emoji: item.emoji,
+      title: item.title,
+      pilar: pilarKey,
+      color: getSubData(pilarKey).color
+    })
+    selectedSkillKey.value = skillKey
+  }
+  selectedSub.value = item.title
   selectedAktivitas.value = null
   history.pushState({ action: 'sub' }, '')
   window.scrollTo(0, 0)
@@ -145,6 +200,13 @@ function closeAktivitas() {
 }
 
 function openDetail(item) {
+  if (props.selectedAnakId && selectedSkillKey.value) {
+    anak.addActivity(props.selectedAnakId, selectedSkillKey.value, {
+      title: item.title,
+      emoji: item.emoji,
+      feature: item.feature
+    })
+  }
   selectedAktivitas.value = item
   history.pushState({ action: 'detail' }, '')
   window.scrollTo(0, 0)

@@ -1,0 +1,17 @@
+{
+  "title": "Kepiting Petualang",
+  "image": "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=400&h=600&fit=crop",
+  "desc": "Kepiting bernama Kiko menjelajahi lautan dan menemukan keajaiban di setiap sudut.",
+  "moral": "Petualangan mengajarkan kita tentang keberagaman dunia.",
+  "ages": [3, 4, 5, 6, 7, 8],
+  "skills": ["petualangan", "keingintahuan"],
+  "pages": [
+    { "num": 1, "image": "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=400&h=600&fit=crop", "text": "Kiko si kepiting tinggal di batu karang yang kecil dan merasa penasaran dengan dunia." },
+    { "num": 2, "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=600&fit=crop", "text": "Setiap hari dia melihat ikan-ikan berenang ke tempat jauh. Kiko-Ingin ikut." },
+    { "num": 3, "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=600&fit=crop", "text": "Suatu pagi, Kiko memutuskan untuk berpetualang melewati terumbu karang." },
+    { "num": 4, "image": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=600&fit=crop", "text": "Kiko menemukan gua raksasa dengan stalaktit yang indah dan ikan-ikan langka." },
+    { "num": 5, "image": "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=400&h=600&fit=crop", "text": "Dia bertemu penyu tua yang menceritakan sejarah lautan yang menakjubkan." },
+    { "num": 6, "image": "https://images.unsplash.com/photo-1505881502353-a1986add3762?w=400&h=600&fit=crop", "text": "Kiko belajar bahwa masih banyak hal menakjubkan yang belum dia ketahui." },
+    { "num": 7, "image": "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=400&h=600&fit=crop", "text": "Kiko kembali ke rumah dengan cerita seru dan teman-teman baru." }
+  ]
+}

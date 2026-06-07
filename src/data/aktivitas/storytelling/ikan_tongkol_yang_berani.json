@@ -1,0 +1,17 @@
+{
+  "title": "Ikan Tongkol yang Berani",
+  "image": "https://images.unsplash.com/photo-1534043464124-3be32fe000c7?w=400&h=600&fit=crop",
+  "desc": "Ikan tongkol kecil melindungi teman-temannya dari hiu yang jahat.",
+  "moral": "Keberanian bukan soal ukuran, tapi soal keberanian hati.",
+  "ages": [3, 4, 5, 6, 7, 8],
+  "skills": ["keberanian", "perlindungan"],
+  "pages": [
+    { "num": 1, "image": "https://images.unsplash.com/photo-1534043464124-3be32fe000c7?w=400&h=600&fit=crop", "text": "Di laut yang indah, hiduplah ikan-ikan kecil yang bersahabat erat." },
+    { "num": 2, "image": "https://images.unsplash.com/photo-1505881502353-a1986add3762?w=400&h=600&fit=crop", "text": "Tiko si ikan tongkol adalah yang paling kecil, tapi paling berani di antara mereka." },
+    { "num": 3, "image": "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=400&h=600&fit=crop", "text": "Suatu hari, hiu jahat bernama HDR muncul dan mengejar ikan-ikan kecil." },
+    { "num": 4, "image": "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=400&h=600&fit=crop", "text": "Tiko tidak lari. Dia menghadap HDR dan berteriak, 'Berhenti menyakiti teman-temanku!'" },
+    { "num": 5, "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=600&fit=crop", "text": "HDR tertawa melihat ikan kecil yang berani. ' Kau? Menghentikanku?'" },
+    { "num": 6, "image": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=600&fit=crop", "text": "Tiko memanggil semua ikan untuk membentuk formasi besar. HDR menjadi bingung dan takut." },
+    { "num": 7, "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=600&fit=crop", "text": "HDR akhirnya pergi. Semua ikan bersyukur pada Tiko yang kecil tapi pemberani." }
+  ]
+}

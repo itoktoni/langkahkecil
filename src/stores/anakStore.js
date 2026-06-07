@@ -47,8 +47,43 @@ export const useAnakStore = defineStore('anak', () => {
     }
   }
 
+  async function addSkill(anakId, skillData) {
+    const anak = anakList.value.find(a => a.id === anakId)
+    if (!anak) return
+    if (!anak.skills) anak.skills = []
+    const exists = anak.skills.some(s => s.key === skillData.key)
+    if (exists) return
+    anak.skills.push({
+      key: skillData.key,
+      emoji: skillData.emoji,
+      title: skillData.title,
+      pilar: skillData.pilar,
+      progress: 0,
+      color: skillData.color,
+      activities: []
+    })
+    await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
+  }
+
+  async function addActivity(anakId, skillKey, activityData) {
+    const anak = anakList.value.find(a => a.id === anakId)
+    if (!anak) return
+    const skill = (anak.skills || []).find(s => s.key === skillKey)
+    if (!skill) return
+    if (!skill.activities) skill.activities = []
+    const exists = skill.activities.some(a => a.title === activityData.title)
+    if (exists) return
+    skill.activities.push({
+      title: activityData.title,
+      emoji: activityData.emoji,
+      feature: activityData.feature,
+      date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    })
+    await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
+  }
+
   return {
     anakList, allHistory,
-    loadAnakList, addAnak, updateAnak, deleteAnak, resetSkill
+    loadAnakList, addAnak, updateAnak, deleteAnak, resetSkill, addSkill, addActivity
   }
 })

@@ -13,31 +13,36 @@
       <p class="font-body-md text-body-md text-on-surface-variant">Aktivitas seru untuk {{ title }}.</p>
     </section>
 
+    <div v-if="!filtered.length"
+      class="bg-white rounded-[28px] p-8 soft-shadow text-center text-sm text-on-surface-variant">
+      Belum ada aktivitas yang cocok untuk usia anak ini.
+    </div>
+
     <!-- Featured Card (first item) -->
-    <div class="mb-4">
-      <div v-if="aktivitasData[0]"
+    <div v-if="filtered.length" class="mb-4">
+      <div
         class="bento-card group relative overflow-hidden rounded-[32px] cursor-pointer transition-all hover:shadow-xl border-2"
-        :style="{ background: `linear-gradient(135deg, ${aktivitasData[0].color}20, ${aktivitasData[0].color}08)`, borderColor: aktivitasData[0].color, boxShadow: `0 8px 32px ${aktivitasData[0].color}30` }"
-        @click="$emit('selectAktivitas', aktivitasData[0])">
+        :style="{ background: `linear-gradient(135deg, ${filtered[0].color}20, ${filtered[0].color}08)`, borderColor: filtered[0].color, boxShadow: `0 8px 32px ${filtered[0].color}30` }"
+        @click="$emit('selectAktivitas', filtered[0])">
         <div class="flex items-center gap-5 p-6 md:p-8">
           <div class="w-20 h-20 rounded-[24px] flex items-center justify-center text-5xl shrink-0 shadow-lg"
-            :style="{ background: `linear-gradient(135deg, ${aktivitasData[0].color}, ${aktivitasData[0].color}CC)` }">
-            {{ aktivitasData[0].emoji }}
+            :style="{ background: `linear-gradient(135deg, ${filtered[0].color}, ${filtered[0].color}CC)` }">
+            {{ filtered[0].emoji }}
           </div>
           <div class="flex-1 min-w-0">
-            <span class="text-xs font-bold uppercase tracking-widest" :style="{ color: aktivitasData[0].color }">Populer</span>
-            <h3 class="font-headline-md text-headline-md text-text-main mt-1">{{ aktivitasData[0].title }}</h3>
-            <p class="text-sm text-on-surface-variant mt-1 line-clamp-2">{{ aktivitasData[0].desc }}</p>
+            <span class="text-xs font-bold uppercase tracking-widest" :style="{ color: filtered[0].color }">Populer</span>
+            <h3 class="font-headline-md text-headline-md text-text-main mt-1">{{ filtered[0].title }}</h3>
+            <p class="text-sm text-on-surface-variant mt-1 line-clamp-2">{{ filtered[0].desc }}</p>
           </div>
           <span class="material-symbols-outlined text-3xl text-outline-variant group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0">arrow_forward</span>
         </div>
-        <div class="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-10" :style="{ background: aktivitasData[0].color }"></div>
+        <div class="absolute -bottom-10 -right-10 w-40 h-40 rounded-full opacity-10" :style="{ background: filtered[0].color }"></div>
       </div>
     </div>
 
     <!-- Grid Cards (remaining items) -->
     <div class="grid grid-cols-2 gap-3">
-      <div v-for="(item, index) in aktivitasData.slice(1)" :key="item.key"
+      <div v-for="item in filtered.slice(1)" :key="item.key"
         class="bento-card group bg-white rounded-[24px] soft-shadow overflow-hidden cursor-pointer transition-all hover:shadow-xl flex flex-col border-2"
         :style="{ borderColor: item.color + '80', boxShadow: `0 4px 16px ${item.color}30` }"
         @click="$emit('selectAktivitas', item)">
@@ -74,11 +79,16 @@
 </template>
 
 <script setup>
-import { aktivitasData } from '../data/pilars.js'
+import { computed } from 'vue'
+import { filterActivities } from '../data/activities.js'
 
-defineProps({
-  title: { type: String, default: '' }
+const props = defineProps({
+  title: { type: String, default: '' },
+  childAge: { type: Number, default: null },
+  skillKey: { type: String, default: null }
 })
 
 defineEmits(['back', 'selectAktivitas'])
+
+const filtered = computed(() => filterActivities(props.childAge, props.skillKey))
 </script>
