@@ -4,10 +4,25 @@
     <AppHeader :title="pageTitle" :tabs="tabs" :active-tab="activeTab" :user-name="userName" @switch="switchTab" />
 
     <main class="content-wrapper pb-24 lg:pb-8">
-      <PilarTab v-show="activeTab === 'pilar'" :selected-pilar="selectedPilar" @select-pilar="openPilarSub" @close-pilar="closePilarSub" />
+      <PilarTab ref="pilarTabRef" v-show="activeTab === 'pilar'" :selected-pilar="selectedPilar" @select-pilar="openPilarSub" @close-pilar="closePilarSub" />
       <ProgressTab v-show="activeTab === 'progress'" :anak-list="anakList" :history="allHistory" :selected-anak-id="selectedAnakId" @reset-subpilar="resetSubpilar" />
       <ToolsTab v-show="activeTab === 'tools'" :anak-list="anakList" />
       <ProfileTab v-show="activeTab === 'profile'" :anak-list="anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" />
+
+      <div v-show="activeTab === 'hafalan'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+        <AnakSelector v-if="anakList.length" :anak-list="anakList" v-model="toolsAnakId" class="mb-stack-lg" />
+        <HafalanPage :hafalan="toolsData.hafalan" :hafalan-history="toolsData.hafalanHistory" @add-hafalan="onAddHafalan" @add-point="onAddPoint" @remove-point="onRemovePoint" @edit-hafalan="onEditHafalan" />
+      </div>
+
+      <div v-show="activeTab === 'jadwal'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+        <AnakSelector v-if="anakList.length" :anak-list="anakList" v-model="toolsAnakId" class="mb-stack-lg" />
+        <JadwalPage :schedules="toolsData.schedules" />
+      </div>
+
+      <div v-show="activeTab === 'checklist'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+        <AnakSelector v-if="anakList.length" :anak-list="anakList" v-model="toolsAnakId" class="mb-stack-lg" />
+        <ChecklistPage :checklist="toolsData.checklist" />
+      </div>
     </main>
 
     <BottomNav :tabs="tabs" :active-tab="activeTab" @switch="switchTab" />
@@ -15,20 +30,27 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { tabs } from './data/pilars.js'
-import AppHeader from './components/AppHeader.vue'
-import AppSidebar from './components/AppSidebar.vue'
-import BottomNav from './components/BottomNav.vue'
-import PilarTab from './components/PilarTab.vue'
-import ProgressTab from './components/ProgressTab.vue'
-import ToolsTab from './components/ToolsTab.vue'
-import ProfileTab from './components/ProfileTab.vue'
+import { hafalanByAnak, defaultHafalan } from './data/hafalan.js'
+import AppHeader from './layouts/AppHeader.vue'
+import AppSidebar from './layouts/AppSidebar.vue'
+import BottomNav from './layouts/BottomNav.vue'
+import PilarTab from './pages/PilarTab.vue'
+import ProgressTab from './pages/ProgressTab.vue'
+import ToolsTab from './pages/ToolsTab.vue'
+import ProfileTab from './pages/ProfileTab.vue'
+import HafalanPage from './pages/HafalanPage.vue'
+import JadwalPage from './pages/JadwalPage.vue'
+import ChecklistPage from './pages/ChecklistPage.vue'
+import AnakSelector from './components/AnakSelector.vue'
 
 const activeTab = ref('pilar')
 const selectedPilar = ref(null)
 const selectedAnakId = ref(null)
 const userName = ref('Azizah')
+const pilarTabRef = ref(null)
+const toolsAnakId = ref(null)
 
 const anakList = ref([
   {
@@ -69,7 +91,15 @@ const anakList = ref([
 ])
 
 const pageTitle = computed(() => {
-  const titles = { pilar: `Halo ${userName.value}!`, progress: 'Statistik', tools: 'Buku Alat', profile: 'Profile' }
+  const titles = {
+    pilar: `Halo ${userName.value}!`,
+    progress: 'Statistik',
+    tools: 'Buku Alat',
+    profile: 'Profile',
+    hafalan: 'Hafalan',
+    jadwal: 'Jadwal Harian',
+    checklist: 'Checklist Harian'
+  }
   return titles[activeTab.value] || `Halo ${userName.value}!`
 })
 
@@ -86,7 +116,106 @@ const allHistory = computed(() => {
     })
 })
 
+const toolsDataByAnak = {
+  1: {
+    ...JSON.parse(JSON.stringify(hafalanByAnak[1] || defaultHafalan)),
+    schedules: [
+      { time: '07:00', label: 'Sarapan & Persiapan Sekolah', done: true },
+      { time: '08:00', label: 'Belajar Membaca', done: true },
+      { time: '16:00', label: 'Waktu Bermain Bebas', done: false },
+      { time: '20:00', label: 'Membaca Buku', done: false }
+    ],
+    checklist: [
+      { label: 'Membaca buku sebelum tidur', done: true },
+      { label: 'Merapiikan mainan sendiri', done: false },
+      { label: 'Minum air putih cukup', done: false },
+      { label: 'Sholat 5 waktu', done: true }
+    ]
+  },
+  2: {
+    ...JSON.parse(JSON.stringify(hafalanByAnak[2] || defaultHafalan)),
+    schedules: [
+      { time: '07:30', label: 'Sarapan & Bermain', done: true },
+      { time: '10:00', label: 'Belajar Menggambar', done: false },
+      { time: '15:00', label: 'Tidur Siang', done: true }
+    ],
+    checklist: [
+      { label: 'Sikat Gigi Sendiri', done: true },
+      { label: 'Membereskan Mainan', done: false },
+      { label: 'Makan Sendiri', done: true }
+    ]
+  }
+}
+
+const defaultToolsData = {
+  hafalan: [],
+  hafalanHistory: [],
+  schedules: [
+    { time: '07:00', label: 'Sarapan', done: false },
+    { time: '20:00', label: 'Tidur', done: false }
+  ],
+  checklist: [
+    { label: 'Membaca buku', done: false }
+  ]
+}
+
+const anakToolsData = ref({})
+
+function getAnakToolsData(anakId) {
+  if (!anakToolsData.value[anakId]) {
+    anakToolsData.value[anakId] = JSON.parse(JSON.stringify(toolsDataByAnak[anakId] || defaultToolsData))
+  }
+  return anakToolsData.value[anakId]
+}
+
+const toolsData = computed(() => getAnakToolsData(toolsAnakId.value))
+
+function onAddHafalan(item) {
+  toolsData.value.hafalan.push(item)
+}
+
+function onAddPoint({ id, amount }) {
+  const h = toolsData.value.hafalan.find(h => h.id === id)
+  if (h) {
+    h.points = Math.min(h.maxPoints, h.points + amount)
+  }
+}
+
+function onRemovePoint({ id }) {
+  const h = toolsData.value.hafalan.find(h => h.id === id)
+  if (h) {
+    h.points = Math.max(0, h.points - 1)
+  }
+}
+
+function onEditHafalan(data) {
+  const h = toolsData.value.hafalan.find(h => h.id === data.id)
+  if (h) {
+    h.category = data.category
+    h.title = data.title
+    h.notes = data.notes
+    h.emoji = data.emoji
+    h.bg = data.bg
+    h.color = data.color
+    h.maxPoints = data.maxPoints
+  }
+}
+
+function onFinishHafalan({ id }) {
+  const idx = toolsData.value.hafalan.findIndex(h => h.id === id)
+  if (idx > -1) {
+    const h = toolsData.value.hafalan.splice(idx, 1)[0]
+    toolsData.value.hafalanHistory.unshift({
+      id: h.id, title: h.title, category: h.category,
+      emoji: h.emoji, bg: h.bg, maxPoints: h.maxPoints
+    })
+  }
+}
+
 function switchTab(tabId) {
+  if (activeTab.value !== tabId) {
+    history.pushState({ action: 'tab', from: activeTab.value }, '')
+  }
   activeTab.value = tabId
   selectedPilar.value = null
   window.scrollTo(0, 0)
@@ -94,6 +223,7 @@ function switchTab(tabId) {
 
 function openPilarSub(key) {
   selectedPilar.value = key
+  history.pushState({ action: 'pilar' }, '')
   window.scrollTo(0, 0)
 }
 
@@ -106,10 +236,31 @@ function handleProfileMenu(menuId) {
 }
 
 function goToAnakProgress(anak) {
+  if (activeTab.value !== 'progress') {
+    history.pushState({ action: 'tab', from: activeTab.value }, '')
+  }
   selectedAnakId.value = anak.id
   activeTab.value = 'progress'
   window.scrollTo(0, 0)
 }
+
+function handleBack() {
+  if (pilarTabRef.value?.goBack()) return
+  if (selectedPilar.value) { selectedPilar.value = null; return }
+  if (activeTab.value !== 'pilar') { activeTab.value = 'pilar'; window.scrollTo(0, 0); return }
+}
+
+onMounted(() => {
+  history.replaceState({ action: 'root' }, '')
+  window.addEventListener('popstate', handleBack)
+  if (anakList.value.length && !toolsAnakId.value) {
+    toolsAnakId.value = anakList.value[0].id
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('popstate', handleBack)
+})
 
 function resetSubpilar({ anak, subpilar }) {
   const idx = anak.completedSubpilars.findIndex(s => s.key === subpilar.key)

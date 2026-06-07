@@ -73,7 +73,7 @@ defineEmits(['switch'])
 const menuOpen = ref(false)
 
 const extraMenus = computed(() => {
-  const footerIds = ['pilar', 'progress', 'tools']
+  const footerIds = ['pilar', 'progress', 'tools', 'profile']
   return props.tabs.filter(t => !footerIds.includes(t.id))
 })
 

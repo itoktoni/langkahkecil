@@ -78,7 +78,7 @@
     <AktivitasPage v-if="selectedSub && !selectedAktivitas" :title="selectedSub" @back="closeAktivitas"
       @select-aktivitas="openDetail" />
 
-    <AktivitasDetailPage v-if="selectedAktivitas" :item="selectedAktivitas" @back="closeDetail" />
+    <AktivitasDetailPage v-if="selectedAktivitas" ref="detailPageRef" :item="selectedAktivitas" @back="closeDetail" />
 
   </div>
 </template>
@@ -97,6 +97,7 @@ const emit = defineEmits(['select-pilar', 'close-pilar'])
 
 const selectedSub = ref(null)
 const selectedAktivitas = ref(null)
+const detailPageRef = ref(null)
 
 watch(() => props.selectedPilar, (val) => {
   if (!val) {
@@ -128,6 +129,7 @@ function closePilar() {
 function openAktivitas(subTitle) {
   selectedSub.value = subTitle
   selectedAktivitas.value = null
+  history.pushState({ action: 'sub' }, '')
   window.scrollTo(0, 0)
 }
 
@@ -138,10 +140,20 @@ function closeAktivitas() {
 
 function openDetail(item) {
   selectedAktivitas.value = item
+  history.pushState({ action: 'detail' }, '')
   window.scrollTo(0, 0)
 }
 
 function closeDetail() {
   selectedAktivitas.value = null
 }
+
+function goBack() {
+  if (selectedAktivitas.value && detailPageRef.value?.goBack()) return true
+  if (selectedAktivitas.value) { selectedAktivitas.value = null; return true }
+  if (selectedSub.value) { selectedSub.value = null; selectedAktivitas.value = null; return true }
+  return false
+}
+
+defineExpose({ goBack })
 </script>

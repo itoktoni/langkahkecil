@@ -308,17 +308,31 @@ const activePuzzle = ref(null)
 
 function openStory(story) {
   activeStory.value = story
+  history.pushState({ action: 'reader' }, '')
 }
 
 function openRoleplay(rp) {
   activeRoleplay.value = rp
+  history.pushState({ action: 'reader' }, '')
 }
 
 function openProject(proj) {
   activeProject.value = proj
+  history.pushState({ action: 'reader' }, '')
 }
 
 function openPuzzle(pz) {
   activePuzzle.value = pz
+  history.pushState({ action: 'reader' }, '')
 }
+
+function goBack() {
+  if (activeStory.value) { activeStory.value = null; return true }
+  if (activeRoleplay.value) { activeRoleplay.value = null; return true }
+  if (activeProject.value) { activeProject.value = null; return true }
+  if (activePuzzle.value) { activePuzzle.value = null; return true }
+  return false
+}
+
+defineExpose({ goBack })
 </script>

@@ -1,6 +1,6 @@
 <template>
   <nav class="mobile-nav fixed bottom-0 w-full z-50 rounded-t-[32px] bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.04)] flex justify-around items-center h-20 px-2 pb-safe">
-    <button v-for="tab in tabs" :key="tab.id"
+    <button v-for="tab in mainTabs" :key="tab.id"
       class="flex flex-col items-center justify-center rounded-2xl px-5 py-2 active:scale-95 transition-all duration-150"
       :class="activeTab === tab.id ? 'bg-success-soft text-primary' : 'text-on-surface-variant hover:bg-surface-container-low'"
       @click="$emit('switch', tab.id)">
@@ -13,12 +13,17 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   tabs: { type: Array, required: true },
   activeTab: { type: String, required: true }
 })
 
 defineEmits(['switch'])
+
+const mainTabIds = ['pilar', 'progress', 'tools', 'profile']
+const mainTabs = computed(() => props.tabs.filter(t => mainTabIds.includes(t.id)))
 
 function iconStyle(tabId) {
   return { fontVariationSettings: props.activeTab === tabId ? "'FILL' 1" : "'FILL' 0" }
