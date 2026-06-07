@@ -1,6 +1,6 @@
 <template>
   <div class="fixed inset-0 z-[100] bg-black/50 flex items-end lg:items-center justify-center" @click.self="$emit('close')">
-    <div class="bg-canvas-cream w-full h-full lg:rounded-[32px] lg:max-w-2xl lg:max-h-[85vh] lg:h-auto flex flex-col overflow-hidden soft-shadow lg:mx-4"
+    <div class="bg-canvas-cream w-full h-full lg:rounded-[32px] lg:max-w-3xl lg:h-[90vh] flex flex-col overflow-hidden soft-shadow lg:mx-4"
       style="box-shadow: 0 25px 60px rgba(0,0,0,0.15);">
 
       <!-- Header -->
@@ -15,18 +15,18 @@
       </div>
 
       <!-- Page Content -->
-      <div v-if="!isFinished" class="flex-1 overflow-hidden relative select-none"
+      <div v-if="!isFinished" class="flex-1 min-h-0 relative select-none"
         @mousedown="onDragStart" @mousemove="onDragMove" @mouseup="onDragEnd" @mouseleave="onDragEnd"
         @touchstart="onDragStart" @touchmove="onDragMove" @touchend="onDragEnd">
         <div class="h-full overflow-y-auto"
           :style="{ transform: `translateX(${dragOffset}px)`, transition: isDragging ? 'none' : 'transform 0.3s ease' }">
           <div class="flex flex-col">
             <!-- Image -->
-            <div class="w-full h-[220px] lg:h-[260px] overflow-hidden bg-surface-container-low shrink-0">
-              <img :src="currentPage.image" :alt="currentPage.narrator" class="w-full h-full object-cover pointer-events-none" />
+            <div class="w-full shrink-0">
+              <ImageWrapper :src="currentPage.image" :alt="currentPage.narrator" height="220px" />
             </div>
             <!-- Content -->
-            <div class="px-5 py-5 space-y-4">
+            <div class="px-5 py-5 space-y-2">
               <!-- Narrator -->
               <div class="bg-surface-container-low rounded-2xl p-4 border border-outline-variant">
                 <div class="flex items-center justify-between mb-2">
@@ -71,7 +71,7 @@
       </div>
 
       <!-- Finished Screen -->
-      <div v-else class="flex-1 overflow-y-auto">
+      <div v-else class="flex-1 min-h-0 overflow-y-auto">
         <div class="flex flex-col items-center px-6 py-10 max-w-lg mx-auto">
           <div class="w-20 h-20 rounded-full bg-success-soft flex items-center justify-center text-5xl mb-6">🎭</div>
           <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-text-main text-center mb-2">Selesai!</h2>
@@ -96,8 +96,8 @@
       </div>
 
       <!-- Bottom Navigation -->
-      <div class="border-t border-outline-variant bg-white px-4 py-3 shrink-0">
-        <div v-if="!isFinished" class="flex items-center justify-center gap-1.5 mb-3 overflow-x-auto px-2">
+      <div class="border-t border-outline-variant bg-white px-4 py-4 shrink-0">
+        <div v-if="!isFinished" class="flex items-center justify-center gap-1.5 mb-3 py-1 overflow-x-auto px-2 pb-1">
           <button v-for="page in roleplay.pages" :key="page.num"
             @click="goToPage(page.num - 1)"
             class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200 shrink-0"
@@ -127,6 +127,7 @@
 
 <script setup>
 import { ref, computed, onUnmounted } from 'vue'
+import ImageWrapper from '../components/ImageWrapper.vue'
 
 const props = defineProps({
   roleplay: { type: Object, required: true },

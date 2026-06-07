@@ -30,7 +30,7 @@
             <div v-for="sp in anak.skills" :key="sp.key" class="bg-canvas-cream rounded-2xl p-4 border border-outline-variant shadow-sm">
               <div class="flex items-center gap-3 mb-3">
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium text-text-main">{{ sp.title }}</p>
+                  <p class="text-sm font-bold text-text-main">{{ sp.title }}</p>
                   <p class="text-xs text-on-surface-variant">{{ getPilarName(sp.pilar) }}</p>
                 </div>
                 <span class="text-xs font-bold" :style="{ color: sp.color }">{{ sp.progress }}%</span>

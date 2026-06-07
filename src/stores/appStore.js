@@ -14,7 +14,7 @@ export const useAppStore = defineStore('app', () => {
     const titles = {
       pilar: `Halo ${userName.value}!`,
       progress: 'Statistik',
-      tools: 'Buku Alat',
+      activity: 'Aktivitas',
       profile: 'Profile',
       challenge: 'Challenge',
       jadwal: 'Jadwal Harian',
@@ -23,10 +23,13 @@ export const useAppStore = defineStore('app', () => {
     return titles[activeTab.value] || `Halo ${userName.value}!`
   })
 
+  const switchCounter = ref(0)
+
   function switchTab(tabId) {
     if (activeTab.value !== tabId) history.pushState({ action: 'tab', from: activeTab.value }, '')
     activeTab.value = tabId
     selectedPilar.value = null
+    switchCounter.value++
     window.scrollTo(0, 0)
   }
 
@@ -42,7 +45,7 @@ export const useAppStore = defineStore('app', () => {
 
   return {
     activeTab, selectedPilar, selectedAnakId, userName, toolsAnakId,
-    appReady, installDismissed, pageTitle,
+    appReady, installDismissed, pageTitle, switchCounter,
     switchTab, openPilarSub, closePilarSub
   }
 })

@@ -27,9 +27,8 @@
           :style="{ transform: `translateX(${dragOffset}px)`, transition: isDragging ? 'none' : 'transform 0.3s ease' }">
           <div class="flex flex-col items-center">
             <!-- Image -->
-            <div class="w-full h-[350px] lg:h-[400px] overflow-hidden bg-surface-container-low">
-              <img :src="currentPage.image" :alt="currentPage.text"
-                class="w-full h-full object-cover pointer-events-none" />
+            <div class="w-full">
+              <ImageWrapper :src="currentPage.image" :alt="currentPage.text" height="350px" />
             </div>
             <!-- Text -->
             <div class="px-6 lg:px-10 py-6 max-w-lg w-full">
@@ -87,7 +86,7 @@
 
       <!-- Bottom Navigation -->
       <div class="border-t border-outline-variant bg-white px-4 py-3 shrink-0">
-        <div v-if="!isFinished" class="flex items-center justify-center gap-1.5 mb-3 overflow-x-auto px-2">
+        <div v-if="!isFinished" class="flex items-center justify-center gap-1.5 mb-3 py-1 overflow-x-auto px-2">
           <button v-for="page in story.pages" :key="page.num"
             @click="goToPage(page.num - 1)"
             class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200 shrink-0"
@@ -121,6 +120,7 @@
 
 <script setup>
 import { ref, computed, onUnmounted } from 'vue'
+import ImageWrapper from '../components/ImageWrapper.vue'
 
 const props = defineProps({
   story: { type: Object, required: true },

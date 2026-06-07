@@ -7,7 +7,7 @@
     <main class="content-wrapper pb-24 lg:pb-8">
       <PilarTab ref="pilarTabRef" v-show="app.activeTab === 'pilar'" :anak-list="anak.anakList" :selected-pilar="app.selectedPilar" :selected-anak-id="app.selectedAnakId" @select-pilar="app.openPilarSub" @close-pilar="app.closePilarSub" @update:anak-id="app.selectedAnakId = $event" @go-profile="app.switchTab('profile')" />
       <ProgressTab v-show="app.activeTab === 'progress'" :anak-list="anak.anakList" :selected-anak-id="app.selectedAnakId" @reset-skill="anak.resetSkill" />
-      <ToolsTab v-show="app.activeTab === 'tools'" :anak-list="anak.anakList" />
+      <ActivityTab ref="activityTabRef" v-show="app.activeTab === 'activity'" />
       <ProfileTab v-show="app.activeTab === 'profile'" :anak-list="anak.anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" />
 
       <div v-show="app.activeTab === 'challenge'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
@@ -35,7 +35,7 @@
             <span class="material-symbols-outlined text-primary">download</span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="font-label-lg text-text-main text-sm">Install Halo Bunda</p>
+            <p class="font-label-lg text-text-main text-sm">Install {{ appName }}</p>
             <p class="text-xs text-on-surface-variant">Akses lebih cepat dari layar utama</p>
           </div>
           <button @click="installApp"
@@ -65,7 +65,7 @@ import AppSidebar from './layouts/AppSidebar.vue'
 import BottomNav from './layouts/BottomNav.vue'
 import PilarTab from './pages/PilarTab.vue'
 import ProgressTab from './pages/ProgressTab.vue'
-import ToolsTab from './pages/ToolsTab.vue'
+import ActivityTab from './pages/ActivityTab.vue'
 import ProfileTab from './pages/ProfileTab.vue'
 import ChallengePage from './pages/ChallengePage.vue'
 import JadwalPage from './pages/JadwalPage.vue'
@@ -74,12 +74,14 @@ import ReferralPage from './pages/ReferralPage.vue'
 import AnakSelector from './components/AnakSelector.vue'
 
 const isReferral = computed(() => new URLSearchParams(window.location.search).has('ref'))
+const appName = import.meta.env.VITE_APP_NAME || 'Halo Bunda'
 
 const app = useAppStore()
 const anak = useAnakStore()
 const tools = useToolsStore()
 
 const pilarTabRef = ref(null)
+const activityTabRef = ref(null)
 const { canInstall, install: installApp } = useInstall()
 
 const showInstallBar = computed(() => canInstall.value && !app.installDismissed)
@@ -108,6 +110,7 @@ function goToAnakProgress(anakItem) {
 
 function handleBack() {
   if (pilarTabRef.value?.goBack()) return
+  if (activityTabRef.value?.goBack()) return
   if (app.selectedPilar) { app.selectedPilar = null; return }
   if (app.activeTab !== 'pilar') { app.activeTab = 'pilar'; window.scrollTo(0, 0); return }
 }

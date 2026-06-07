@@ -22,7 +22,7 @@ const props = defineProps({
 
 defineEmits(['switch'])
 
-const mainTabIds = ['pilar', 'progress', 'tools', 'profile']
+const mainTabIds = ['pilar', 'progress', 'activity', 'profile']
 const mainTabs = computed(() => props.tabs.filter(t => mainTabIds.includes(t.id)))
 
 function iconStyle(tabId) {
