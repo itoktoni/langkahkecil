@@ -6,13 +6,13 @@
 
     <main class="content-wrapper pb-24 lg:pb-8">
       <PilarTab ref="pilarTabRef" v-show="app.activeTab === 'pilar'" :anak-list="anak.anakList" :selected-pilar="app.selectedPilar" :selected-anak-id="app.selectedAnakId" @select-pilar="app.openPilarSub" @close-pilar="app.closePilarSub" @update:anak-id="app.selectedAnakId = $event" @go-profile="app.switchTab('profile')" />
-      <ProgressTab v-show="app.activeTab === 'progress'" :anak-list="anak.anakList" :selected-anak-id="app.selectedAnakId" @reset-skill="anak.resetSkill" />
+      <ProgressTab v-show="app.activeTab === 'progress'" :anak-list="anak.anakList" :selected-anak-id="app.selectedAnakId" @reset-skill="anak.resetSkill" @delete-skill="anak.deleteSkill" />
       <ActivityTab ref="activityTabRef" v-show="app.activeTab === 'activity'" />
       <ProfileTab v-show="app.activeTab === 'profile'" :anak-list="anak.anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" />
 
       <div v-show="app.activeTab === 'challenge'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
         <AnakSelector v-if="anak.anakList.length" :anak-list="anak.anakList" v-model="tools.toolsAnakId" class="mb-stack-lg" />
-        <ChallengePage :challenges="tools.toolsData.challenges" :challenge-history="tools.toolsData.challengeHistory" @add-challenge="tools.addChallenge" @add-point="tools.addPoint" @remove-point="tools.removePoint" @edit-challenge="tools.editChallenge" />
+        <ChallengePage :challenges="tools.toolsData.challenges" :challenge-history="tools.toolsData.challengeHistory" @add-challenge="tools.addChallenge" @add-point="tools.addPoint" @remove-point="tools.removePoint" @edit-challenge="tools.editChallenge" @delete-challenge="tools.deleteChallenge" />
       </div>
 
       <div v-show="app.activeTab === 'jadwal'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">

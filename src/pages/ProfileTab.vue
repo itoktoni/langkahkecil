@@ -89,7 +89,7 @@
       <p v-if="addAnakError" class="text-xs text-red-500 mb-2">{{ addAnakError }}</p>
       <div class="space-y-3">
         <div v-for="anak in anakList" :key="anak.id"
-          class="relative bg-white rounded-2xl p-4 soft-shadow flex items-center gap-4 cursor-pointer hover:shadow-md transition-shadow"
+          class="relative bg-white rounded-2xl p-4 soft-shadow flex items-center gap-4 border border-outline-variant cursor-pointer hover:shadow-md transition-shadow"
           @click="$emit('select-anak', anak)">
           <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" :style="{ background: anak.bg }">
             {{ anak.emoji }}
@@ -122,7 +122,7 @@
     </div>
 
     <div class="mt-6">
-      <div class="bg-white rounded-[28px] p-6 soft-shadow">
+      <div class="bg-white rounded-[28px] p-6 shadow-sm border border-outline-variant">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 rounded-full flex items-center justify-center"
             :class="currentPlan === 'free' ? 'bg-[#FFF3E0]' : 'bg-[#E8F5E9]'">

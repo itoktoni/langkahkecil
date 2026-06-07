@@ -54,7 +54,7 @@
                   <span>{{ (sp.activities || []).length }} aktivitas</span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <button @click.stop="$emit('reset-skill', { anak, skill: sp })"
+                  <button @click.stop="$emit('delete-skill', { anak, skill: sp })"
                     class="h-8 w-8 rounded-lg flex items-center justify-center border-2 transition-all active:scale-95"
                     style="border-color: #C6282860; color: #C62828;">
                     <span class="material-symbols-outlined text-base">delete</span>
@@ -176,7 +176,7 @@ const props = defineProps({
   selectedAnakId: { type: Number, default: null }
 })
 
-defineEmits(['evaluasi', 'reset-skill'])
+defineEmits(['evaluasi', 'reset-skill', 'delete-skill'])
 
 const openId = ref(null)
 const showEvaluasi = ref(false)

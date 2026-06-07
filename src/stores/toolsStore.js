@@ -65,6 +65,14 @@ export const useToolsStore = defineStore('tools', () => {
     }
   }
 
+  function deleteChallenge({ id }) {
+    const idx = toolsData.value.challenges.findIndex(c => c.id === id)
+    if (idx > -1) {
+      toolsData.value.challenges.splice(idx, 1)
+      dbRemoveChallenge(id)
+    }
+  }
+
   // Challenge History
   function addChallengeHistory(item) {
     toolsData.value.challengeHistory.push(item)
@@ -115,7 +123,7 @@ export const useToolsStore = defineStore('tools', () => {
   return {
     toolsAnakId, toolsData,
     loadToolsData,
-    addChallenge, addPoint, removePoint, editChallenge, addChallengeHistory,
+    addChallenge, addPoint, removePoint, editChallenge, deleteChallenge, addChallengeHistory,
     addChecklist, removeChecklist, addChecklistItem, removeChecklistItem,
     addSchedule, removeSchedule
   }

@@ -47,6 +47,14 @@ export const useAnakStore = defineStore('anak', () => {
     }
   }
 
+  async function deleteSkill({ anak, skill }) {
+    const idx = (anak.skills || []).findIndex(s => s.key === skill.key)
+    if (idx > -1) {
+      anak.skills.splice(idx, 1)
+      await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
+    }
+  }
+
   async function addSkill(anakId, skillData) {
     const anak = anakList.value.find(a => a.id === anakId)
     if (!anak) return
@@ -84,6 +92,6 @@ export const useAnakStore = defineStore('anak', () => {
 
   return {
     anakList, allHistory,
-    loadAnakList, addAnak, updateAnak, deleteAnak, resetSkill, addSkill, addActivity
+    loadAnakList, addAnak, updateAnak, deleteAnak, resetSkill, deleteSkill, addSkill, addActivity
   }
 })

@@ -40,6 +40,11 @@
                 :style="{ borderColor: c.color + '80', color: c.color }">
                 <span class="material-symbols-outlined text-base">share</span>
               </button>
+              <button @click.stop="deleteChallenge(c)"
+                class="h-9 w-9 rounded-xl text-xs font-bold border-2 transition-all active:scale-95 flex items-center justify-center"
+                style="border-color: #C6282860; color: #C62828;">
+                <span class="material-symbols-outlined text-base">delete</span>
+              </button>
             </div>
           </div>
 
@@ -101,11 +106,7 @@
   <AppModal v-model="showAddForm" title="Tambah Challenge">
     <div class="space-y-4">
       <AppSelect v-model="form.category" label="Kategori" placeholder="Pilih kategori">
-        <option value="Kitab Suci">Kitab Suci</option>
-        <option value="Matematika">Matematika</option>
-        <option value="Bahasa">Bahasa</option>
-        <option value="IPA">IPA</option>
-        <option value="Lainnya">Lainnya</option>
+        <option v-for="(_, key) in kategoriChallenge" :key="key" :value="key">{{ key }}</option>
       </AppSelect>
       <AppInput v-model="form.title" label="Nama Challenge" placeholder="Contoh: Perkalian 1-10" />
       <AppTextarea v-model="form.notes" label="Catatan" placeholder="Catatan tambahan..." :rows="2" />
@@ -120,11 +121,7 @@
   <AppModal v-model="showEditForm" title="Edit Challenge">
     <div class="space-y-4">
       <AppSelect v-model="editForm.category" label="Kategori" placeholder="Pilih kategori">
-        <option value="Kitab Suci">Kitab Suci</option>
-        <option value="Matematika">Matematika</option>
-        <option value="Bahasa">Bahasa</option>
-        <option value="IPA">IPA</option>
-        <option value="Lainnya">Lainnya</option>
+        <option v-for="(_, key) in kategoriChallenge" :key="key" :value="key">{{ key }}</option>
       </AppSelect>
       <AppInput v-model="editForm.title" label="Nama Challenge" placeholder="Contoh: Perkalian 1-10" />
       <AppTextarea v-model="editForm.notes" label="Catatan" placeholder="Catatan tambahan..." :rows="2" />
@@ -144,6 +141,7 @@ import AppInput from '../components/AppInput.vue'
 import AppSelect from '../components/AppSelect.vue'
 import AppTextarea from '../components/AppTextarea.vue'
 import AppButton from '../components/AppButton.vue'
+import { kategoriChallenge } from '../data/challenge.js'
 import { playAddSound, playRemoveSound } from '../utils/sound.js'
 import { shareChallenge, shareProgress } from '../utils/share.js'
 import { useToolsStore } from '../stores/toolsStore.js'
@@ -162,20 +160,14 @@ const props = defineProps({
   challengeHistory: { type: Array, default: () => [] }
 })
 
-const emit = defineEmits(['add-challenge', 'add-point', 'remove-point', 'edit-challenge'])
+const emit = defineEmits(['add-challenge', 'add-point', 'remove-point', 'edit-challenge', 'delete-challenge'])
 
 const showHistory = ref(false)
 const showAddForm = ref(false)
 const showEditForm = ref(false)
 const editingId = ref(null)
 
-const categoryEmojis = {
-  "Kitab Suci": { emoji: '📖', bg: '#E8F5E9', color: '#4CAF50' },
-  "Matematika": { emoji: '✖️', bg: '#E3F2FD', color: '#2196F3' },
-  "Bahasa": { emoji: '🔤', bg: '#FFF3E0', color: '#FF9800' },
-  "IPA": { emoji: '🔬', bg: '#F3E5F5', color: '#9C27B0' },
-  "Lainnya": { emoji: '📝', bg: '#FCE4EC', color: '#E91E63' }
-}
+const categoryEmojis = kategoriChallenge
 
 const defaultForm = { category: '', title: '', notes: '', maxPoints: 10 }
 const form = ref({ ...defaultForm })
@@ -212,6 +204,10 @@ function handleShareProgress(c) {
 
 function handleShareChallenge(c) {
   shareChallenge({ ...c, childName: selectedAnakName.value })
+}
+
+function deleteChallenge(c) {
+  emit('delete-challenge', { id: c.id })
 }
 
 function openEdit(c) {
