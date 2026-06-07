@@ -6,7 +6,7 @@
     </div>
 
     <ChallengePage :challenges="data.challenges" :challenge-history="data.challengeHistory" @add-challenge="onAddChallenge" @add-point="onAddPoint" @remove-point="onRemovePoint" @edit-challenge="onEditChallenge" />
-    <JadwalPage :schedules="data.schedules" />
+    <JadwalPage :schedules="data.schedules" @add-schedule="onAddSchedule" @remove-schedule="onRemoveSchedule" />
     <ChecklistPage :checklists="data.checklists" @add-checklist="onAddChecklist" @remove-checklist="onRemoveChecklist" @add-item="onAddChecklistItem" @remove-item="onRemoveChecklistItem" />
   </div>
 </template>
@@ -140,6 +140,15 @@ function onAddChecklistItem({ checklistId, item }) {
 function onRemoveChecklistItem({ checklistId, itemIndex }) {
   const cl = data.value.checklists.find(c => c.id === checklistId)
   if (cl) cl.items.splice(itemIndex, 1)
+}
+
+function onAddSchedule(item) {
+  data.value.schedules.push(item)
+}
+
+function onRemoveSchedule(item) {
+  const idx = data.value.schedules.indexOf(item)
+  if (idx > -1) data.value.schedules.splice(idx, 1)
 }
 
 watch(() => props.anakList, (list) => {

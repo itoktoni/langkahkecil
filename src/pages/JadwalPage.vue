@@ -1,33 +1,83 @@
 <template>
-  <div class="mb-6">
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="font-headline-sm text-text-main flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary">schedule</span> Jadwal Harian
-      </h3>
-      <button class="text-primary text-sm font-bold bg-success-soft px-4 py-1.5 rounded-full">Ubah</button>
-    </div>
-    <div class="space-y-2">
-      <div v-for="s in schedules" :key="s.time"
-        class="bg-white p-4 rounded-2xl flex items-center justify-between soft-shadow">
-        <div class="flex items-center gap-3">
-          <span class="font-label-sm text-on-surface-variant">{{ s.time }}</span>
-          <span class="font-body-md text-sm">{{ s.label }}</span>
-        </div>
-        <span class="material-symbols-outlined"
-          :class="s.done ? 'text-growth-green' : 'text-outline-variant'">
-          {{ s.done ? 'check_circle' : 'radio_button_unchecked' }}
-        </span>
+  <div class="space-y-4">
+    <div v-for="s in schedules" :key="s.time"
+      class="bg-white rounded-[24px] p-5 border-2 soft-shadow flex items-center gap-4 cursor-pointer"
+      style="border-color: #FF980040; box-shadow: 0 4px 16px #FF980018"
+      @click="s.done = !s.done">
+      <div class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all"
+        :style="s.done ? { background: '#FF9800', color: '#fff' } : { background: '#FFF3E0', color: '#FF9800' }">
+        <span class="material-symbols-outlined text-lg">{{ s.done ? 'check' : 'schedule' }}</span>
       </div>
-      <div v-if="!schedules.length"
-        class="bg-white/70 rounded-2xl p-6 soft-shadow text-center text-sm text-on-surface-variant">
-        Belum ada jadwal
+      <div class="flex-1 min-w-0">
+        <p class="font-label-lg" :class="s.done ? 'text-on-surface-variant line-through' : 'text-text-main'">{{ s.label }}</p>
+        <p class="text-xs text-on-surface-variant">{{ s.time }}</p>
       </div>
+      <button @click.stop="emit('remove-schedule', s)"
+        class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-red-50 hover:text-error transition-colors">
+        <span class="material-symbols-outlined text-base">close</span>
+      </button>
     </div>
+
+    <div v-if="!schedules.length"
+      class="bg-white/70 rounded-[24px] p-6 soft-shadow text-center text-sm text-on-surface-variant border-2"
+      style="border-color: #FF980030">
+      Belum ada jadwal
+    </div>
+
+    <button @click="showForm = true"
+      class="w-full py-3 rounded-2xl text-sm font-bold text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+      style="background: #FF9800; box-shadow: 0 4px 12px #FF980040">
+      <span class="material-symbols-outlined text-lg">add</span>
+      Tambah Jadwal
+    </button>
   </div>
+
+  <AppModal v-model="showForm" title="Tambah Jadwal">
+    <div class="space-y-4">
+      <AppInput v-model="newLabel" label="Nama Aktivitas" placeholder="Contoh: Belajar Membaca" />
+      <AppInput v-model="newTime" label="Waktu" type="time" placeholder="08:00" />
+    </div>
+    <div class="flex gap-3 mt-6">
+      <AppButton variant="outline" block @click="closeForm">Batal</AppButton>
+      <AppButton block @click="addSchedule">Simpan</AppButton>
+    </div>
+  </AppModal>
 </template>
 
 <script setup>
-defineProps({
+import { ref, onMounted } from 'vue'
+import AppModal from '../components/AppModal.vue'
+import AppInput from '../components/AppInput.vue'
+import AppButton from '../components/AppButton.vue'
+
+const props = defineProps({
   schedules: { type: Array, default: () => [] }
 })
+
+const emit = defineEmits(['add-schedule', 'remove-schedule'])
+
+const showForm = ref(false)
+const newLabel = ref('')
+const newTime = ref('')
+
+onMounted(() => {
+  const today = new Date().toISOString().slice(0, 10)
+  const lastReset = localStorage.getItem('jadwal_last_reset')
+  if (lastReset !== today) {
+    props.schedules.forEach(s => { s.done = false })
+    localStorage.setItem('jadwal_last_reset', today)
+  }
+})
+
+function closeForm() {
+  showForm.value = false
+  newLabel.value = ''
+  newTime.value = ''
+}
+
+function addSchedule() {
+  if (!newLabel.value.trim() || !newTime.value) return
+  emit('add-schedule', { time: newTime.value, label: newLabel.value.trim(), done: false })
+  closeForm()
+}
 </script>

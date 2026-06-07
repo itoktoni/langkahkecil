@@ -4,7 +4,7 @@
       <input type="checkbox" :checked="modelValue" :disabled="disabled"
         class="peer sr-only"
         @change="$emit('update:modelValue', $event.target.checked)" />
-      <div class="w-5 h-5 rounded-md border-2 border-outline-variant bg-white transition-all peer-checked:bg-primary peer-checked:border-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40">
+      <div class="w-5 h-5 rounded-md border-2 border-outline-variant bg-white transition-all peer-checked:bg-blue-500 peer-checked:border-blue-500 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500/40">
         <svg v-if="modelValue" class="w-full h-full text-white p-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12" />
         </svg>

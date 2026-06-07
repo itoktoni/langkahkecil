@@ -16,7 +16,7 @@
 
       <div v-show="activeTab === 'jadwal'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
         <AnakSelector v-if="anakList.length" :anak-list="anakList" v-model="toolsAnakId" class="mb-stack-lg" />
-        <JadwalPage :schedules="toolsData.schedules" />
+        <JadwalPage :schedules="toolsData.schedules" @add-schedule="onAddSchedule" @remove-schedule="onRemoveSchedule" />
       </div>
 
       <div v-show="activeTab === 'checklist'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
@@ -232,6 +232,15 @@ function onAddChecklistItem({ checklistId, item }) {
 function onRemoveChecklistItem({ checklistId, itemIndex }) {
   const cl = toolsData.value.checklists.find(c => c.id === checklistId)
   if (cl) cl.items.splice(itemIndex, 1)
+}
+
+function onAddSchedule(item) {
+  toolsData.value.schedules.push(item)
+}
+
+function onRemoveSchedule(item) {
+  const idx = toolsData.value.schedules.indexOf(item)
+  if (idx > -1) toolsData.value.schedules.splice(idx, 1)
 }
 
 function switchTab(tabId) {

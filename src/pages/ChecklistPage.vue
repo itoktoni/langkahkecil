@@ -24,7 +24,7 @@
 
       <div class="flex items-center gap-2 mt-3">
         <button @click="openAddItem(cl)"
-          class="flex-1 py-2 rounded-xl border-2 border-dashed text-xs font-medium transition-colors flex items-center justify-center gap-1.5" style="border-color: #2196F350; color: #2196F3">
+          class="h-9 flex-1 rounded-xl border-2 border-dashed text-xs font-medium transition-colors flex items-center justify-center gap-1.5" style="border-color: #2196F350; color: #2196F3">
           <span class="material-symbols-outlined text-base">add</span>
           Tambah Item
         </button>
