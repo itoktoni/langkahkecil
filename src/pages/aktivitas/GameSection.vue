@@ -4,7 +4,7 @@
       <h3 class="font-headline-md text-headline-md mb-3">{{ game.title }}</h3>
       <p class="font-body-md text-body-md text-on-surface-variant mb-4">{{ game.how }}</p>
       <div class="bg-surface-container-low rounded-2xl p-4 mb-3">
-        <p class="font-label-lg text-label-lg text-primary mb-2">📋 Aturan</p>
+        <p class="font-label-lg text-label-lg text-primary mb-2"><span class="w-6 h-6 rounded-full bg-success-soft border-2 border-[#B7D9BC] inline-flex items-center justify-center text-xs align-middle mr-1">📋</span> Aturan</p>
         <ul class="space-y-2">
           <li v-for="(rule, i) in game.rules" :key="i" class="flex items-start gap-2 text-sm text-on-surface-variant">
             <span class="material-symbols-outlined text-primary text-lg mt-0.5">check_circle</span>
@@ -13,7 +13,7 @@
         </ul>
       </div>
       <div class="bg-success-soft rounded-2xl p-4">
-        <p class="font-label-lg text-label-lg text-primary mb-1">💬 Pelajaran</p>
+          <p class="font-label-lg text-label-lg text-primary mb-1"><span class="w-6 h-6 rounded-full bg-success-soft border-2 border-[#B7D9BC] inline-flex items-center justify-center text-xs align-middle mr-1">💬</span> Pelajaran</p>
         <p class="text-sm text-on-surface-variant">{{ game.moral }}</p>
       </div>
     </div>

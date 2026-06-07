@@ -1,10 +1,10 @@
 <template>
   <div>
-    <label v-if="label" :for="id" class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">{{ label }}</label>
+    <label v-if="label" :for="id" class="text-xs font-bold text-primary uppercase tracking-wider mb-1.5 block">{{ label }}</label>
     <textarea :id="id" :value="modelValue" :placeholder="placeholder" :disabled="disabled" :rows="rows"
-      class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm bg-white transition-colors focus:outline-none focus:border-primary resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+      class="w-full px-3 py-2.5 rounded-xl border-2 border-[#B7D9BC] text-sm bg-white transition-colors focus:outline-none focus:border-primary resize-none disabled:opacity-50 disabled:cursor-not-allowed"
       @input="$emit('update:modelValue', $event.target.value)"></textarea>
-    <p v-if="error" class="text-xs text-error mt-1">{{ error }}</p>
+    <p v-if="error" class="text-xs text-error font-medium mt-1">{{ error }}</p>
     <p v-else-if="hint" class="text-xs text-on-surface-variant mt-1">{{ hint }}</p>
   </div>
 </template>

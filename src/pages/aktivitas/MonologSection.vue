@@ -6,7 +6,7 @@
         <p class="font-body-md text-body-md text-on-surface-variant italic leading-relaxed">"{{ sc.script }}"</p>
       </div>
       <div class="bg-[#D7EDFF] rounded-2xl p-4">
-        <p class="font-label-lg text-label-lg text-on-tertiary-fixed mb-2">💡 Tips</p>
+          <p class="font-label-lg text-label-lg text-on-tertiary-fixed mb-2"><span class="w-6 h-6 rounded-full bg-friendly-sky/20 border-2 border-[#B7D9BC] inline-flex items-center justify-center text-xs align-middle mr-1">💡</span> Tips</p>
         <ul class="space-y-1.5">
           <li v-for="(tip, i) in sc.tips" :key="i" class="flex items-start gap-2 text-sm text-on-surface-variant">
             <span class="material-symbols-outlined text-tertiary text-lg mt-0.5">lightbulb</span>

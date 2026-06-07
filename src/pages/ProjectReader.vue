@@ -46,7 +46,7 @@
               <!-- Materials -->
               <div class="bg-white rounded-[28px] p-5 soft-shadow border" :style="{ borderColor: color }">
                 <div class="flex items-center gap-3 mb-4">
-                  <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" :style="{ background: bg }">📦</div>
+                  <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl border-2 border-white shadow-sm" :style="{ background: bg }">📦</div>
                   <div>
                     <h3 class="font-headline-md text-headline-md">Bahan yang Dibutuhkan</h3>
                     <p class="text-xs text-on-surface-variant">Siapkan semua bahan sebelum mulai</p>
@@ -86,7 +86,7 @@
       <!-- Finished Screen -->
       <div v-else class="flex-1 overflow-y-auto">
         <div class="flex flex-col items-center px-6 py-10 max-w-lg mx-auto">
-          <div class="w-20 h-20 rounded-full bg-success-soft flex items-center justify-center text-5xl mb-6">🎉</div>
+           <div class="w-20 h-20 rounded-full bg-success-soft border-4 border-[#B7D9BC] flex items-center justify-center text-5xl mb-6 shadow-md">🎉</div>
           <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-text-main text-center mb-2">Proyek Selesai!</h2>
           <p class="font-body-md text-body-md text-on-surface-variant text-center mb-8">{{ project.title }}</p>
           <div class="w-full grid grid-cols-2 gap-3 mb-6">
@@ -101,7 +101,7 @@
           </div>
           <div class="w-full bg-white rounded-[28px] p-6 soft-shadow border" :style="{ borderColor: color }">
             <div class="flex items-center gap-3 mb-3">
-              <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" :style="{ background: bg }">💡</div>
+               <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl border-2 border-white shadow-sm" :style="{ background: bg }">💡</div>
               <h3 class="font-headline-md text-headline-md">Tips</h3>
             </div>
             <p class="font-body-lg text-body-lg text-on-surface leading-relaxed">{{ project.tips }}</p>

@@ -79,13 +79,13 @@ export default {
         "stack-md": "16px"
       },
       fontFamily: {
-        "headline-md": ["Nunito Sans"],
-        "label-sm": ["Nunito Sans"],
-        "headline-lg": ["Nunito Sans"],
-        "body-md": ["Nunito Sans"],
-        "body-lg": ["Nunito Sans"],
-        "label-lg": ["Nunito Sans"],
-        "headline-lg-mobile": ["Nunito Sans"]
+        "headline-md": ["Fredoka"],
+        "label-sm": ["Fredoka"],
+        "headline-lg": ["Fredoka"],
+        "body-md": ["Fredoka"],
+        "body-lg": ["Fredoka"],
+        "label-lg": ["Fredoka"],
+        "headline-lg-mobile": ["Fredoka"]
       },
       fontSize: {
         "xs": ["13px", { lineHeight: "18px" }],

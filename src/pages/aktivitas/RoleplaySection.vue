@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="bg-success-soft rounded-xl p-3 mb-3">
-          <p class="text-xs text-primary font-bold">💬 {{ rp.moral }}</p>
+          <p class="text-xs text-primary font-bold"><span class="w-5 h-5 rounded-full bg-white border border-[#B7D9BC] inline-flex items-center justify-center text-[10px] align-middle mr-1">💬</span> {{ rp.moral }}</p>
         </div>
         <div class="flex items-center gap-2 text-primary font-label-lg mt-auto pt-3 border-t border-outline-variant">
           <span class="material-symbols-outlined text-xl">theater_comedy</span>

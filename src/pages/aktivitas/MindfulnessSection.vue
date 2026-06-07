@@ -9,7 +9,7 @@
         </li>
       </ol>
       <div class="bg-success-soft rounded-2xl p-4">
-        <p class="font-label-lg text-label-lg text-primary mb-1">✨ Manfaat</p>
+        <p class="font-label-lg text-label-lg text-primary mb-1"><span class="w-6 h-6 rounded-full bg-success-soft border-2 border-[#B7D9BC] inline-flex items-center justify-center text-xs align-middle mr-1">✨</span> Manfaat</p>
         <p class="text-sm text-on-surface-variant">{{ ex.benefit }}</p>
       </div>
     </div>

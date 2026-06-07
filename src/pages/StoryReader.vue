@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 z-[100] bg-black/40 flex items-end lg:items-center justify-center p-2 lg:p-4">
+  <div class="fixed inset-0 z-[100] bg-black/40 flex items-end lg:items-center justify-center lg:p-4">
     <div class="w-full max-w-md bg-canvas-cream rounded-[40px] shadow-2xl border-8 border-[#B7D9BC] overflow-hidden flex flex-col h-[100dvh] lg:h-[852px] relative">
 
       <!-- Header -->
@@ -66,7 +66,7 @@
         <div class="bg-white rounded-[32px] border-4 border-[#B7D9BC] p-5 shadow-md relative">
           <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-b-[14px] border-b-white"></div>
           <div class="flex items-center gap-2 mb-3 justify-center">
-            <span class="text-xl">💬</span>
+            <span class="w-8 h-8 rounded-full bg-success-soft border-2 border-[#B7D9BC] flex items-center justify-center text-base">💬</span>
             <p class="text-primary text-base font-bold">Pelajaran</p>
           </div>
           <p class="text-text-main text-base text-center leading-relaxed font-medium" style="font-style: italic;">

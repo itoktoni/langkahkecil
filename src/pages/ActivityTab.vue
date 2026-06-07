@@ -3,20 +3,19 @@
 
     <div v-if="!selectedType">
       <section class="mb-stack-lg">
-        <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-text-main leading-tight mb-2">
-          Semua Aktivitas
+        <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-text-main leading-tight mb-2 flex items-center gap-2">
+          <span class="w-10 h-10 rounded-full bg-success-soft border-2 border-[#B7D9BC] flex items-center justify-center text-xl">🎨</span> Semua Aktivitas
         </h2>
         <p class="font-body-md text-body-md text-on-surface-variant">Pilih jenis aktivitas untuk melihat seluruh konten.</p>
       </section>
 
       <div class="grid grid-cols-2 gap-3">
         <div v-for="item in aktivitasData" :key="item.key"
-          class="bento-card group bg-white rounded-[24px] soft-shadow overflow-hidden cursor-pointer transition-all hover:shadow-xl flex flex-col border-2"
-          :style="{ borderColor: item.color + '80', boxShadow: `0 4px 16px ${item.color}30` }"
+          class="bento-card group bg-canvas-cream rounded-[24px] overflow-hidden cursor-pointer transition-all hover:shadow-lg flex flex-col border-4 border-[#B7D9BC] shadow-md"
           @click="openType(item)">
           <div class="p-4 flex flex-col flex-1">
             <div class="flex items-start justify-between mb-3">
-              <div class="w-12 h-12 rounded-[16px] flex items-center justify-center text-2xl"
+              <div class="w-12 h-12 rounded-[16px] flex items-center justify-center text-2xl border-2 border-white shadow-sm"
                 :style="{ background: item.bg }">
                 {{ item.emoji }}
               </div>
@@ -34,14 +33,14 @@
 
     <div v-else>
       <button @click="selectedType = null"
-        class="flex items-center gap-2 text-primary font-label-lg mb-stack-md hover:opacity-80 transition-opacity border border-primary-container px-3 py-1.5 rounded-full">
+        class="flex items-center gap-2 text-primary font-label-lg mb-stack-md hover:opacity-80 transition-opacity bg-success-soft px-4 py-2 rounded-full border-2 border-[#B7D9BC]">
         <span class="material-symbols-outlined text-xl">arrow_back</span>
         Kembali
       </button>
 
       <section class="mb-stack-lg">
         <div class="flex items-center gap-3 mb-2">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" :style="{ background: selectedType.bg }">{{ selectedType.emoji }}</div>
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl border-2 border-white shadow-sm" :style="{ background: selectedType.bg }">{{ selectedType.emoji }}</div>
           <div>
             <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-text-main leading-tight">{{ selectedType.title }}</h2>
             <p class="font-body-md text-body-md text-on-surface-variant">{{ sortedItems.length }} aktivitas</p>

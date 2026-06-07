@@ -1,11 +1,10 @@
 <template>
   <div class="space-y-4">
     <div v-for="s in schedules" :key="s.time"
-      class="bg-white rounded-[24px] p-5 border-2 soft-shadow flex items-center gap-4 cursor-pointer"
-      style="border-color: #FF980040; box-shadow: 0 4px 16px #FF980018"
+      class="bg-canvas-cream rounded-[24px] p-5 border-4 border-[#B7D9BC] shadow-md flex items-center gap-4 cursor-pointer hover:shadow-lg transition-all"
       @click="s.done = !s.done">
-      <div class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all"
-        :style="s.done ? { background: '#FF9800', color: '#fff' } : { background: '#FFF3E0', color: '#FF9800' }">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all border-2 border-white shadow-sm"
+        :style="s.done ? { background: '#176c33', color: '#fff' } : { background: '#E1F2E5', color: '#176c33' }">
         <span class="material-symbols-outlined text-lg">{{ s.done ? 'check' : 'schedule' }}</span>
       </div>
       <div class="flex-1 min-w-0">
@@ -13,20 +12,19 @@
         <p class="text-xs text-on-surface-variant">{{ s.time }}</p>
       </div>
       <button @click.stop="emit('remove-schedule', s)"
-        class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-red-50 hover:text-error transition-colors">
+        class="w-8 h-8 rounded-full flex items-center justify-center text-error/50 hover:bg-error/10 hover:text-error transition-colors">
         <span class="material-symbols-outlined text-base">close</span>
       </button>
     </div>
 
     <div v-if="!schedules.length"
-      class="bg-white/70 rounded-[24px] p-6 soft-shadow text-center text-sm text-on-surface-variant border-2"
-      style="border-color: #FF980030">
-      Belum ada jadwal
+      class="bg-canvas-cream rounded-[24px] p-8 text-center border-4 border-dashed border-[#B7D9BC]">
+      <p class="text-3xl mb-2">📅</p>
+      <p class="text-sm text-on-surface-variant font-medium">Belum ada jadwal</p>
     </div>
 
     <button @click="showForm = true"
-      class="w-full py-3 rounded-2xl text-sm font-bold text-white transition-all active:scale-95 flex items-center justify-center gap-2"
-      style="background: #FF9800; box-shadow: 0 4px 12px #FF980040">
+      class="w-full py-3 rounded-2xl text-sm font-bold text-white btn-pop-green flex items-center justify-center gap-2">
       <span class="material-symbols-outlined text-lg">add</span>
       Tambah Jadwal
     </button>
@@ -96,3 +94,15 @@ function addSchedule() {
   closeForm()
 }
 </script>
+
+<style scoped>
+.btn-pop-green {
+  background-color: #6DBE7B;
+  box-shadow: 0 4px 0 #176c33;
+  transition: all 0.1s ease;
+}
+.btn-pop-green:active {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #176c33;
+}
+</style>

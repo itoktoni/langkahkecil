@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="font-headline-sm text-text-main flex items-center gap-2">
-        <span class="material-symbols-outlined" style="color: #4CAF50">emoji_events</span> Challenge
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-headline-md text-text-main flex items-center gap-2">
+        <span class="w-8 h-8 rounded-full bg-success-soft border-2 border-[#B7D9BC] flex items-center justify-center text-base">🏆</span> Challenge
       </h3>
       <button @click="showHistory = !showHistory"
-        class="flex items-center gap-1.5 text-sm font-medium transition-colors" style="color: #4CAF50">
+        class="flex items-center gap-1.5 text-sm font-bold text-primary transition-colors bg-success-soft px-3 py-1.5 rounded-full">
         <span class="material-symbols-outlined text-lg">{{ showHistory ? 'close' : 'history' }}</span>
         {{ showHistory ? 'Tutup' : 'History' }}
       </button>
@@ -13,8 +13,7 @@
 
     <div v-if="!showHistory" class="space-y-4">
       <div v-for="c in activeChallenges" :key="c.id"
-        class="bg-white rounded-[24px] p-5 border-2 soft-shadow cursor-pointer hover:shadow-md transition-shadow"
-        style="border-color: #4CAF5040; box-shadow: 0 4px 16px #4CAF5018"
+        class="bg-canvas-cream rounded-[24px] p-5 border-4 border-[#B7D9BC] shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.01] transition-all"
         @click="openEdit(c)">
         <div class="flex items-end gap-4">
           <div class="flex-1 min-w-0">
@@ -41,17 +40,16 @@
                 <span class="material-symbols-outlined text-base">share</span>
               </button>
               <button @click.stop="deleteChallenge(c)"
-                class="h-9 w-9 rounded-xl text-xs font-bold border-2 transition-all active:scale-95 flex items-center justify-center"
-                style="border-color: #C6282860; color: #C62828;">
+                class="h-9 w-9 rounded-xl text-xs font-bold border-2 transition-all active:scale-95 flex items-center justify-center border-error/30 text-error">
                 <span class="material-symbols-outlined text-base">delete</span>
               </button>
             </div>
           </div>
 
           <div class="celengan shrink-0 flex flex-col items-center self-stretch">
-            <div class="celengan-tube relative w-16 h-full rounded-lg overflow-hidden border-2 shadow-lg"
+            <div class="celengan-tube relative w-16 h-full rounded-xl overflow-hidden border-2 shadow-lg"
               :style="{ borderColor: c.color + '60', background: c.color + '10', boxShadow: `0 4px 16px ${c.color}40` }">
-              <div class="absolute bottom-0 left-0 right-0 transition-all duration-700 rounded-b-lg"
+              <div class="absolute bottom-0 left-0 right-0 transition-all duration-700 rounded-b-xl"
                 :style="{ height: pointPercent(c) + '%', background: `linear-gradient(to top, ${c.color}, ${c.color}CC)` }">
               </div>
               <div class="absolute inset-0 flex flex-col items-center justify-center">
@@ -64,11 +62,12 @@
       </div>
 
       <div v-if="!activeChallenges.length"
-        class="bg-white/70 rounded-[24px] p-6 soft-shadow text-center text-sm text-on-surface-variant">
-        Belum ada challenge aktif
+        class="bg-canvas-cream rounded-[24px] p-8 text-center border-4 border-dashed border-[#B7D9BC]">
+        <p class="text-3xl mb-2">🏅</p>
+        <p class="text-sm text-on-surface-variant font-medium">Belum ada challenge aktif</p>
       </div>
       <button @click="showAddForm = true"
-        class="w-full py-3 rounded-2xl text-sm font-bold text-white transition-all active:scale-95 flex items-center justify-center gap-2" style="background: #4CAF50; box-shadow: 0 4px 12px #4CAF5040">
+        class="w-full py-3 rounded-2xl text-sm font-bold text-white btn-pop-green flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">add</span>
         Tambah Challenge
       </button>
@@ -78,27 +77,26 @@
       <div v-for="(items, cat) in historyByCategory" :key="cat">
         <div class="flex items-center gap-2 mb-2">
           <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">{{ cat }}</h4>
-          <span class="text-xs font-bold text-on-surface-variant bg-surface-container-low px-1.5 py-0.5 rounded-full">{{ items.length }}</span>
+          <span class="text-xs font-bold text-primary bg-success-soft px-2 py-0.5 rounded-full">{{ items.length }}</span>
         </div>
         <div class="space-y-2">
           <div v-for="c in items" :key="c.id"
-            class="bg-white rounded-2xl p-4 border-2 soft-shadow flex items-center gap-3"
-            style="border-color: #4CAF5030; box-shadow: 0 4px 12px #4CAF5012">
+            class="bg-canvas-cream rounded-2xl p-4 border-2 border-[#B7D9BC] shadow-sm flex items-center gap-3">
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-text-main">{{ c.title }}</p>
               <p class="text-xs text-on-surface-variant">{{ c.maxPoints }} poin terkumpul</p>
             </div>
             <button @click="handleShareChallenge(c)"
-              class="w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-95"
-              style="background: #4CAF5015; color: #4CAF50">
+              class="w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-95 bg-success-soft text-primary">
               <span class="material-symbols-outlined text-xl">share</span>
             </button>
           </div>
         </div>
       </div>
       <div v-if="!challengeHistory.length"
-        class="bg-white rounded-[24px] p-6 soft-shadow text-center text-sm text-on-surface-variant">
-        Belum ada riwayat challenge
+        class="bg-canvas-cream rounded-[24px] p-8 text-center border-4 border-dashed border-[#B7D9BC]">
+        <p class="text-3xl mb-2">📜</p>
+        <p class="text-sm text-on-surface-variant font-medium">Belum ada riwayat challenge</p>
       </div>
     </div>
   </div>
@@ -288,3 +286,15 @@ function saveForm() {
   closeForm()
 }
 </script>
+
+<style scoped>
+.btn-pop-green {
+  background-color: #6DBE7B;
+  box-shadow: 0 4px 0 #176c33;
+  transition: all 0.1s ease;
+}
+.btn-pop-green:active {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #176c33;
+}
+</style>

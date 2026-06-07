@@ -1,19 +1,21 @@
 <template>
   <div class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
 
-    <h2 class="font-headline-md text-headline-md mb-6">Laporan Perkembangan</h2>
+    <h2 class="font-headline-md text-headline-md mb-6 flex items-center gap-2">
+      <span class="w-8 h-8 rounded-full bg-success-soft border-2 border-[#B7D9BC] flex items-center justify-center text-base">📊</span> Laporan Perkembangan
+    </h2>
 
     <div class="space-y-4">
-      <div v-if="!anakList.length" class="bg-white rounded-[28px] border border-outline-variant shadow-md p-8 text-center">
+      <div v-if="!anakList.length" class="bg-canvas-cream rounded-[32px] border-4 border-dashed border-[#B7D9BC] p-8 text-center">
         <div class="text-5xl mb-3">👶</div>
         <p class="font-label-lg text-text-main mb-1">Belum ada data anak</p>
         <p class="text-sm text-on-surface-variant">Tambahkan anak terlebih dahulu di menu Profil untuk mulai melihat perkembangan.</p>
       </div>
 
-      <div v-for="anak in anakList" :key="anak.id" class="bg-white rounded-[28px] border border-outline-variant shadow-md overflow-hidden">
-        <button class="w-full flex items-center gap-4 p-5 text-left hover:bg-gray-50 transition-colors"
+      <div v-for="anak in anakList" :key="anak.id" class="bg-canvas-cream rounded-[28px] border-4 border-[#B7D9BC] shadow-md overflow-hidden">
+        <button class="w-full flex items-center gap-4 p-5 text-left hover:bg-white/50 transition-colors"
           @click="toggle(anak.id)">
-          <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl shrink-0" :style="{ background: anak.bg }">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl shrink-0 border-2 border-white shadow-sm" :style="{ background: anak.bg }">
             {{ anak.emoji }}
           </div>
           <div class="flex-1 min-w-0">
@@ -21,19 +23,19 @@
             <p class="text-sm text-on-surface-variant">{{ ageLabel(anak.tahun, anak.bulan, anak.tanggal) }}</p>
           </div>
           <div class="flex items-center gap-2">
-            <span v-if="anak.skills" class="text-xs font-bold text-on-surface-variant bg-surface-container-low px-2 py-1 rounded-full">
+            <span v-if="anak.skills" class="text-xs font-bold text-primary bg-success-soft px-2 py-1 rounded-full">
               {{ anak.skills.length }} skills
             </span>
-            <span class="material-symbols-outlined text-on-surface-variant transition-transform duration-200"
+            <span class="material-symbols-outlined text-primary transition-transform duration-200"
               :class="{ 'rotate-180': openId === anak.id }">expand_more</span>
           </div>
         </button>
 
-        <div v-show="openId === anak.id" class="px-5 pb-5 space-y-5 border-t border-outline-variant">
+        <div v-show="openId === anak.id" class="px-5 pb-5 space-y-5 border-t-2 border-[#B7D9BC]/50">
 
           <div v-if="anak.skills && anak.skills.length" class="pt-4 space-y-3">
-            <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Skills Aktif</h4>
-            <div v-for="sp in anak.skills" :key="sp.key" class="bg-canvas-cream rounded-2xl p-4 border border-outline-variant shadow-sm">
+            <h4 class="text-xs font-bold text-primary uppercase tracking-wider">Skills Aktif</h4>
+            <div v-for="sp in anak.skills" :key="sp.key" class="bg-white rounded-2xl p-4 border-2 border-[#B7D9BC] shadow-sm">
               <div class="flex items-center gap-3 mb-3">
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-bold text-text-main">{{ sp.title }}</p>
@@ -47,7 +49,7 @@
 
               <div v-if="sp.activities && sp.activities.length" class="mb-3 space-y-1.5">
                 <div v-for="act in sp.activities" :key="act.title"
-                  class="flex items-center gap-2 px-3 py-2 bg-white rounded-xl text-xs border border-outline-variant">
+                  class="flex items-center gap-2 px-3 py-2 bg-canvas-cream rounded-xl text-xs border border-[#B7D9BC]/50">
                   <span class="text-base">{{ act.emoji }}</span>
                   <span class="flex-1 font-medium text-text-main">{{ act.title }}</span>
                   <span class="text-on-surface-variant">{{ act.date }}</span>
@@ -61,8 +63,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                   <button @click.stop="$emit('delete-skill', { anak, skill: sp })"
-                    class="h-8 w-8 rounded-lg flex items-center justify-center border-2 transition-all active:scale-95"
-                    style="border-color: #C6282860; color: #C62828;">
+                    class="h-8 w-8 rounded-lg flex items-center justify-center border-2 transition-all active:scale-95 border-error/30 text-error">
                     <span class="material-symbols-outlined text-base">delete</span>
                   </button>
                   <button @click.stop="openEvaluasi(anak, sp)"
@@ -82,27 +83,27 @@
           </div>
 
           <div v-else class="pt-4 text-center text-sm text-on-surface-variant py-4">
+            <p class="text-2xl mb-1">📝</p>
             Belum ada skills aktif
           </div>
 
           <div class="" v-if="anak.completedSkills && anak.completedSkills.length">
-            <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">Skills Selesai</h4>
+            <h4 class="text-xs font-bold text-primary uppercase tracking-wider mb-3">Skills Selesai</h4>
             <div class="space-y-2">
               <div v-for="sp in anak.completedSkills" :key="sp.key"
-                class="flex items-center gap-3 bg-canvas-cream rounded-2xl p-3 border border-outline-variant shadow-sm">
+                class="flex items-center gap-3 bg-white rounded-2xl p-3 border-2 border-[#B7D9BC] shadow-sm">
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-text-main">{{ sp.title }}</p>
                   <p class="text-xs text-on-surface-variant">{{ getPilarName(sp.pilar) }}</p>
                 </div>
                 <div class="flex items-center gap-2">
                   <button @click="$emit('reset-skill', { anak, skill: sp })"
-                    class="h-8 w-8 rounded-lg flex items-center justify-center border-2 transition-all active:scale-95"
-                    style="border-color: #C6282860; color: #C62828;">
+                    class="h-8 w-8 rounded-lg flex items-center justify-center border-2 transition-all active:scale-95 border-error/30 text-error">
                     <span class="material-symbols-outlined text-base">delete</span>
                   </button>
                   <button @click.stop="shareEvalDirect(anak, sp)"
                     class="h-8 w-8 rounded-lg flex items-center justify-center border-2 transition-all active:scale-95"
-                    :style="{ borderColor: (sp.color || '#4CAF50') + '60', color: sp.color || '#4CAF50' }">
+                    :style="{ borderColor: (sp.color || '#176c33') + '60', color: sp.color || '#176c33' }">
                     <span class="material-symbols-outlined text-base">share</span>
                   </button>
                 </div>
@@ -121,16 +122,16 @@
       </div>
 
       <div v-if="evalQuestions.length" class="space-y-2 mb-5">
-        <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Panduan Penilaian</p>
+        <p class="text-[11px] font-bold text-primary uppercase tracking-wider">Panduan Penilaian</p>
         <div v-for="(q, i) in evalQuestions" :key="i"
-          class="bg-canvas-cream rounded-xl p-3 text-sm text-text-main border border-outline-variant">
+          class="bg-canvas-cream rounded-xl p-3 text-sm text-text-main border-2 border-[#B7D9BC]/50">
           {{ i + 1 }}. {{ q }}
         </div>
       </div>
 
-      <div class="bg-canvas-cream rounded-2xl p-4 shadow-sm border border-outline-variant">
+      <div class="bg-canvas-cream rounded-2xl p-4 shadow-sm border-2 border-[#B7D9BC]/50">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Penilaian Orang Tua</span>
+          <span class="text-xs font-bold text-primary uppercase tracking-wider">Penilaian Orang Tua</span>
           <span class="text-xs font-bold" :style="{ color: evalColor }">{{ evalPoints }}/{{ evalMax }}</span>
         </div>
         <div class="flex items-center gap-3 mb-3">
@@ -216,7 +217,7 @@ const evalTitle = computed(() => {
 })
 
 const evalEmoji = computed(() => evalSkill.value?.emoji || '⭐')
-const evalColor = computed(() => evalSkill.value?.color || '#4CAF50')
+const evalColor = computed(() => evalSkill.value?.color || '#176c33')
 const evalDesc = computed(() => evalSkill.value?.desc || '')
 
 const evalPercent = computed(() => Math.min(100, Math.round((evalPoints.value / evalMax) * 100)))

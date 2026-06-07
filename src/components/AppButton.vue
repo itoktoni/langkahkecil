@@ -21,16 +21,16 @@ const props = defineProps({
 })
 
 const sizeClass = computed(() => ({
-  sm: 'px-3 py-1.5 rounded-lg text-sm',
+  sm: 'px-3 py-1.5 rounded-xl text-sm',
   md: 'px-4 py-2.5 rounded-xl text-sm',
-  lg: 'px-6 py-3 rounded-xl text-base'
+  lg: 'px-6 py-3 rounded-2xl text-base'
 }[props.size]))
 
 const variantClass = computed(() => ({
-  primary: 'bg-primary text-on-primary hover:bg-primary/90 shadow-lg shadow-green-900/20',
-  secondary: 'bg-surface-container-low text-text-main hover:bg-surface-container border border-outline-variant',
-  outline: 'border border-outline-variant text-on-surface-variant hover:bg-gray-50',
-  ghost: 'text-on-surface-variant hover:bg-surface-container-low',
+  primary: 'bg-primary text-on-primary hover:bg-primary/90 shadow-md',
+  secondary: 'bg-success-soft text-primary hover:bg-success-soft/80 border-2 border-[#B7D9BC]',
+  outline: 'border-2 border-[#B7D9BC] text-on-surface-variant hover:bg-success-soft/50',
+  ghost: 'text-on-surface-variant hover:bg-success-soft/50',
   danger: 'bg-error text-on-error hover:bg-error/90'
 }[props.variant]))
 </script>

@@ -1,71 +1,75 @@
 <template>
   <div class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
 
-    <div class="bg-white rounded-[28px] p-6 soft-shadow border border-outline-variant">
-      <div class="flex items-center gap-4">
-        <div class="w-16 h-16 rounded-full bg-[#E8F5E9] flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+    <!-- Profile Card -->
+    <div class="bg-canvas-cream rounded-[32px] border-4 border-[#B7D9BC] p-6 shadow-lg relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-success-soft rounded-full -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+      <div class="flex items-center gap-4 relative z-10">
+        <div class="w-16 h-16 rounded-full bg-success-soft flex items-center justify-center overflow-hidden border-4 border-white shadow-md">
           <span class="text-4xl">{{ userGender === 'Ayah' ? '👨' : '👩' }}</span>
         </div>
         <div class="flex-1 min-w-0">
           <div v-if="!editingName">
-            <h3 class="font-headline-sm text-text-main">{{ userName }}</h3>
+            <h3 class="font-headline-md text-text-main">{{ userName }}</h3>
             <p class="text-sm text-on-surface-variant truncate">{{ userEmail }}</p>
-            <p v-if="userGender" class="text-xs text-on-surface-variant">{{ userGender }}</p>
+            <p v-if="userGender" class="text-xs text-primary font-bold mt-0.5">{{ userGender }}</p>
           </div>
           <div v-else class="space-y-2 flex-1">
             <input v-model="editNameValue"
-              class="w-full px-3 py-2 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
+              class="w-full px-3 py-2 rounded-xl border-2 border-[#B7D9BC] text-sm focus:outline-none focus:border-primary bg-white"
               placeholder="Nama baru" @keyup.enter="saveName" />
-            <p v-if="nameError" class="text-xs text-error mt-1">{{ nameError }}</p>
+            <p v-if="nameError" class="text-xs text-error font-medium">{{ nameError }}</p>
             <div class="flex gap-2">
               <button @click="setGender('Bunda')"
-                class="flex-1 py-2 rounded-lg text-xs font-bold border-2 transition-all"
-                :class="editGender === 'Bunda' ? 'bg-pink-100 border-pink-400 text-pink-700' : 'border-outline-variant text-on-surface-variant'">
+                class="flex-1 py-2 rounded-xl text-xs font-bold border-2 transition-all"
+                :class="editGender === 'Bunda' ? 'bg-pink-100 border-pink-400 text-pink-700' : 'border-[#B7D9BC] text-on-surface-variant bg-white'">
                 👩 Bunda
               </button>
               <button @click="setGender('Ayah')"
-                class="flex-1 py-2 rounded-lg text-xs font-bold border-2 transition-all"
-                :class="editGender === 'Ayah' ? 'bg-blue-100 border-blue-400 text-blue-700' : 'border-outline-variant text-on-surface-variant'">
+                class="flex-1 py-2 rounded-xl text-xs font-bold border-2 transition-all"
+                :class="editGender === 'Ayah' ? 'bg-blue-100 border-blue-400 text-blue-700' : 'border-[#B7D9BC] text-on-surface-variant bg-white'">
                 👨 Ayah
               </button>
             </div>
             <button @click="saveName"
-              class="w-full px-3 py-2 rounded-lg bg-[#2E7D32] text-white text-sm font-medium hover:bg-[#2E7D32]/90 transition-colors">
+              class="w-full px-3 py-2 rounded-xl bg-primary text-on-primary text-sm font-bold hover:opacity-90 transition-all shadow-md">
               Simpan
             </button>
           </div>
         </div>
         <button v-if="!editingName" @click="startEditName"
-          class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+          class="w-10 h-10 rounded-full bg-white border-2 border-[#B7D9BC] flex items-center justify-center text-primary hover:bg-success-soft transition-colors shadow-sm">
           <span class="material-symbols-outlined text-xl">edit</span>
         </button>
       </div>
-      <div class="mt-4 pt-4 border-t border-outline-variant">
+
+      <!-- Password Section -->
+      <div class="mt-4 pt-4 border-t-2 border-[#B7D9BC]/50">
         <button v-if="!showPasswordForm" @click="showPasswordForm = true"
           class="flex items-center gap-3 text-sm text-on-surface-variant hover:text-primary transition-colors w-full">
           <span class="material-symbols-outlined text-lg">lock</span>
-          <span>Ganti Password</span>
+          <span class="font-medium">Ganti Password</span>
           <span class="ml-auto material-symbols-outlined text-base">chevron_right</span>
         </button>
         <div v-else class="space-y-3">
-          <div class="flex items-center gap-3 text-sm text-on-surface-variant">
+          <div class="flex items-center gap-3 text-sm text-primary font-bold">
             <span class="material-symbols-outlined text-lg">lock</span>
-            <span class="font-medium">Ganti Password</span>
+            <span>Ganti Password</span>
           </div>
           <input v-model="oldPassword" type="password"
-            class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
+            class="w-full px-3 py-2.5 rounded-xl border-2 border-[#B7D9BC] text-sm focus:outline-none focus:border-primary bg-white"
             placeholder="Masukkan password lama" />
           <input v-model="newPassword" type="password"
-            class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
+            class="w-full px-3 py-2.5 rounded-xl border-2 border-[#B7D9BC] text-sm focus:outline-none focus:border-primary bg-white"
             placeholder="Masukkan password baru" />
-          <p v-if="passwordError" class="text-xs text-error">{{ passwordError }}</p>
+          <p v-if="passwordError" class="text-xs text-error font-medium">{{ passwordError }}</p>
           <div class="flex gap-2">
             <button @click="cancelPassword"
-              class="flex-1 py-2.5 rounded-lg border border-outline-variant text-sm font-medium text-on-surface-variant hover:bg-gray-50 transition-colors">
+              class="flex-1 py-2.5 rounded-xl border-2 border-[#B7D9BC] text-sm font-bold text-on-surface-variant btn-pop-gray">
               Batal
             </button>
             <button @click="savePassword"
-              class="flex-1 py-2.5 rounded-lg bg-[#2E7D32] text-white text-sm font-medium hover:bg-[#2E7D32]/90 transition-colors">
+              class="flex-1 py-2.5 rounded-xl text-white text-sm font-bold btn-pop-green">
               Simpan
             </button>
           </div>
@@ -73,27 +77,34 @@
       </div>
     </div>
 
+    <!-- Anak Section -->
     <div class="mt-6">
       <div class="flex items-center justify-between mb-3">
-        <h3 class="font-headline-sm text-text-main">Anak</h3>
+        <h3 class="font-headline-md text-text-main flex items-center gap-2">
+          <span class="w-8 h-8 rounded-full bg-success-soft border-2 border-[#B7D9BC] flex items-center justify-center text-base">👶</span> Anak
+        </h3>
         <div class="flex items-center gap-2">
           <button v-if="anakList.length" @click="resetAnak"
-            class="px-4 py-2 rounded-xl text-sm font-bold border border-error/30 text-error hover:bg-error/5 transition-colors">
+            class="px-4 py-2 rounded-xl text-sm font-bold border-2 border-error/30 text-error hover:bg-error/5 transition-colors">
             Reset
           </button>
           <button @click="tambahAnak"
-            class="px-4 py-2 rounded-xl text-sm font-bold border border-primary/30 text-primary hover:bg-primary/5 transition-colors"
+            class="px-4 py-2 rounded-xl text-sm font-bold text-primary btn-pop-green-sm"
             :class="{ 'opacity-40 pointer-events-none': !canAddAnak }">
-            Tambah
+            + Tambah
           </button>
         </div>
       </div>
-      <p v-if="addAnakError" class="text-xs text-red-500 mb-2">{{ addAnakError }}</p>
+
+      <div v-if="addAnakError" class="bg-error-container rounded-2xl p-3 mb-3 border-2 border-error/20">
+        <p class="text-xs text-error font-medium text-center">{{ addAnakError }}</p>
+      </div>
+
       <div class="space-y-3">
         <div v-for="anak in anakList" :key="anak.id"
-          class="relative bg-white rounded-2xl p-4 soft-shadow flex items-center gap-4 border border-outline-variant cursor-pointer hover:shadow-md transition-shadow"
+          class="relative bg-canvas-cream rounded-[24px] p-4 flex items-center gap-4 border-4 border-[#B7D9BC] shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.01] transition-all"
           @click="$emit('select-anak', anak)">
-          <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" :style="{ background: anak.bg }">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl border-2 border-white shadow-sm" :style="{ background: anak.bg }">
             {{ anak.emoji }}
           </div>
           <div class="flex-1">
@@ -101,13 +112,13 @@
             <p class="text-sm text-on-surface-variant">{{ ageLabel(anak.tahun, anak.bulan, anak.tanggal) }}</p>
           </div>
           <button @click.stop="toggleMenu(anak.id)"
-            class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+            class="w-8 h-8 rounded-full bg-white border-2 border-[#B7D9BC] flex items-center justify-center text-on-surface-variant hover:bg-success-soft transition-colors shadow-sm">
             <span class="material-symbols-outlined text-base">more_vert</span>
           </button>
           <div v-if="openMenuId === anak.id"
-            class="absolute right-4 top-12 bg-white rounded-xl shadow-xl border border-outline-variant py-1 z-10 min-w-[140px]">
+            class="absolute right-4 top-14 bg-white rounded-2xl shadow-xl border-2 border-[#B7D9BC] py-1 z-10 min-w-[140px]">
             <button @click.stop="openEditAnak(anak)"
-              class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-text-main hover:bg-surface-container-low transition-colors">
+              class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-text-main hover:bg-success-soft transition-colors">
               <span class="material-symbols-outlined text-base">edit</span> Edit
             </button>
             <button @click.stop="deleteAnak(anak)"
@@ -116,39 +127,42 @@
             </button>
           </div>
         </div>
+
         <div v-if="anakList.length === 0"
-          class="bg-white rounded-2xl p-6 soft-shadow text-center border border-outline-variant text-on-surface-variant text-sm">
-          Belum ada data anak
+          class="bg-canvas-cream rounded-[24px] p-8 text-center border-4 border-dashed border-[#B7D9BC]">
+          <p class="text-4xl mb-2">👶</p>
+          <p class="text-sm text-on-surface-variant font-medium">Belum ada data anak</p>
         </div>
       </div>
     </div>
 
+    <!-- Billing Section -->
     <div class="mt-6">
-      <div class="bg-white rounded-[28px] p-6 shadow-sm border border-outline-variant">
+      <div class="bg-canvas-cream rounded-[32px] p-6 border-4 border-[#B7D9BC] shadow-lg">
         <div class="flex items-center gap-3 mb-4">
-          <div class="w-10 h-10 rounded-full flex items-center justify-center"
-            :class="currentPlan === 'free' ? 'bg-[#FFF3E0]' : 'bg-[#E8F5E9]'">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shadow-sm"
+            :class="currentPlan === 'free' ? 'bg-warm-bonding/20' : 'bg-success-soft'">
             <span class="material-symbols-outlined"
-              :class="currentPlan === 'free' ? 'text-[#FF9800]' : 'text-[#2E7D32]'"
+              :class="currentPlan === 'free' ? 'text-warm-bonding' : 'text-primary'"
               :style="fillIcon">workspace_premium</span>
           </div>
           <div>
             <p class="font-label-lg text-text-main">Billing</p>
             <p class="text-sm text-on-surface-variant">
-              Paket saat ini: <span class="font-medium capitalize">{{ currentPlan }}</span>
+              Paket saat ini: <span class="font-bold capitalize text-primary">{{ currentPlan }}</span>
             </p>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3 mb-4">
           <div v-for="plan in plans" :key="plan.id"
-            class="text-center p-4 rounded-xl border-2 transition-all cursor-pointer"
+            class="text-center p-4 rounded-2xl border-2 transition-all cursor-pointer"
             :class="selectedPlan === plan.id
-              ? 'border-[#2E7D32] bg-[#E8F5E9]'
-              : 'border-outline-variant bg-white hover:border-gray-300'"
+              ? 'border-primary bg-success-soft'
+              : 'border-[#B7D9BC] bg-white hover:border-primary/50'"
             @click="selectedPlan = plan.id">
             <p class="text-2xl mb-1">{{ plan.emoji }}</p>
-            <p class="text-sm font-bold" :class="selectedPlan === plan.id ? 'text-[#2E7D32]' : 'text-on-surface-variant'">{{ plan.label }}</p>
+            <p class="text-sm font-bold" :class="selectedPlan === plan.id ? 'text-primary' : 'text-on-surface-variant'">{{ plan.label }}</p>
             <p class="text-xs text-on-surface-variant mt-0.5">{{ plan.price }}</p>
             <p class="text-xs text-on-surface-variant mt-1">{{ plan.desc }}</p>
           </div>
@@ -156,50 +170,55 @@
 
         <button v-if="currentPlan !== selectedPlan"
           @click="upgradePlan"
-          class="w-full py-3 rounded-xl font-label-lg bg-[#2E7D32] text-white hover:bg-[#2E7D32]/90 shadow-lg shadow-green-900/20 transition-all duration-200">
+          class="w-full py-3 rounded-2xl font-label-lg text-white btn-pop-green">
           {{ currentPlan === 'free' ? 'Upgrade Sekarang' : 'Ubah Paket' }}
         </button>
-        <div v-else class="text-center text-sm text-on-surface-variant py-2">
-          Paket aktif
+        <div v-else class="text-center text-sm text-on-surface-variant py-2 font-medium">
+          ✅ Paket aktif
         </div>
 
-        <div class="mt-4 pt-4 border-t border-outline-variant">
+        <div class="mt-4 pt-4 border-t-2 border-[#B7D9BC]/50">
           <button @click="shareReferral"
-            class="w-full py-3 rounded-xl font-label-lg border-2 border-[#2E7D32] text-[#2E7D32] hover:bg-[#E8F5E9] transition-all duration-200 flex items-center justify-center gap-2">
+            class="w-full py-3 rounded-2xl font-label-lg border-2 border-primary text-primary hover:bg-success-soft transition-all duration-200 flex items-center justify-center gap-2 font-bold">
             <span class="material-symbols-outlined text-lg">share</span>
             Share Link Referral
           </button>
           <p v-if="referralCode" class="text-center text-xs text-on-surface-variant mt-2">
-            Kode: <span class="font-bold text-[#2E7D32]">{{ referralCode }}</span>
+            Kode: <span class="font-bold text-primary">{{ referralCode }}</span>
           </p>
         </div>
       </div>
     </div>
 
+    <!-- Edit Anak Modal -->
     <div v-if="editAnak" class="fixed inset-0 z-[100] flex items-end justify-center lg:items-center">
       <div class="absolute inset-0 bg-black/40" @click="closeEditAnak"></div>
-      <div class="relative bg-white rounded-t-[28px] lg:rounded-[28px] w-full max-w-md p-6 pb-8 lg:mb-0">
-        <div class="w-10 h-1 bg-outline-variant rounded-full mx-auto mb-5 lg:hidden"></div>
-        <h3 class="font-headline-sm text-text-main mb-5">Edit Profil Anak</h3>
-        <p v-if="editAnakError" class="text-xs text-error mb-3">{{ editAnakError }}</p>
+      <div class="relative bg-canvas-cream rounded-t-[32px] lg:rounded-[32px] w-full max-w-md p-6 pb-8 lg:mb-0 border-4 border-[#B7D9BC] border-b-0 lg:border-b-4">
+        <div class="w-10 h-1 bg-[#B7D9BC] rounded-full mx-auto mb-5 lg:hidden"></div>
+        <h3 class="font-headline-md text-text-main mb-1 flex items-center gap-2">
+          <span class="w-8 h-8 rounded-full bg-success-soft border-2 border-[#B7D9BC] flex items-center justify-center text-base">✏️</span> Edit Profil Anak
+        </h3>
+        <div v-if="editAnakError" class="bg-error-container rounded-xl p-2.5 mb-3 border-2 border-error/20">
+          <p class="text-xs text-error font-medium text-center">{{ editAnakError }}</p>
+        </div>
         <div class="space-y-4">
           <div>
             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Nama</label>
             <input v-model="editAnakForm.nama"
-              class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
+              class="w-full px-3 py-2.5 rounded-xl border-2 border-[#B7D9BC] text-sm focus:outline-none focus:border-primary bg-white"
               placeholder="Nama anak" />
           </div>
           <div>
             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Gender</label>
             <div class="grid grid-cols-2 gap-2">
               <button @click="editAnakForm.gender = 'Laki-laki'"
-                class="py-2.5 rounded-lg text-sm font-bold border-2 transition-all"
-                :class="editAnakForm.gender === 'Laki-laki' ? 'bg-blue-100 border-blue-400 text-blue-700' : 'border-outline-variant text-on-surface-variant'">
+                class="py-2.5 rounded-xl text-sm font-bold border-2 transition-all"
+                :class="editAnakForm.gender === 'Laki-laki' ? 'bg-blue-100 border-blue-400 text-blue-700' : 'border-[#B7D9BC] text-on-surface-variant bg-white'">
                 👦 Laki-laki
               </button>
               <button @click="editAnakForm.gender = 'Perempuan'"
-                class="py-2.5 rounded-lg text-sm font-bold border-2 transition-all"
-                :class="editAnakForm.gender === 'Perempuan' ? 'bg-pink-100 border-pink-400 text-pink-700' : 'border-outline-variant text-on-surface-variant'">
+                class="py-2.5 rounded-xl text-sm font-bold border-2 transition-all"
+                :class="editAnakForm.gender === 'Perempuan' ? 'bg-pink-100 border-pink-400 text-pink-700' : 'border-[#B7D9BC] text-on-surface-variant bg-white'">
                 👧 Perempuan
               </button>
             </div>
@@ -208,17 +227,17 @@
             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Tanggal Lahir</label>
             <div class="grid grid-cols-3 gap-2">
               <select v-model="editAnakForm.tanggal"
-                class="px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white appearance-none">
+                class="px-3 py-2.5 rounded-xl border-2 border-[#B7D9BC] text-sm focus:outline-none focus:border-primary bg-white appearance-none">
                 <option value="" disabled>Tgl</option>
                 <option v-for="d in 31" :key="d" :value="d">{{ d }}</option>
               </select>
               <select v-model="editAnakForm.bulan"
-                class="px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white appearance-none">
+                class="px-3 py-2.5 rounded-xl border-2 border-[#B7D9BC] text-sm focus:outline-none focus:border-primary bg-white appearance-none">
                 <option value="" disabled>Bulan</option>
                 <option v-for="(m, i) in months" :key="i" :value="i + 1">{{ m }}</option>
               </select>
               <select v-model="editAnakForm.tahun"
-                class="px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white appearance-none">
+                class="px-3 py-2.5 rounded-xl border-2 border-[#B7D9BC] text-sm focus:outline-none focus:border-primary bg-white appearance-none">
                 <option value="" disabled>Tahun</option>
                 <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
               </select>
@@ -227,11 +246,11 @@
         </div>
         <div class="flex gap-3 mt-6">
           <button @click="closeEditAnak"
-            class="flex-1 py-3 rounded-xl border border-outline-variant text-sm font-medium text-on-surface-variant hover:bg-gray-50 transition-colors">
+            class="flex-1 py-3 rounded-2xl text-sm font-bold text-on-surface-variant btn-pop-gray">
             Batal
           </button>
           <button @click="saveEditAnak"
-            class="flex-1 py-3 rounded-xl bg-[#2E7D32] text-white text-sm font-medium hover:bg-[#2E7D32]/90 transition-colors shadow-lg shadow-green-900/20">
+            class="flex-1 py-3 rounded-2xl text-white text-sm font-bold btn-pop-green">
             Simpan
           </button>
         </div>
@@ -463,3 +482,36 @@ function upgradePlan() {
   addAnakError.value = ''
 }
 </script>
+
+<style scoped>
+.btn-pop-green {
+  background-color: #6DBE7B;
+  box-shadow: 0 4px 0 #176c33;
+  transition: all 0.1s ease;
+}
+.btn-pop-green:active {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #176c33;
+}
+.btn-pop-green-sm {
+  background-color: #6DBE7B;
+  box-shadow: 0 3px 0 #176c33;
+  transition: all 0.1s ease;
+  color: white;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+}
+.btn-pop-green-sm:active {
+  transform: translateY(3px);
+  box-shadow: 0 0px 0 #176c33;
+}
+.btn-pop-gray {
+  background-color: #E5E7EB;
+  box-shadow: 0 4px 0 #9CA3AF;
+  transition: all 0.1s ease;
+}
+.btn-pop-gray:active {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #9CA3AF;
+}
+</style>

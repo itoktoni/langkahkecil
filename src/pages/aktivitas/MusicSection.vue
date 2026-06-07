@@ -14,7 +14,7 @@
         </ul>
       </div>
       <div class="bg-success-soft rounded-2xl p-4">
-        <p class="font-label-lg text-label-lg text-primary mb-1">💬 Pelajaran</p>
+          <p class="font-label-lg text-label-lg text-primary mb-1"><span class="w-6 h-6 rounded-full bg-success-soft border-2 border-[#B7D9BC] inline-flex items-center justify-center text-xs align-middle mr-1">💬</span> Pelajaran</p>
         <p class="text-sm text-on-surface-variant">{{ song.moral }}</p>
       </div>
     </div>

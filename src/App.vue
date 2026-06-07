@@ -1,7 +1,7 @@
 <template>
   <ReferralPage v-if="isReferral" />
   <div v-else class="bg-canvas-cream text-text-main min-h-screen">
-    <AppSidebar :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" @switch="app.switchTab" />
+    <AppSidebar :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" :user-gender="app.userGender" @switch="app.switchTab" />
     <AppHeader :title="app.pageTitle" :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" @switch="app.switchTab" />
 
     <main class="content-wrapper pb-24 lg:pb-8">

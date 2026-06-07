@@ -1,14 +1,14 @@
 <template>
   <div class="fade-in-up">
     <button @click="$emit('back')"
-      class="flex items-center gap-2 text-primary font-label-lg mb-stack-md hover:opacity-80 transition-opacity border border-primary-container px-3 py-1.5 rounded-full">
+      class="flex items-center gap-2 text-primary font-label-lg mb-stack-md hover:opacity-80 transition-opacity bg-success-soft px-4 py-2 rounded-full border-2 border-[#B7D9BC]">
       <span class="material-symbols-outlined text-xl">arrow_back</span>
       Kembali
     </button>
 
     <section class="mb-stack-lg">
       <div class="flex items-center gap-3 mb-2">
-        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" :style="{ background: item.bg }">{{ item.emoji }}</div>
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl border-2 border-white shadow-sm" :style="{ background: item.bg }">{{ item.emoji }}</div>
         <div>
           <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-text-main leading-tight">{{ item.title }}</h2>
           <p class="font-body-md text-body-md text-on-surface-variant">{{ item.desc }}</p>

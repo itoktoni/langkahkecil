@@ -6,6 +6,7 @@ export const useAppStore = defineStore('app', () => {
   const selectedPilar = ref(null)
   const selectedAnakId = ref(null)
   const userName = ref('Parent')
+  const userGender = ref('')
   const toolsAnakId = ref(null)
   const appReady = ref(false)
   const installDismissed = ref(false)
@@ -44,7 +45,7 @@ export const useAppStore = defineStore('app', () => {
   }
 
   return {
-    activeTab, selectedPilar, selectedAnakId, userName, toolsAnakId,
+    activeTab, selectedPilar, selectedAnakId, userName, userGender, toolsAnakId,
     appReady, installDismissed, pageTitle, switchCounter,
     switchTab, openPilarSub, closePilarSub
   }

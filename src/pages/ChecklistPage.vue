@@ -1,11 +1,12 @@
 <template>
   <div class="space-y-4">
     <div v-for="cl in checklists" :key="cl.id"
-      class="bg-white rounded-[24px] p-5 border-2 soft-shadow"
-      style="border-color: #2196F340; box-shadow: 0 4px 16px #2196F318">
+      class="bg-canvas-cream rounded-[24px] p-5 border-4 border-[#B7D9BC] shadow-md">
       <div class="flex items-center justify-between mb-3">
-        <h4 class="font-label-lg text-text-main">{{ cl.title }}</h4>
-        <span class="text-xs font-bold text-blue-600">{{ checked(cl) }}/{{ cl.items.length }}</span>
+        <h4 class="font-label-lg text-text-main flex items-center gap-2">
+          <span class="w-7 h-7 rounded-full bg-success-soft border-2 border-[#B7D9BC] flex items-center justify-center text-xs">✅</span> {{ cl.title }}
+        </h4>
+        <span class="text-xs font-bold text-primary bg-success-soft px-2 py-1 rounded-full">{{ checked(cl) }}/{{ cl.items.length }}</span>
       </div>
 
       <div class="space-y-2 mb-4">
@@ -13,36 +14,37 @@
           v-model="item.done"
           :label="item.label" />
         <div v-if="!cl.items.length" class="text-center text-xs text-on-surface-variant py-2">
+          <p class="text-2xl mb-1">📋</p>
           Belum ada item
         </div>
       </div>
 
-      <div class="w-full h-2 bg-blue-50 rounded-full overflow-hidden">
+      <div class="w-full h-2 bg-white rounded-full overflow-hidden">
         <div class="h-full rounded-full transition-all duration-700"
-          :style="{ width: percent(cl) + '%', background: '#2196F3' }"></div>
+          :style="{ width: percent(cl) + '%', background: '#176c33' }"></div>
       </div>
 
       <div class="flex items-center gap-2 mt-3">
         <button @click="openAddItem(cl)"
-          class="h-9 flex-1 rounded-xl border-2 border-dashed text-xs font-medium transition-colors flex items-center justify-center gap-1.5" style="border-color: #2196F350; color: #2196F3">
+          class="h-9 flex-1 rounded-xl border-2 border-dashed text-xs font-bold transition-colors flex items-center justify-center gap-1.5 border-[#B7D9BC] text-primary">
           <span class="material-symbols-outlined text-base">add</span>
           Tambah Item
         </button>
         <button @click="shareChecklist(cl)"
-          class="h-9 w-9 rounded-xl border-2 flex items-center justify-center transition-all active:scale-95"
-          style="border-color: #2196F350; color: #2196F3">
+          class="h-9 w-9 rounded-xl border-2 flex items-center justify-center transition-all active:scale-95 border-[#B7D9BC] text-primary">
           <span class="material-symbols-outlined text-base">share</span>
         </button>
       </div>
     </div>
 
     <div v-if="!checklists.length"
-      class="bg-white/70 rounded-[24px] p-6 soft-shadow text-center text-sm text-on-surface-variant">
-      Belum ada checklist
+      class="bg-canvas-cream rounded-[24px] p-8 text-center border-4 border-dashed border-[#B7D9BC]">
+      <p class="text-3xl mb-2">✅</p>
+      <p class="text-sm text-on-surface-variant font-medium">Belum ada checklist</p>
     </div>
 
     <button @click="showForm = true"
-      class="w-full py-3 mt-4 rounded-2xl bg-blue-500 text-white text-sm font-bold transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30 hover:bg-blue-600">
+      class="w-full py-3 mt-4 rounded-2xl text-white text-sm font-bold btn-pop-green flex items-center justify-center gap-2">
       <span class="material-symbols-outlined text-lg">add</span>
       Buat Checklist
     </button>
@@ -143,3 +145,15 @@ function shareChecklist(cl) {
   shareChecklistImage(cl.title, cl.items, checked(cl), percent(cl))
 }
 </script>
+
+<style scoped>
+.btn-pop-green {
+  background-color: #6DBE7B;
+  box-shadow: 0 4px 0 #176c33;
+  transition: all 0.1s ease;
+}
+.btn-pop-green:active {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0 #176c33;
+}
+</style>
