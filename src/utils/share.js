@@ -1,93 +1,63 @@
-async function generateImage(challenge, isComplete) {
-  const canvas = document.createElement('canvas')
-  canvas.width = 1080
-  canvas.height = 1920
-  const ctx = canvas.getContext('2d')
+import { createApp, h } from 'vue'
+import html2canvas from 'html2canvas-pro'
+import ShareCard from '../components/ShareCard.vue'
+import ShareChecklistCard from '../components/ShareChecklistCard.vue'
 
-  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height)
-  grad.addColorStop(0, '#1B5E20')
-  grad.addColorStop(1, '#2E7D32')
-  ctx.fillStyle = grad
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
+function generateRefCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  let code = ''
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)]
+  return code
+}
 
-  ctx.fillStyle = 'rgba(255,255,255,0.04)'
-  for (let i = 0; i < 6; i++) {
-    ctx.beginPath()
-    ctx.arc(200 + i * 180, 300 + (i % 2) * 200, 120 + i * 30, 0, Math.PI * 2)
-    ctx.fill()
-  }
+async function renderToCanvas(component, props) {
+  const container = document.createElement('div')
+  container.style.position = 'fixed'
+  container.style.left = '-9999px'
+  container.style.top = '0'
+  container.style.zIndex = '-1'
+  document.body.appendChild(container)
 
-  ctx.fillStyle = '#FFFFFF'
-  ctx.font = 'bold 72px Nunito Sans, sans-serif'
-  ctx.textAlign = 'center'
-  ctx.fillText(isComplete ? 'Challenge Selesai!' : 'Progress Challenge', canvas.width / 2, 400)
+  const app = createApp({ render: () => h(component, props) })
+  app.mount(container)
 
-  ctx.font = '200px Nunito Sans, sans-serif'
-  ctx.fillText(challenge.emoji || '🏆', canvas.width / 2, 680)
+  await new Promise(r => setTimeout(r, 300))
 
-  ctx.fillStyle = '#FFFFFF'
-  ctx.font = 'bold 64px Nunito Sans, sans-serif'
-  ctx.fillText(challenge.title, canvas.width / 2, 850)
+  const el = container.firstElementChild
+  const canvas = await html2canvas(el, {
+    width: el.scrollWidth,
+    height: el.scrollHeight,
+    scale: 2,
+    useCORS: true,
+    backgroundColor: null
+  })
 
-  ctx.fillStyle = 'rgba(255,255,255,0.7)'
-  ctx.font = '40px Nunito Sans, sans-serif'
-  ctx.fillText(challenge.category, canvas.width / 2, 920)
+  app.unmount()
+  document.body.removeChild(container)
 
-  const percent = Math.min(100, Math.round((challenge.points / challenge.maxPoints) * 100))
-  const barY = 1050
-  const barW = 700
-  const barH = 50
-  const barX = (canvas.width - barW) / 2
+  return canvas
+}
 
-  ctx.fillStyle = 'rgba(255,255,255,0.2)'
-  ctx.beginPath()
-  ctx.roundRect(barX, barY, barW, barH, 25)
-  ctx.fill()
-
-  ctx.fillStyle = '#FFFFFF'
-  ctx.beginPath()
-  ctx.roundRect(barX, barY, barW * (percent / 100), barH, 25)
-  ctx.fill()
-
-  ctx.fillStyle = '#FFFFFF'
-  ctx.font = 'bold 80px Nunito Sans, sans-serif'
-  ctx.fillText(`${challenge.points} / ${challenge.maxPoints} Poin`, canvas.width / 2, 1230)
-
-  if (challenge.notes) {
-    ctx.fillStyle = 'rgba(255,255,255,0.6)'
-    ctx.font = '36px Nunito Sans, sans-serif'
-    const lines = wrapText(ctx, challenge.notes, 800)
-    lines.forEach((line, i) => {
-      ctx.fillText(line, canvas.width / 2, 1340 + i * 50)
-    })
-  }
-
-  ctx.fillStyle = 'rgba(255,255,255,0.5)'
-  ctx.font = '36px Nunito Sans, sans-serif'
-  ctx.fillText('Halo Bunda - Aplikasi Pengembangan Anak', canvas.width / 2, 1800)
-
+async function canvasToBlob(canvas) {
   return new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
 }
 
-function wrapText(ctx, text, maxWidth) {
-  const words = text.split(' ')
-  const lines = []
-  let line = ''
-  for (const word of words) {
-    const test = line ? line + ' ' + word : word
-    if (ctx.measureText(test).width > maxWidth) {
-      if (line) lines.push(line)
-      line = word
-    } else {
-      line = test
-    }
-  }
-  if (line) lines.push(line)
-  return lines
-}
-
 async function doShare(challenge, isComplete) {
-  const blob = await generateImage(challenge, isComplete)
+  const refCode = challenge.referralCode || generateRefCode()
+  const canvas = await renderToCanvas(ShareCard, {
+    emoji: challenge.emoji || '🏆',
+    challengeTitle: challenge.title,
+    category: challenge.category,
+    color: challenge.color || '#2e7d32',
+    points: challenge.points,
+    maxPoints: challenge.maxPoints,
+    notes: challenge.notes || '',
+    isComplete,
+    childName: challenge.childName || 'Anak',
+    referralCode: refCode
+  })
+
+  const blob = await canvasToBlob(canvas)
   const label = isComplete ? 'selesai' : 'progress'
   const file = new File([blob], `challenge-${challenge.title}-${label}.png`, { type: 'image/png' })
 
@@ -122,68 +92,17 @@ export function shareProgress(challenge) {
   return doShare(challenge, false)
 }
 
-export async function shareChecklistImage(title, items, checkedCount, percent) {
-  const canvas = document.createElement('canvas')
-  canvas.width = 1080
-  canvas.height = 1920
-  const ctx = canvas.getContext('2d')
-
-  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height)
-  grad.addColorStop(0, '#0D47A1')
-  grad.addColorStop(1, '#1976D2')
-  ctx.fillStyle = grad
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-  ctx.fillStyle = 'rgba(255,255,255,0.04)'
-  for (let i = 0; i < 6; i++) {
-    ctx.beginPath()
-    ctx.arc(200 + i * 180, 300 + (i % 2) * 200, 120 + i * 30, 0, Math.PI * 2)
-    ctx.fill()
-  }
-
-  ctx.textAlign = 'center'
-  ctx.fillStyle = '#FFFFFF'
-  ctx.font = 'bold 72px Nunito Sans, sans-serif'
-  ctx.fillText('Checklist Harian', canvas.width / 2, 350)
-
-  ctx.font = 'bold 64px Nunito Sans, sans-serif'
-  ctx.fillText(title, canvas.width / 2, 470)
-
-  ctx.fillStyle = '#FFFFFF'
-  ctx.font = 'bold 80px Nunito Sans, sans-serif'
-  ctx.fillText(`${checkedCount} / ${items.length}`, canvas.width / 2, 620)
-
-  const barY = 700
-  const barW = 700
-  const barH = 50
-  const barX = (canvas.width - barW) / 2
-
-  ctx.fillStyle = 'rgba(255,255,255,0.2)'
-  ctx.beginPath()
-  ctx.roundRect(barX, barY, barW, barH, 25)
-  ctx.fill()
-
-  ctx.fillStyle = '#FFFFFF'
-  ctx.beginPath()
-  ctx.roundRect(barX, barY, barW * (percent / 100), barH, 25)
-  ctx.fill()
-
-  const startY = 860
-  ctx.textAlign = 'left'
-  ctx.font = '44px Nunito Sans, sans-serif'
-  items.forEach((item, i) => {
-    const y = startY + i * 70
-    const icon = item.done ? '✅' : '⬜'
-    ctx.fillStyle = item.done ? '#FFFFFF' : 'rgba(255,255,255,0.6)'
-    ctx.fillText(`${icon}  ${item.label}`, 180, y)
+export async function shareChecklistImage(title, items, checkedCount, percent, options = {}) {
+  const refCode = options.referralCode || generateRefCode()
+  const canvas = await renderToCanvas(ShareChecklistCard, {
+    title,
+    items,
+    checkedCount,
+    percent,
+    referralCode: refCode
   })
 
-  ctx.textAlign = 'center'
-  ctx.fillStyle = 'rgba(255,255,255,0.5)'
-  ctx.font = '36px Nunito Sans, sans-serif'
-  ctx.fillText('Halo Bunda - Aplikasi Pengembangan Anak', canvas.width / 2, 1800)
-
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
+  const blob = await canvasToBlob(canvas)
   const file = new File([blob], `checklist-${title}.png`, { type: 'image/png' })
 
   if (navigator.share && navigator.canShare({ files: [file] })) {

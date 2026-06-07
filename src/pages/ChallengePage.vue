@@ -35,7 +35,7 @@
                 :style="{ background: c.color }">
                 +1 Poin
               </button>
-              <button @click.stop="shareProgress(c)"
+              <button @click.stop="handleShareProgress(c)"
                 class="h-9 w-9 rounded-xl text-xs font-bold border-2 transition-all active:scale-95 flex items-center justify-center"
                 :style="{ borderColor: c.color + '80', color: c.color }">
                 <span class="material-symbols-outlined text-base">share</span>
@@ -83,7 +83,7 @@
               <p class="text-sm font-medium text-text-main">{{ c.title }}</p>
               <p class="text-xs text-on-surface-variant">{{ c.maxPoints }} poin terkumpul</p>
             </div>
-            <button @click="shareChallenge(c)"
+            <button @click="handleShareChallenge(c)"
               class="w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-95"
               style="background: #4CAF5015; color: #4CAF50">
               <span class="material-symbols-outlined text-xl">share</span>
@@ -146,6 +146,16 @@ import AppTextarea from '../components/AppTextarea.vue'
 import AppButton from '../components/AppButton.vue'
 import { playAddSound, playRemoveSound } from '../utils/sound.js'
 import { shareChallenge, shareProgress } from '../utils/share.js'
+import { useToolsStore } from '../stores/toolsStore.js'
+import { useAnakStore } from '../stores/anakStore.js'
+
+const tools = useToolsStore()
+const anakStore = useAnakStore()
+
+const selectedAnakName = computed(() => {
+  const a = anakStore.anakList.find(a => a.id === tools.toolsAnakId)
+  return a ? a.nama : 'Anak'
+})
 
 const props = defineProps({
   challenges: { type: Array, default: () => [] },
@@ -194,6 +204,14 @@ function addPoint(c, amount = 1) {
 function removePoint(c) {
   playRemoveSound()
   emit('remove-point', { id: c.id })
+}
+
+function handleShareProgress(c) {
+  shareProgress({ ...c, childName: selectedAnakName.value })
+}
+
+function handleShareChallenge(c) {
+  shareChallenge({ ...c, childName: selectedAnakName.value })
 }
 
 function openEdit(c) {

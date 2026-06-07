@@ -1,5 +1,6 @@
 <template>
-  <div class="bg-canvas-cream text-text-main min-h-screen">
+  <ReferralPage v-if="isReferral" />
+  <div v-else class="bg-canvas-cream text-text-main min-h-screen">
     <AppSidebar :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" @switch="app.switchTab" />
     <AppHeader :title="app.pageTitle" :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" @switch="app.switchTab" />
 
@@ -70,7 +71,10 @@ import ProfileTab from './pages/ProfileTab.vue'
 import ChallengePage from './pages/ChallengePage.vue'
 import JadwalPage from './pages/JadwalPage.vue'
 import ChecklistPage from './pages/ChecklistPage.vue'
+import ReferralPage from './pages/ReferralPage.vue'
 import AnakSelector from './components/AnakSelector.vue'
+
+const isReferral = computed(() => new URLSearchParams(window.location.search).has('ref'))
 
 const app = useAppStore()
 const anak = useAnakStore()

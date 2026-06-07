@@ -230,25 +230,27 @@ function closeEvaluasi() {
 function shareEval() {
   if (!evalAnak.value || !evalSubpilar.value) return
   shareProgress({
-    title: `Evaluasi ${evalSubpilar.value.title} - ${evalAnak.value.nama}`,
+    title: `Evaluasi ${evalSubpilar.value.title}`,
     category: getPilarName(evalSubpilar.value.pilar),
     emoji: evalSubpilar.value.emoji,
     color: evalColor.value,
     points: evalPoints.value,
     maxPoints: evalMax,
-    notes: `${evalPoints.value} dari ${evalMax} poin`
+    notes: `${evalPoints.value} dari ${evalMax} poin`,
+    childName: evalAnak.value.nama
   })
 }
 
 function shareEvalDirect(anak, sp) {
   shareProgress({
-    title: `${sp.title} - ${anak.nama}`,
+    title: sp.title,
     category: getPilarName(sp.pilar),
     emoji: sp.emoji,
     color: sp.color,
     points: Math.round(sp.progress / 10),
     maxPoints: 10,
-    notes: `Progress ${sp.progress}%`
+    notes: `Progress ${sp.progress}%`,
+    childName: anak.nama
   })
 }
 </script>

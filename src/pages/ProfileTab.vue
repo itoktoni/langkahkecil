@@ -156,6 +156,17 @@
         <div v-else class="text-center text-sm text-on-surface-variant py-2">
           Paket aktif
         </div>
+
+        <div class="mt-4 pt-4 border-t border-outline-variant">
+          <button @click="shareReferral"
+            class="w-full py-3 rounded-xl font-label-lg border-2 border-[#2E7D32] text-[#2E7D32] hover:bg-[#E8F5E9] transition-all duration-200 flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-lg">share</span>
+            Share Link Referral
+          </button>
+          <p v-if="referralCode" class="text-center text-xs text-on-surface-variant mt-2">
+            Kode: <span class="font-bold text-[#2E7D32]">{{ referralCode }}</span>
+          </p>
+        </div>
       </div>
     </div>
 
@@ -262,6 +273,31 @@ const plans = [
 ]
 const selectedPlan = ref('premium')
 const addAnakError = ref('')
+const referralCode = ref('')
+
+function generateRefCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  let code = ''
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)]
+  return code
+}
+
+function shareReferral() {
+  const code = referralCode.value || generateRefCode()
+  referralCode.value = code
+  const appUrl = import.meta.env.VITE_APP_URL || 'https://halobunda.app'
+  const appName = import.meta.env.VITE_APP_NAME || 'Halo Bunda'
+  const url = `${appUrl}?ref=${code}`
+  const text = `Yuk coba ${appName}! Aplikasi pengembangan anak. Pakai kode referral: ${code} 🌸\n${url}`
+
+  if (navigator.share) {
+    navigator.share({ title: `Referral ${appName}`, text, url }).catch(() => {})
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Link referral sudah disalin!')
+    })
+  }
+}
 
 const maxAnak = computed(() => currentPlan.value === 'family' ? 5 : 1)
 const canAddAnak = computed(() => {
