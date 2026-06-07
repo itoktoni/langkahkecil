@@ -9,9 +9,9 @@
       <ToolsTab v-show="activeTab === 'tools'" :anak-list="anakList" />
       <ProfileTab v-show="activeTab === 'profile'" :anak-list="anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" />
 
-      <div v-show="activeTab === 'hafalan'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+      <div v-show="activeTab === 'challenge'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
         <AnakSelector v-if="anakList.length" :anak-list="anakList" v-model="toolsAnakId" class="mb-stack-lg" />
-        <HafalanPage :hafalan="toolsData.hafalan" :hafalan-history="toolsData.hafalanHistory" @add-hafalan="onAddHafalan" @add-point="onAddPoint" @remove-point="onRemovePoint" @edit-hafalan="onEditHafalan" />
+        <ChallengePage :challenges="toolsData.challenges" :challenge-history="toolsData.challengeHistory" @add-challenge="onAddChallenge" @add-point="onAddPoint" @remove-point="onRemovePoint" @edit-challenge="onEditChallenge" />
       </div>
 
       <div v-show="activeTab === 'jadwal'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
@@ -21,7 +21,7 @@
 
       <div v-show="activeTab === 'checklist'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
         <AnakSelector v-if="anakList.length" :anak-list="anakList" v-model="toolsAnakId" class="mb-stack-lg" />
-        <ChecklistPage :checklist="toolsData.checklist" />
+        <ChecklistPage :checklists="toolsData.checklists" @add-checklist="onAddChecklist" @remove-checklist="onRemoveChecklist" @add-item="onAddChecklistItem" @remove-item="onRemoveChecklistItem" />
       </div>
     </main>
 
@@ -32,7 +32,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { tabs } from './data/pilars.js'
-import { hafalanByAnak, defaultHafalan } from './data/hafalan.js'
+import { challengeByAnak, defaultChallenge } from './data/challenge.js'
 import AppHeader from './layouts/AppHeader.vue'
 import AppSidebar from './layouts/AppSidebar.vue'
 import BottomNav from './layouts/BottomNav.vue'
@@ -40,7 +40,7 @@ import PilarTab from './pages/PilarTab.vue'
 import ProgressTab from './pages/ProgressTab.vue'
 import ToolsTab from './pages/ToolsTab.vue'
 import ProfileTab from './pages/ProfileTab.vue'
-import HafalanPage from './pages/HafalanPage.vue'
+import ChallengePage from './pages/ChallengePage.vue'
 import JadwalPage from './pages/JadwalPage.vue'
 import ChecklistPage from './pages/ChecklistPage.vue'
 import AnakSelector from './components/AnakSelector.vue'
@@ -96,7 +96,7 @@ const pageTitle = computed(() => {
     progress: 'Statistik',
     tools: 'Buku Alat',
     profile: 'Profile',
-    hafalan: 'Hafalan',
+    challenge: 'Challenge',
     jadwal: 'Jadwal Harian',
     checklist: 'Checklist Harian'
   }
@@ -118,45 +118,60 @@ const allHistory = computed(() => {
 
 const toolsDataByAnak = {
   1: {
-    ...JSON.parse(JSON.stringify(hafalanByAnak[1] || defaultHafalan)),
+    ...JSON.parse(JSON.stringify(challengeByAnak[1] || defaultChallenge)),
     schedules: [
       { time: '07:00', label: 'Sarapan & Persiapan Sekolah', done: true },
       { time: '08:00', label: 'Belajar Membaca', done: true },
       { time: '16:00', label: 'Waktu Bermain Bebas', done: false },
       { time: '20:00', label: 'Membaca Buku', done: false }
     ],
-    checklist: [
-      { label: 'Membaca buku sebelum tidur', done: true },
-      { label: 'Merapiikan mainan sendiri', done: false },
-      { label: 'Minum air putih cukup', done: false },
-      { label: 'Sholat 5 waktu', done: true }
+    checklists: [
+      {
+        id: 1, title: 'Pagi Hari',
+        items: [
+          { label: 'Sholat Subuh', done: true },
+          { label: 'Membaca buku sebelum tidur', done: true },
+          { label: 'Sarapan sehat', done: false }
+        ]
+      },
+      {
+        id: 2, title: 'Malam Hari',
+        items: [
+          { label: 'Merapiikan mainan', done: false },
+          { label: 'Minum air putih', done: true },
+          { label: 'Sholat Isya', done: true }
+        ]
+      }
     ]
   },
   2: {
-    ...JSON.parse(JSON.stringify(hafalanByAnak[2] || defaultHafalan)),
+    ...JSON.parse(JSON.stringify(challengeByAnak[2] || defaultChallenge)),
     schedules: [
       { time: '07:30', label: 'Sarapan & Bermain', done: true },
       { time: '10:00', label: 'Belajar Menggambar', done: false },
       { time: '15:00', label: 'Tidur Siang', done: true }
     ],
-    checklist: [
-      { label: 'Sikat Gigi Sendiri', done: true },
-      { label: 'Membereskan Mainan', done: false },
-      { label: 'Makan Sendiri', done: true }
+    checklists: [
+      {
+        id: 1, title: 'Kegiatan Harian',
+        items: [
+          { label: 'Sikat Gigi Sendiri', done: true },
+          { label: 'Membereskan Mainan', done: false },
+          { label: 'Makan Sendiri', done: true }
+        ]
+      }
     ]
   }
 }
 
 const defaultToolsData = {
-  hafalan: [],
-  hafalanHistory: [],
+  challenges: [],
+  challengeHistory: [],
   schedules: [
     { time: '07:00', label: 'Sarapan', done: false },
     { time: '20:00', label: 'Tidur', done: false }
   ],
-  checklist: [
-    { label: 'Membaca buku', done: false }
-  ]
+  checklists: []
 }
 
 const anakToolsData = ref({})
@@ -170,46 +185,53 @@ function getAnakToolsData(anakId) {
 
 const toolsData = computed(() => getAnakToolsData(toolsAnakId.value))
 
-function onAddHafalan(item) {
-  toolsData.value.hafalan.push(item)
+function onAddChallenge(item) {
+  toolsData.value.challenges.push(item)
 }
 
 function onAddPoint({ id, amount }) {
-  const h = toolsData.value.hafalan.find(h => h.id === id)
-  if (h) {
-    h.points = Math.min(h.maxPoints, h.points + amount)
+  const c = toolsData.value.challenges.find(c => c.id === id)
+  if (c) {
+    c.points = Math.min(c.maxPoints, c.points + amount)
   }
 }
 
 function onRemovePoint({ id }) {
-  const h = toolsData.value.hafalan.find(h => h.id === id)
-  if (h) {
-    h.points = Math.max(0, h.points - 1)
+  const c = toolsData.value.challenges.find(c => c.id === id)
+  if (c) {
+    c.points = Math.max(0, c.points - 1)
   }
 }
 
-function onEditHafalan(data) {
-  const h = toolsData.value.hafalan.find(h => h.id === data.id)
-  if (h) {
-    h.category = data.category
-    h.title = data.title
-    h.notes = data.notes
-    h.emoji = data.emoji
-    h.bg = data.bg
-    h.color = data.color
-    h.maxPoints = data.maxPoints
+function onEditChallenge(data) {
+  const c = toolsData.value.challenges.find(c => c.id === data.id)
+  if (c) {
+    c.category = data.category
+    c.title = data.title
+    c.notes = data.notes
+    c.emoji = data.emoji
+    c.bg = data.bg
+    c.color = data.color
+    c.maxPoints = data.maxPoints
   }
 }
 
-function onFinishHafalan({ id }) {
-  const idx = toolsData.value.hafalan.findIndex(h => h.id === id)
-  if (idx > -1) {
-    const h = toolsData.value.hafalan.splice(idx, 1)[0]
-    toolsData.value.hafalanHistory.unshift({
-      id: h.id, title: h.title, category: h.category,
-      emoji: h.emoji, bg: h.bg, maxPoints: h.maxPoints
-    })
-  }
+function onAddChecklist(item) {
+  toolsData.value.checklists.push(item)
+}
+
+function onRemoveChecklist(index) {
+  toolsData.value.checklists.splice(index, 1)
+}
+
+function onAddChecklistItem({ checklistId, item }) {
+  const cl = toolsData.value.checklists.find(c => c.id === checklistId)
+  if (cl) cl.items.push(item)
+}
+
+function onRemoveChecklistItem({ checklistId, itemIndex }) {
+  const cl = toolsData.value.checklists.find(c => c.id === checklistId)
+  if (cl) cl.items.splice(itemIndex, 1)
 }
 
 function switchTab(tabId) {
