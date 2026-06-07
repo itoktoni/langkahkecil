@@ -12,7 +12,7 @@
           </div>
           <div class="flex-1 min-w-0">
             <p class="font-label-lg text-text-main">{{ anak.nama }}</p>
-            <p class="text-sm text-on-surface-variant">{{ ageLabel(anak.tahun, anak.bulan, anak.tanggal) }}{{ anak.gender ? ' · ' + anak.gender : '' }}</p>
+            <p class="text-sm text-on-surface-variant">{{ ageLabel(anak.tahun, anak.bulan, anak.tanggal) }}</p>
           </div>
           <div class="flex items-center gap-2">
             <span v-if="anak.subpilars" class="text-xs font-bold text-on-surface-variant bg-surface-container-low px-2 py-1 rounded-full">

@@ -20,7 +20,7 @@
           <div class="flex-1 min-w-0">
             <div class="mb-1">
               <p class="text-[11px] font-bold uppercase tracking-wider mb-0.5" :style="{ color: c.color }">{{ c.category }}</p>
-              <p class="font-label-lg text-text-main">{{ c.title }}</p>
+              <p class="font-label-lg font-bold text-text-main">{{ c.title }}</p>
               <p v-if="c.notes" class="text-xs text-on-surface-variant mt-0.5">{{ c.notes }}</p>
             </div>
 

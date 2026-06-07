@@ -1,31 +1,31 @@
 <template>
   <div class="bg-canvas-cream text-text-main min-h-screen">
-    <AppSidebar :tabs="tabs" :active-tab="activeTab" :user-name="userName" @switch="switchTab" />
-    <AppHeader :title="pageTitle" :tabs="tabs" :active-tab="activeTab" :user-name="userName" @switch="switchTab" />
+    <AppSidebar :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" @switch="app.switchTab" />
+    <AppHeader :title="app.pageTitle" :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" @switch="app.switchTab" />
 
     <main class="content-wrapper pb-24 lg:pb-8">
-      <PilarTab ref="pilarTabRef" v-show="activeTab === 'pilar'" :selected-pilar="selectedPilar" @select-pilar="openPilarSub" @close-pilar="closePilarSub" />
-      <ProgressTab v-show="activeTab === 'progress'" :anak-list="anakList" :history="allHistory" :selected-anak-id="selectedAnakId" @reset-subpilar="resetSubpilar" />
-      <ToolsTab v-show="activeTab === 'tools'" :anak-list="anakList" />
-      <ProfileTab v-show="activeTab === 'profile'" :anak-list="anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" />
+      <PilarTab ref="pilarTabRef" v-show="app.activeTab === 'pilar'" :selected-pilar="app.selectedPilar" @select-pilar="app.openPilarSub" @close-pilar="app.closePilarSub" />
+      <ProgressTab v-show="app.activeTab === 'progress'" :anak-list="anak.anakList" :selected-anak-id="app.selectedAnakId" @reset-subpilar="anak.resetSubpilar" />
+      <ToolsTab v-show="app.activeTab === 'tools'" :anak-list="anak.anakList" />
+      <ProfileTab v-show="app.activeTab === 'profile'" :anak-list="anak.anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" />
 
-      <div v-show="activeTab === 'challenge'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
-        <AnakSelector v-if="anakList.length" :anak-list="anakList" v-model="toolsAnakId" class="mb-stack-lg" />
-        <ChallengePage :challenges="toolsData.challenges" :challenge-history="toolsData.challengeHistory" @add-challenge="onAddChallenge" @add-point="onAddPoint" @remove-point="onRemovePoint" @edit-challenge="onEditChallenge" />
+      <div v-show="app.activeTab === 'challenge'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+        <AnakSelector v-if="anak.anakList.length" :anak-list="anak.anakList" v-model="tools.toolsAnakId" class="mb-stack-lg" />
+        <ChallengePage :challenges="tools.toolsData.challenges" :challenge-history="tools.toolsData.challengeHistory" @add-challenge="tools.addChallenge" @add-point="tools.addPoint" @remove-point="tools.removePoint" @edit-challenge="tools.editChallenge" />
       </div>
 
-      <div v-show="activeTab === 'jadwal'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
-        <AnakSelector v-if="anakList.length" :anak-list="anakList" v-model="toolsAnakId" class="mb-stack-lg" />
-        <JadwalPage :schedules="toolsData.schedules" @add-schedule="onAddSchedule" @remove-schedule="onRemoveSchedule" />
+      <div v-show="app.activeTab === 'jadwal'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+        <AnakSelector v-if="anak.anakList.length" :anak-list="anak.anakList" v-model="tools.toolsAnakId" class="mb-stack-lg" />
+        <JadwalPage :schedules="tools.toolsData.schedules" @add-schedule="tools.addSchedule" @remove-schedule="tools.removeSchedule" />
       </div>
 
-      <div v-show="activeTab === 'checklist'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
-        <AnakSelector v-if="anakList.length" :anak-list="anakList" v-model="toolsAnakId" class="mb-stack-lg" />
-        <ChecklistPage :checklists="toolsData.checklists" @add-checklist="onAddChecklist" @remove-checklist="onRemoveChecklist" @add-item="onAddChecklistItem" @remove-item="onRemoveChecklistItem" />
+      <div v-show="app.activeTab === 'checklist'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+        <AnakSelector v-if="anak.anakList.length" :anak-list="anak.anakList" v-model="tools.toolsAnakId" class="mb-stack-lg" />
+        <ChecklistPage :checklists="tools.toolsData.checklists" @add-checklist="tools.addChecklist" @remove-checklist="tools.removeChecklist" @add-item="tools.addChecklistItem" @remove-item="tools.removeChecklistItem" />
       </div>
     </main>
 
-    <BottomNav :tabs="tabs" :active-tab="activeTab" @switch="switchTab" />
+    <BottomNav :tabs="tabs" :active-tab="app.activeTab" @switch="app.switchTab" />
 
     <Transition name="install-bar">
       <div v-if="showInstallBar" class="fixed bottom-24 left-4 right-4 z-50 lg:bottom-4 lg:left-auto lg:right-4 lg:w-80">
@@ -41,7 +41,7 @@
             class="px-4 py-2 rounded-xl bg-primary text-on-primary text-sm font-bold active:scale-95 transition-transform">
             Install
           </button>
-          <button @click="dismissInstall"
+          <button @click="app.installDismissed = true"
             class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low">
             <span class="material-symbols-outlined text-lg">close</span>
           </button>
@@ -56,14 +56,10 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { tabs } from './data/pilars.js'
 import { challengeByAnak, defaultChallenge } from './data/challenge.js'
 import { useInstall } from './composables/useInstall.js'
-import { ageLabel, ageGroup } from './utils/age.js'
-import {
-  getAnakList, saveAnak,
-  getChallenges, saveChallenge, removeChallenge,
-  getChallengeHistory, saveChallengeHistory,
-  getChecklists, saveChecklist, removeChecklist,
-  getSchedules, saveSchedule, removeSchedule
-} from './db.js'
+import { getAnakList, saveAnak as dbSaveAnak, saveChallenge, saveChallengeHistory, saveChecklist, saveSchedule } from './db.js'
+import { useAppStore } from './stores/appStore.js'
+import { useAnakStore } from './stores/anakStore.js'
+import { useToolsStore } from './stores/toolsStore.js'
 import AppHeader from './layouts/AppHeader.vue'
 import AppSidebar from './layouts/AppSidebar.vue'
 import BottomNav from './layouts/BottomNav.vue'
@@ -76,21 +72,14 @@ import JadwalPage from './pages/JadwalPage.vue'
 import ChecklistPage from './pages/ChecklistPage.vue'
 import AnakSelector from './components/AnakSelector.vue'
 
-const activeTab = ref('pilar')
-const selectedPilar = ref(null)
-const selectedAnakId = ref(null)
-const userName = ref('Azizah')
+const app = useAppStore()
+const anak = useAnakStore()
+const tools = useToolsStore()
+
 const pilarTabRef = ref(null)
-const toolsAnakId = ref(null)
-const appReady = ref(false)
 const { canInstall, install: installApp } = useInstall()
-const installDismissed = ref(false)
 
-const showInstallBar = computed(() => canInstall.value && !installDismissed.value)
-
-function dismissInstall() {
-  installDismissed.value = true
-}
+const showInstallBar = computed(() => canInstall.value && !app.installDismissed)
 
 const defaultAnakList = [
   {
@@ -157,46 +146,10 @@ const defaultToolsByAnak = {
   }
 }
 
-const anakList = ref([])
-const anakToolsData = ref({})
-
-const emptyToolsData = { challenges: [], challengeHistory: [], checklists: [], schedules: [] }
-
-function getAnakToolsData(anakId) {
-  if (!anakToolsData.value[anakId]) {
-    anakToolsData.value[anakId] = JSON.parse(JSON.stringify(emptyToolsData))
-  }
-  return anakToolsData.value[anakId]
-}
-
-const toolsData = computed(() => getAnakToolsData(toolsAnakId.value))
-
-const pageTitle = computed(() => {
-  const titles = { pilar: `Halo ${userName.value}!`, progress: 'Statistik', tools: 'Buku Alat', profile: 'Profile', challenge: 'Challenge', jadwal: 'Jadwal Harian', checklist: 'Checklist Harian' }
-  return titles[activeTab.value] || `Halo ${userName.value}!`
-})
-
-const allHistory = computed(() => {
-  return anakList.value
-    .flatMap(a => (a.history || []).map(h => ({ ...h, anakNama: a.nama, anakEmoji: a.emoji })))
-    .sort((a, b) => {
-      const parse = s => { const [d, m, y] = s.split(' '); const months = { Jan:0, Feb:1, Mar:2, Apr:3, Mei:4, Jun:5, Jul:6, Agu:7, Sep:8, Okt:9, Nov:10, Des:11 }; return new Date(y, months[m], d) }
-      return parse(b.date) - parse(a.date)
-    })
-})
-
-function getUsia(anak) {
-  return ageLabel(anak.tahun, anak.bulan, anak.tanggal)
-}
-
-function getAgeGroup(anak) {
-  return ageGroup(anak.tahun)
-}
-
 async function seedAndLoad() {
   const existing = await getAnakList()
   if (existing.length === 0) {
-    for (const a of defaultAnakList) await saveAnak(JSON.parse(JSON.stringify(a)))
+    for (const a of defaultAnakList) await dbSaveAnak(JSON.parse(JSON.stringify(a)))
     for (const [anakId, data] of Object.entries(defaultToolsByAnak)) {
       const id = Number(anakId)
       for (const c of (data.challenges || [])) await saveChallenge({ ...c, anakId: id })
@@ -205,104 +158,26 @@ async function seedAndLoad() {
       for (const s of (data.schedules || [])) await saveSchedule({ ...s, anakId: id })
     }
   }
-  anakList.value = await getAnakList()
-  if (anakList.value.length && !toolsAnakId.value) {
-    toolsAnakId.value = anakList.value[0].id
-  }
-  for (const anak of anakList.value) {
-    const challenges = await getChallenges(anak.id)
-    const challengeHistory = await getChallengeHistory(anak.id)
-    const checklists = await getChecklists(anak.id)
-    const schedules = await getSchedules(anak.id)
-    anakToolsData.value[anak.id] = { challenges, challengeHistory, checklists, schedules }
-  }
-  appReady.value = true
+  await anak.loadAnakList()
+  await tools.loadToolsData(anak.anakList)
+  app.appReady = true
 }
 
-function persistChallenge(item) { saveChallenge({ ...item, anakId: toolsAnakId.value }) }
-
-function onAddChallenge(item) {
-  toolsData.value.challenges.push(item)
-  persistChallenge(item)
+function handleProfileMenu(menuId) {
+  console.log('Profile menu clicked:', menuId)
 }
 
-function onAddPoint({ id, amount }) {
-  const c = toolsData.value.challenges.find(c => c.id === id)
-  if (c) { c.points = Math.min(c.maxPoints, c.points + amount); persistChallenge(c) }
-}
-
-function onRemovePoint({ id }) {
-  const c = toolsData.value.challenges.find(c => c.id === id)
-  if (c) { c.points = Math.max(0, c.points - 1); persistChallenge(c) }
-}
-
-function onEditChallenge(data) {
-  const c = toolsData.value.challenges.find(c => c.id === data.id)
-  if (c) { Object.assign(c, data); saveChallenge(c) }
-}
-
-function persistChecklist(item) { saveChecklist({ ...item, anakId: toolsAnakId.value }) }
-
-function onAddChecklist(item) {
-  toolsData.value.checklists.push(item)
-  persistChecklist(item)
-}
-
-function onRemoveChecklist(index) {
-  const removed = toolsData.value.checklists.splice(index, 1)[0]
-  if (removed?.id) removeChecklist(removed.id)
-}
-
-function onAddChecklistItem({ checklistId, item }) {
-  const cl = toolsData.value.checklists.find(c => c.id === checklistId)
-  if (cl) { cl.items.push(item); persistChecklist(cl) }
-}
-
-function onRemoveChecklistItem({ checklistId, itemIndex }) {
-  const cl = toolsData.value.checklists.find(c => c.id === checklistId)
-  if (cl) { cl.items.splice(itemIndex, 1); persistChecklist(cl) }
-}
-
-function persistSchedule(item) { saveSchedule({ ...item, anakId: toolsAnakId.value }) }
-
-function onAddSchedule(item) {
-  toolsData.value.schedules.push(item)
-  persistSchedule(item)
-}
-
-function onRemoveSchedule(item) {
-  const idx = toolsData.value.schedules.indexOf(item)
-  if (idx > -1) { toolsData.value.schedules.splice(idx, 1); if (item.id) removeSchedule(item.id) }
-}
-
-function switchTab(tabId) {
-  if (activeTab.value !== tabId) history.pushState({ action: 'tab', from: activeTab.value }, '')
-  activeTab.value = tabId
-  selectedPilar.value = null
-  window.scrollTo(0, 0)
-}
-
-function openPilarSub(key) {
-  selectedPilar.value = key
-  history.pushState({ action: 'pilar' }, '')
-  window.scrollTo(0, 0)
-}
-
-function closePilarSub() { selectedPilar.value = null }
-
-function handleProfileMenu(menuId) { console.log('Profile menu clicked:', menuId) }
-
-function goToAnakProgress(anak) {
-  if (activeTab.value !== 'progress') history.pushState({ action: 'tab', from: activeTab.value }, '')
-  selectedAnakId.value = anak.id
-  activeTab.value = 'progress'
+function goToAnakProgress(anakItem) {
+  if (app.activeTab !== 'progress') history.pushState({ action: 'tab', from: app.activeTab }, '')
+  app.selectedAnakId = anakItem.id
+  app.activeTab = 'progress'
   window.scrollTo(0, 0)
 }
 
 function handleBack() {
   if (pilarTabRef.value?.goBack()) return
-  if (selectedPilar.value) { selectedPilar.value = null; return }
-  if (activeTab.value !== 'pilar') { activeTab.value = 'pilar'; window.scrollTo(0, 0); return }
+  if (app.selectedPilar) { app.selectedPilar = null; return }
+  if (app.activeTab !== 'pilar') { app.activeTab = 'pilar'; window.scrollTo(0, 0); return }
 }
 
 onMounted(async () => {
@@ -314,12 +189,4 @@ onMounted(async () => {
 onUnmounted(() => {
   window.removeEventListener('popstate', handleBack)
 })
-
-function resetSubpilar({ anak, subpilar }) {
-  const idx = anak.completedSubpilars.findIndex(s => s.key === subpilar.key)
-  if (idx > -1) {
-    anak.completedSubpilars.splice(idx, 1)
-    anak.subpilars.push({ ...subpilar, progress: 0 })
-  }
-}
 </script>

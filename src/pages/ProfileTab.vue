@@ -92,7 +92,7 @@
           </div>
           <div class="flex-1">
             <p class="font-label-lg text-text-main">{{ anak.nama }}</p>
-            <p class="text-sm text-on-surface-variant">{{ ageLabel(anak.tahun, anak.bulan, anak.tanggal) }}{{ anak.gender ? ' · ' + anak.gender : '' }}</p>
+            <p class="text-sm text-on-surface-variant">{{ ageLabel(anak.tahun, anak.bulan, anak.tanggal) }}</p>
           </div>
           <button @click.stop="toggleMenu(anak.id)"
             class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
@@ -324,6 +324,13 @@ function saveEditAnak() {
   const anak = editAnak.value
   anak.nama = editAnakForm.value.nama.trim()
   anak.gender = editAnakForm.value.gender
+  if (anak.gender === 'Perempuan') {
+    anak.emoji = '👧'
+    anak.bg = '#FCE4EC'
+  } else if (anak.gender === 'Laki-laki') {
+    anak.emoji = '👦'
+    anak.bg = '#E3F2FD'
+  }
   anak.tanggal = editAnakForm.value.tanggal
   anak.bulan = editAnakForm.value.bulan
   anak.tahun = editAnakForm.value.tahun
