@@ -28,7 +28,7 @@
             <!-- Content -->
             <div class="px-5 py-5 space-y-2">
               <!-- Narrator -->
-              <div class="bg-surface-container-low rounded-2xl p-4 border border-outline-variant">
+              <div class="bg-surface-container-low rounded-2xl mb-5 p-4 border border-outline-variant">
                 <div class="flex items-center justify-between mb-2">
                   <div class="flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary text-lg">auto_stories</span>

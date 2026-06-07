@@ -54,6 +54,11 @@
                   <span>{{ (sp.activities || []).length }} aktivitas</span>
                 </div>
                 <div class="flex items-center gap-2">
+                  <button @click.stop="$emit('reset-skill', { anak, skill: sp })"
+                    class="h-8 w-8 rounded-lg flex items-center justify-center border-2 transition-all active:scale-95"
+                    style="border-color: #C6282860; color: #C62828;">
+                    <span class="material-symbols-outlined text-base">delete</span>
+                  </button>
                   <button @click.stop="openEvaluasi(anak, sp)"
                     class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all active:scale-95"
                     :style="{ background: sp.color }">

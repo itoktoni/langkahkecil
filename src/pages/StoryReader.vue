@@ -133,6 +133,7 @@ const emit = defineEmits(['close'])
 const currentPageIndex = ref(0)
 const isSpeaking = ref(false)
 const isSpeakingMoral = ref(false)
+const autoPlay = ref(false)
 let utterance = null
 
 const isDragging = ref(false)
@@ -169,12 +170,14 @@ function onDragEnd() {
 }
 
 function goToPage(index) {
+  autoPlay.value = false
   stopSpeech()
   currentPageIndex.value = index
 }
 
 function prevPage() {
   if (currentPageIndex.value > 0) {
+    autoPlay.value = false
     stopSpeech()
     currentPageIndex.value--
   }
@@ -185,6 +188,7 @@ function nextPage() {
     emit('close')
     return
   }
+  autoPlay.value = false
   stopSpeech()
   if (currentPageIndex.value < props.story.pages.length - 1) {
     currentPageIndex.value++
@@ -199,8 +203,13 @@ function backToLastPage() {
 }
 
 function toggleSpeech() {
-  if (isSpeaking.value) stopSpeech()
-  else speak()
+  if (isSpeaking.value) {
+    autoPlay.value = false
+    stopSpeech()
+  } else {
+    autoPlay.value = true
+    speak()
+  }
 }
 
 function speak() {
@@ -210,8 +219,16 @@ function speak() {
   utterance.lang = 'id-ID'
   utterance.rate = 0.9
   utterance.pitch = 1.1
-  utterance.onend = () => { isSpeaking.value = false }
-  utterance.onerror = () => { isSpeaking.value = false }
+  utterance.onend = () => {
+    isSpeaking.value = false
+    if (autoPlay.value && currentPageIndex.value < props.story.pages.length - 1) {
+      currentPageIndex.value++
+      setTimeout(() => speak(), 400)
+    } else {
+      autoPlay.value = false
+    }
+  }
+  utterance.onerror = () => { isSpeaking.value = false; autoPlay.value = false }
   speechSynthesis.speak(utterance)
   isSpeaking.value = true
 }
