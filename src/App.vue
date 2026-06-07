@@ -5,8 +5,8 @@
     <AppHeader :title="app.pageTitle" :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" @switch="app.switchTab" />
 
     <main class="content-wrapper pb-24 lg:pb-8">
-      <PilarTab ref="pilarTabRef" v-show="app.activeTab === 'pilar'" :selected-pilar="app.selectedPilar" @select-pilar="app.openPilarSub" @close-pilar="app.closePilarSub" />
-      <ProgressTab v-show="app.activeTab === 'progress'" :anak-list="anak.anakList" :selected-anak-id="app.selectedAnakId" @reset-subpilar="anak.resetSubpilar" />
+      <PilarTab ref="pilarTabRef" v-show="app.activeTab === 'pilar'" :anak-list="anak.anakList" :selected-pilar="app.selectedPilar" :selected-anak-id="app.selectedAnakId" @select-pilar="app.openPilarSub" @close-pilar="app.closePilarSub" @update:anak-id="app.selectedAnakId = $event" />
+      <ProgressTab v-show="app.activeTab === 'progress'" :anak-list="anak.anakList" :selected-anak-id="app.selectedAnakId" @reset-skill="anak.resetSkill" />
       <ToolsTab v-show="app.activeTab === 'tools'" :anak-list="anak.anakList" />
       <ProfileTab v-show="app.activeTab === 'profile'" :anak-list="anak.anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" />
 
@@ -55,9 +55,8 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { tabs } from './data/pilars.js'
-import { challengeByAnak, defaultChallenge } from './data/challenge.js'
 import { useInstall } from './composables/useInstall.js'
-import { getAnakList, saveAnak as dbSaveAnak, saveChallenge, saveChallengeHistory, saveChecklist, saveSchedule } from './db.js'
+import { getSetting } from './db.js'
 import { useAppStore } from './stores/appStore.js'
 import { useAnakStore } from './stores/anakStore.js'
 import { useToolsStore } from './stores/toolsStore.js'
@@ -85,85 +84,14 @@ const { canInstall, install: installApp } = useInstall()
 
 const showInstallBar = computed(() => canInstall.value && !app.installDismissed)
 
-const defaultAnakList = [
-  {
-    id: 1, nama: 'Raka', gender: 'Laki-laki', emoji: '👦', bg: '#E3F2FD',
-    tanggal: 15, bulan: 3, tahun: 2019,
-    subpilars: [
-      { key: 'bersyukur', emoji: '🤲', title: 'Bersyukur', pilar: 'spiritual', progress: 80, color: '#4CAF50' },
-      { key: 'tidak_mudah_menyerah', emoji: '💪', title: 'Tidak Mudah Menyerah', pilar: 'karakter', progress: 45, color: '#FF9800' },
-      { key: 'berpikir_kreatif', emoji: '🎨', title: 'Berpikir Kreatif', pilar: 'kreatifitas', progress: 60, color: '#2196F3' }
-    ],
-    completedSubpilars: [
-      { key: 'fokus', emoji: '🎯', title: 'Fokus', pilar: 'disiplin', color: '#9C27B0' }
-    ],
-    history: [
-      { date: '05 Jun 2026', action: 'Menyelesaikan aktivitas Bersyukur', emoji: '🤲', color: '#4CAF50' },
-      { date: '03 Jun 2026', action: 'Mulai Belajar Tidak Mudah Menyerah', emoji: '💪', color: '#FF9800' },
-      { date: '01 Jun 2026', action: 'Menyelesaikan aktivitas Berpikir Kreatif', emoji: '🎨', color: '#2196F3' },
-      { date: '28 Mei 2026', action: 'Mulai Belajar Bersyukur', emoji: '🤲', color: '#4CAF50' }
-    ]
-  },
-  {
-    id: 2, nama: 'Rina', gender: 'Perempuan', emoji: '👧', bg: '#FCE4EC',
-    tanggal: 22, bulan: 7, tahun: 2021,
-    subpilars: [
-      { key: 'berani_bicara', emoji: '🗣', title: 'Berani Bicara', pilar: 'karakter', progress: 30, color: '#FF9800' },
-      { key: 'berbagi', emoji: '🎁', title: 'Berbagi', pilar: 'sosial', progress: 55, color: '#8D6E63' }
-    ],
-    completedSubpilars: [
-      { key: 'jujur', emoji: '🤝', title: 'Jujur', pilar: 'spiritual', color: '#4CAF50' }
-    ],
-    history: [
-      { date: '06 Jun 2026', action: 'Menyelesaikan aktivitas Jujur', emoji: '🤝', color: '#4CAF50' },
-      { date: '04 Jun 2026', action: 'Mulai Belajar Berbagi', emoji: '🎁', color: '#8D6E63' },
-      { date: '02 Jun 2026', action: 'Mulai Belajar Berani Bicara', emoji: '🗣', color: '#FF9800' },
-      { date: '30 Mei 2026', action: 'Mulai Belajar Jujur', emoji: '🤝', color: '#4CAF50' }
-    ]
-  }
-]
-
-const defaultToolsByAnak = {
-  1: {
-    ...JSON.parse(JSON.stringify(challengeByAnak[1] || defaultChallenge)),
-    schedules: [
-      { time: '07:00', label: 'Sarapan & Persiapan Sekolah', done: true },
-      { time: '08:00', label: 'Belajar Membaca', done: true },
-      { time: '16:00', label: 'Waktu Bermain Bebas', done: false },
-      { time: '20:00', label: 'Membaca Buku', done: false }
-    ],
-    checklists: [
-      { id: 1, title: 'Pagi Hari', items: [{ label: 'Sholat Subuh', done: true }, { label: 'Membaca buku sebelum tidur', done: true }, { label: 'Sarapan sehat', done: false }] },
-      { id: 2, title: 'Malam Hari', items: [{ label: 'Merapiikan mainan', done: false }, { label: 'Minum air putih', done: true }, { label: 'Sholat Isya', done: true }] }
-    ]
-  },
-  2: {
-    ...JSON.parse(JSON.stringify(challengeByAnak[2] || defaultChallenge)),
-    schedules: [
-      { time: '07:30', label: 'Sarapan & Bermain', done: true },
-      { time: '10:00', label: 'Belajar Menggambar', done: false },
-      { time: '15:00', label: 'Tidur Siang', done: true }
-    ],
-    checklists: [
-      { id: 1, title: 'Kegiatan Harian', items: [{ label: 'Sikat Gigi Sendiri', done: true }, { label: 'Membereskan Mainan', done: false }, { label: 'Makan Sendiri', done: true }] }
-    ]
-  }
-}
-
 async function seedAndLoad() {
-  const existing = await getAnakList()
-  if (existing.length === 0) {
-    for (const a of defaultAnakList) await dbSaveAnak(JSON.parse(JSON.stringify(a)))
-    for (const [anakId, data] of Object.entries(defaultToolsByAnak)) {
-      const id = Number(anakId)
-      for (const c of (data.challenges || [])) await saveChallenge({ ...c, anakId: id })
-      for (const c of (data.challengeHistory || [])) await saveChallengeHistory({ ...c, anakId: id })
-      for (const cl of (data.checklists || [])) await saveChecklist({ ...cl, anakId: id })
-      for (const s of (data.schedules || [])) await saveSchedule({ ...s, anakId: id })
-    }
-  }
+  const savedName = await getSetting('userName')
+  if (savedName) app.userName = savedName
   await anak.loadAnakList()
   await tools.loadToolsData(anak.anakList)
+  if (!app.selectedAnakId && anak.anakList.length) {
+    app.selectedAnakId = anak.anakList[0].id
+  }
   app.appReady = true
 }
 

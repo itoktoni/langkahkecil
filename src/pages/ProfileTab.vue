@@ -4,8 +4,7 @@
     <div class="bg-white rounded-[28px] p-6 soft-shadow">
       <div class="flex items-center gap-4">
         <div class="w-16 h-16 rounded-full bg-[#E8F5E9] flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
-          <img alt="Avatar" class="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzJNpRkogQwczNStctNhENEVUYGd8K9gvJsJHTF4dEc8EJ0f7gqUIejr4bQpYMLUPW5IXczrErhaApGFrTVwP_x6ydST_7zIETJf3sBbPA_SJkfU6g7oBaRxYDJiZEVtiDkwNnpiHti6_c1CUO8EyBmmilPhrfKepTN-4SeBHs_ll75dnAePuOcw-mydodKV12Zwo6rVBVVPdjjo1ZFFuREjTkuDmc4lifG7lewY_DLtHTp4RUKAG66H77zbFeqqZi-xuHnx8k2Ew">
+          <span class="text-4xl">{{ userGender === 'Ayah' ? '👨' : '👩' }}</span>
         </div>
         <div class="flex-1 min-w-0">
           <div v-if="!editingName">
@@ -75,12 +74,17 @@
     <div class="mt-6">
       <div class="flex items-center justify-between mb-3">
         <h3 class="font-headline-sm text-text-main">Anak</h3>
-        <button @click="tambahAnak"
-          class="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-          :class="{ 'opacity-40 pointer-events-none': !canAddAnak }">
-          <span class="material-symbols-outlined text-lg">person_add</span>
-          <span>Tambah</span>
-        </button>
+        <div class="flex items-center gap-2">
+          <button v-if="anakList.length" @click="resetAnak"
+            class="px-4 py-2 rounded-xl text-sm font-bold border border-error/30 text-error hover:bg-error/5 transition-colors">
+            Reset
+          </button>
+          <button @click="tambahAnak"
+            class="px-4 py-2 rounded-xl text-sm font-bold border border-primary/30 text-primary hover:bg-primary/5 transition-colors"
+            :class="{ 'opacity-40 pointer-events-none': !canAddAnak }">
+            Tambah
+          </button>
+        </div>
       </div>
       <p v-if="addAnakError" class="text-xs text-red-500 mb-2">{{ addAnakError }}</p>
       <div class="space-y-3">
@@ -238,6 +242,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { saveAnak, removeAnak, getSetting, saveSetting } from '../db.js'
 import { ageLabel } from '../utils/age.js'
+import { useAppStore } from '../stores/appStore.js'
+
+const app = useAppStore()
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] }
@@ -325,6 +332,7 @@ function setGender(g) { editGender.value = g }
 function saveName() {
   if (editNameValue.value.trim()) {
     userName.value = editNameValue.value.trim()
+    app.userName = editNameValue.value.trim()
     saveSetting('userName', userName.value)
   }
   userGender.value = editGender.value
@@ -355,7 +363,7 @@ function openEditAnak(anak) {
 
 function closeEditAnak() { editAnak.value = null }
 
-function saveEditAnak() {
+async function saveEditAnak() {
   if (!editAnakForm.value.nama.trim()) return
   const anak = editAnak.value
   anak.nama = editAnakForm.value.nama.trim()
@@ -370,7 +378,7 @@ function saveEditAnak() {
   anak.tanggal = editAnakForm.value.tanggal
   anak.bulan = editAnakForm.value.bulan
   anak.tahun = editAnakForm.value.tahun
-  saveAnak(anak)
+  await saveAnak(JSON.parse(JSON.stringify(anak)))
   closeEditAnak()
 }
 
@@ -380,6 +388,14 @@ async function deleteAnak(anak) {
   await removeAnak(anak.id)
   const idx = props.anakList.indexOf(anak)
   if (idx > -1) props.anakList.splice(idx, 1)
+}
+
+async function resetAnak() {
+  if (!confirm('Hapus semua data anak? Semua data challenge, jadwal, dan checklist akan ikut terhapus.')) return
+  for (const anak of [...props.anakList]) {
+    await removeAnak(anak.id)
+  }
+  props.anakList.splice(0)
 }
 
 async function tambahAnak() {
@@ -402,10 +418,11 @@ async function tambahAnak() {
     emoji: emojis[idx % 2],
     bg: bgs[idx % bgs.length],
     tanggal: null, bulan: null, tahun: null,
-    subpilars: [], completedSubpilars: [], history: []
+    skills: [], completedSkills: [], history: []
   }
   newAnak.id = await saveAnak(newAnak)
   props.anakList.push(newAnak)
+  app.selectedAnakId = newAnak.id
 }
 
 function upgradePlan() {

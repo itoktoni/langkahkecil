@@ -1,5 +1,15 @@
 <template>
   <div class="fade-in-up">
+    <section class="mb-4">
+      <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-text-main leading-tight mb-2">
+        Mau Belajar Apa Hari Ini?
+      </h2>
+      <p class="font-body-md text-body-md text-on-surface-variant mb-3">Pilih area yang ingin dikembangkan bersama si kecil.</p>
+      <div v-if="anakList.length">
+        <AnakSelector :anak-list="anakList" :model-value="selectedAnakId" @update:model-value="$emit('update:anak-id', $event)" />
+      </div>
+    </section>
+
     <button @click="$emit('back')"
       class="flex items-center gap-2 text-primary font-label-lg mb-4 hover:opacity-80 transition-opacity border border-primary-container px-3 py-1.5 rounded-full">
       <span class="material-symbols-outlined text-xl">arrow_back</span>
@@ -25,13 +35,16 @@
 
 <script setup>
 import { computed } from 'vue'
+import AnakSelector from '../components/AnakSelector.vue'
 import { pillarSubs } from '../data/pilars.js'
 
 const props = defineProps({
+  anakList: { type: Array, default: () => [] },
+  selectedAnakId: { type: Number, default: null },
   pilarKey: { type: String, required: true }
 })
 
-defineEmits(['back', 'selectSub'])
+defineEmits(['back', 'selectSub', 'update:anak-id'])
 
 const data = computed(() => pillarSubs[props.pilarKey] || {})
 </script>

@@ -39,16 +39,16 @@ export const useAnakStore = defineStore('anak', () => {
     if (idx > -1) anakList.value.splice(idx, 1)
   }
 
-  function resetSubpilar({ anak, subpilar }) {
-    const idx = anak.completedSubpilars.findIndex(s => s.key === subpilar.key)
+  function resetSkill({ anak, skill }) {
+    const idx = anak.completedSkills.findIndex(s => s.key === skill.key)
     if (idx > -1) {
-      anak.completedSubpilars.splice(idx, 1)
-      anak.subpilars.push({ ...subpilar, progress: 0 })
+      anak.completedSkills.splice(idx, 1)
+      anak.skills.push({ ...skill, progress: 0 })
     }
   }
 
   return {
     anakList, allHistory,
-    loadAnakList, addAnak, updateAnak, deleteAnak, resetSubpilar
+    loadAnakList, addAnak, updateAnak, deleteAnak, resetSkill
   }
 })

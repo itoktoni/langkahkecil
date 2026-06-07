@@ -6,7 +6,10 @@
         <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-text-main leading-tight mb-2">
           Mau Belajar Apa Hari Ini?
         </h2>
-        <p class="font-body-md text-body-md text-on-surface-variant">Pilih area yang ingin dikembangkan bersama si kecil.</p>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-3">Pilih area yang ingin dikembangkan bersama si kecil.</p>
+        <div v-if="anakList.length">
+          <AnakSelector :anak-list="anakList" :model-value="selectedAnakId" @update:model-value="$emit('update:anak-id', $event)" />
+        </div>
       </section>
 
       <template v-for="pilar in pilars" :key="pilar.key">
@@ -87,13 +90,16 @@
 import { ref, computed, watch } from 'vue'
 import AktivitasPage from './AktivitasPage.vue'
 import AktivitasDetailPage from './AktivitasDetailPage.vue'
+import AnakSelector from '../components/AnakSelector.vue'
 import { pilars, pillarSubs } from '../data/pilars.js'
 
 const props = defineProps({
-  selectedPilar: { type: String, default: null }
+  anakList: { type: Array, default: () => [] },
+  selectedPilar: { type: String, default: null },
+  selectedAnakId: { type: Number, default: null }
 })
 
-const emit = defineEmits(['select-pilar', 'close-pilar'])
+const emit = defineEmits(['select-pilar', 'close-pilar', 'update:anak-id'])
 
 const selectedSub = ref(null)
 const selectedAktivitas = ref(null)

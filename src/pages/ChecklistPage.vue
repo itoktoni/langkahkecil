@@ -81,7 +81,7 @@ const props = defineProps({
   checklists: { type: Array, default: () => [] }
 })
 
-const emit = defineEmits(['add-checklist', 'remove-checklist', 'add-item'])
+const emit = defineEmits(['add-checklist', 'remove-checklist', 'add-item', 'remove-item'])
 
 const showForm = ref(false)
 const newTitle = ref('')

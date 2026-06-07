@@ -5,7 +5,7 @@ export const useAppStore = defineStore('app', () => {
   const activeTab = ref('pilar')
   const selectedPilar = ref(null)
   const selectedAnakId = ref(null)
-  const userName = ref('Azizah')
+  const userName = ref('Parent')
   const toolsAnakId = ref(null)
   const appReady = ref(false)
   const installDismissed = ref(false)

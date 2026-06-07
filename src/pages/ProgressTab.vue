@@ -15,8 +15,8 @@
             <p class="text-sm text-on-surface-variant">{{ ageLabel(anak.tahun, anak.bulan, anak.tanggal) }}</p>
           </div>
           <div class="flex items-center gap-2">
-            <span v-if="anak.subpilars" class="text-xs font-bold text-on-surface-variant bg-surface-container-low px-2 py-1 rounded-full">
-              {{ anak.subpilars.length }} skills
+            <span v-if="anak.skills" class="text-xs font-bold text-on-surface-variant bg-surface-container-low px-2 py-1 rounded-full">
+              {{ anak.skills.length }} skills
             </span>
             <span class="material-symbols-outlined text-on-surface-variant transition-transform duration-200"
               :class="{ 'rotate-180': openId === anak.id }">expand_more</span>
@@ -25,9 +25,9 @@
 
         <div v-show="openId === anak.id" class="px-5 pb-5 space-y-5 border-t border-outline-variant">
 
-          <div v-if="anak.subpilars && anak.subpilars.length" class="pt-4 space-y-3">
+          <div v-if="anak.skills && anak.skills.length" class="pt-4 space-y-3">
             <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Skills Aktif</h4>
-            <div v-for="sp in anak.subpilars" :key="sp.key" class="bg-canvas-cream rounded-2xl p-4 border border-outline-variant shadow-sm">
+            <div v-for="sp in anak.skills" :key="sp.key" class="bg-canvas-cream rounded-2xl p-4 border border-outline-variant shadow-sm">
               <div class="flex items-center gap-3 mb-3">
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-text-main">{{ sp.title }}</p>
@@ -64,17 +64,17 @@
             Belum ada skills aktif
           </div>
 
-          <div class="" v-if="anak.completedSubpilars && anak.completedSubpilars.length">
+          <div class="" v-if="anak.completedSkills && anak.completedSkills.length">
             <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">Skills Selesai</h4>
             <div class="space-y-2">
-              <div v-for="sp in anak.completedSubpilars" :key="sp.key"
+              <div v-for="sp in anak.completedSkills" :key="sp.key"
                 class="flex items-center gap-3 bg-canvas-cream rounded-2xl p-3 border border-outline-variant shadow-sm">
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-text-main">{{ sp.title }}</p>
                   <p class="text-xs text-on-surface-variant">{{ getPilarName(sp.pilar) }}</p>
                 </div>
                 <div class="flex items-center gap-2">
-                  <button @click="$emit('reset-subpilar', { anak, subpilar: sp })"
+                  <button @click="$emit('reset-skill', { anak, skill: sp })"
                     class="h-8 w-8 rounded-lg flex items-center justify-center border-2 transition-all active:scale-95"
                     style="border-color: #C6282860; color: #C62828;">
                     <span class="material-symbols-outlined text-base">delete</span>
@@ -161,12 +161,12 @@ const props = defineProps({
   selectedAnakId: { type: Number, default: null }
 })
 
-defineEmits(['evaluasi', 'reset-subpilar'])
+defineEmits(['evaluasi', 'reset-skill'])
 
 const openId = ref(null)
 const showEvaluasi = ref(false)
 const evalAnak = ref(null)
-const evalSubpilar = ref(null)
+const evalSkill = ref(null)
 const evalQuestions = ref([])
 const evalPoints = ref(0)
 const evalMax = 10
@@ -190,19 +190,19 @@ function getPilarBg(key) {
 }
 
 const evalTitle = computed(() => {
-  if (!evalSubpilar.value) return 'Evaluasi'
-  return `Evaluasi: ${evalSubpilar.value.title}`
+  if (!evalSkill.value) return 'Evaluasi'
+  return `Evaluasi: ${evalSkill.value.title}`
 })
 
-const evalEmoji = computed(() => evalSubpilar.value?.emoji || '⭐')
-const evalColor = computed(() => evalSubpilar.value?.color || '#4CAF50')
-const evalDesc = computed(() => evalSubpilar.value?.desc || '')
+const evalEmoji = computed(() => evalSkill.value?.emoji || '⭐')
+const evalColor = computed(() => evalSkill.value?.color || '#4CAF50')
+const evalDesc = computed(() => evalSkill.value?.desc || '')
 
 const evalPercent = computed(() => Math.min(100, Math.round((evalPoints.value / evalMax) * 100)))
 
 function openEvaluasi(anak, sp) {
   evalAnak.value = anak
-  evalSubpilar.value = sp
+  evalSkill.value = sp
   const data = evaluasiData[sp.key]
   evalQuestions.value = data ? data.questions : []
   evalPoints.value = 0
@@ -228,11 +228,11 @@ function closeEvaluasi() {
 }
 
 function shareEval() {
-  if (!evalAnak.value || !evalSubpilar.value) return
+  if (!evalAnak.value || !evalSkill.value) return
   shareProgress({
-    title: `Evaluasi ${evalSubpilar.value.title}`,
-    category: getPilarName(evalSubpilar.value.pilar),
-    emoji: evalSubpilar.value.emoji,
+    title: `Evaluasi ${evalSkill.value.title}`,
+    category: getPilarName(evalSkill.value.pilar),
+    emoji: evalSkill.value.emoji,
     color: evalColor.value,
     points: evalPoints.value,
     maxPoints: evalMax,
