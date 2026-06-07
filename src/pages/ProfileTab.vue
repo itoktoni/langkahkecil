@@ -11,13 +11,26 @@
           <div v-if="!editingName">
             <h3 class="font-headline-sm text-text-main">{{ userName }}</h3>
             <p class="text-sm text-on-surface-variant truncate">{{ userEmail }}</p>
+            <p v-if="userGender" class="text-xs text-on-surface-variant">{{ userGender }}</p>
           </div>
-          <div v-else class="flex items-center gap-2">
+          <div v-else class="space-y-2 flex-1">
             <input v-model="editNameValue"
-              class="flex-1 px-3 py-2 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
+              class="w-full px-3 py-2 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-primary bg-white"
               placeholder="Nama baru" @keyup.enter="saveName" />
+            <div class="flex gap-2">
+              <button @click="setGender('Bunda')"
+                class="flex-1 py-2 rounded-lg text-xs font-bold border-2 transition-all"
+                :class="editGender === 'Bunda' ? 'bg-pink-100 border-pink-400 text-pink-700' : 'border-outline-variant text-on-surface-variant'">
+                👩 Bunda
+              </button>
+              <button @click="setGender('Ayah')"
+                class="flex-1 py-2 rounded-lg text-xs font-bold border-2 transition-all"
+                :class="editGender === 'Ayah' ? 'bg-blue-100 border-blue-400 text-blue-700' : 'border-outline-variant text-on-surface-variant'">
+                👨 Ayah
+              </button>
+            </div>
             <button @click="saveName"
-              class="px-3 py-2 rounded-lg bg-[#2E7D32] text-white text-sm font-medium hover:bg-[#2E7D32]/90 transition-colors">
+              class="w-full px-3 py-2 rounded-lg bg-[#2E7D32] text-white text-sm font-medium hover:bg-[#2E7D32]/90 transition-colors">
               Simpan
             </button>
           </div>
@@ -72,19 +85,30 @@
       <p v-if="addAnakError" class="text-xs text-red-500 mb-2">{{ addAnakError }}</p>
       <div class="space-y-3">
         <div v-for="anak in anakList" :key="anak.id"
-          class="bg-white rounded-2xl p-4 soft-shadow flex items-center gap-4 cursor-pointer hover:shadow-md transition-shadow"
+          class="relative bg-white rounded-2xl p-4 soft-shadow flex items-center gap-4 cursor-pointer hover:shadow-md transition-shadow"
           @click="$emit('select-anak', anak)">
           <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" :style="{ background: anak.bg }">
             {{ anak.emoji }}
           </div>
           <div class="flex-1">
             <p class="font-label-lg text-text-main">{{ anak.nama }}</p>
-            <p class="text-sm text-on-surface-variant">{{ anak.usia }}</p>
+            <p class="text-sm text-on-surface-variant">{{ ageLabel(anak.tahun, anak.bulan, anak.tanggal) }}{{ anak.gender ? ' · ' + anak.gender : '' }}</p>
           </div>
-          <button @click.stop="openEditAnak(anak)"
+          <button @click.stop="toggleMenu(anak.id)"
             class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
             <span class="material-symbols-outlined text-base">more_vert</span>
           </button>
+          <div v-if="openMenuId === anak.id"
+            class="absolute right-4 top-12 bg-white rounded-xl shadow-xl border border-outline-variant py-1 z-10 min-w-[140px]">
+            <button @click.stop="openEditAnak(anak)"
+              class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-text-main hover:bg-surface-container-low transition-colors">
+              <span class="material-symbols-outlined text-base">edit</span> Edit
+            </button>
+            <button @click.stop="deleteAnak(anak)"
+              class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-error hover:bg-red-50 transition-colors">
+              <span class="material-symbols-outlined text-base">delete</span> Hapus
+            </button>
+          </div>
         </div>
         <div v-if="anakList.length === 0"
           class="bg-white rounded-2xl p-6 soft-shadow text-center text-on-surface-variant text-sm">
@@ -148,6 +172,21 @@
               placeholder="Nama anak" />
           </div>
           <div>
+            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Gender</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button @click="editAnakForm.gender = 'Laki-laki'"
+                class="py-2.5 rounded-lg text-sm font-bold border-2 transition-all"
+                :class="editAnakForm.gender === 'Laki-laki' ? 'bg-blue-100 border-blue-400 text-blue-700' : 'border-outline-variant text-on-surface-variant'">
+                👦 Laki-laki
+              </button>
+              <button @click="editAnakForm.gender = 'Perempuan'"
+                class="py-2.5 rounded-lg text-sm font-bold border-2 transition-all"
+                :class="editAnakForm.gender === 'Perempuan' ? 'bg-pink-100 border-pink-400 text-pink-700' : 'border-outline-variant text-on-surface-variant'">
+                👧 Perempuan
+              </button>
+            </div>
+          </div>
+          <div>
             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Tanggal Lahir</label>
             <div class="grid grid-cols-3 gap-2">
               <select v-model="editAnakForm.tanggal"
@@ -185,59 +224,75 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { saveAnak, removeAnak, getSetting, saveSetting } from '../db.js'
+import { ageLabel } from '../utils/age.js'
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] }
 })
 
-defineEmits(['select-anak'])
+const emit = defineEmits(['select-anak'])
 
 const fillIcon = { fontVariationSettings: "'FILL' 1" }
 
-const userName = ref('Azizah')
-const userEmail = ref('sarah@email.com')
+const userName = ref('Bunda')
+const userEmail = ref('')
+const userGender = ref('')
 const editingName = ref(false)
 const editNameValue = ref('')
+const editGender = ref('')
+const openMenuId = ref(null)
 
 const showPasswordForm = ref(false)
 const oldPassword = ref('')
 const newPassword = ref('')
 
 const editAnak = ref(null)
-const editAnakForm = ref({ nama: '', tanggal: '', bulan: '', tahun: '' })
+const editAnakForm = ref({ nama: '', gender: '', tanggal: '', bulan: '', tahun: '' })
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
-
 const currentYear = new Date().getFullYear()
 const years = Array.from({ length: currentYear - 1999 }, (_, i) => currentYear - i)
 
 const currentPlan = ref('free')
-
 const plans = [
   { id: 'premium', label: 'Premium', emoji: '👑', price: 'Rp99.000/bulan', desc: '1 anak, semua fitur' },
   { id: 'family', label: 'Family', emoji: '👨‍👩‍👧‍👦', price: 'Rp299.000/bulan', desc: 'Maks 5 anak' }
 ]
-
 const selectedPlan = ref('premium')
 const addAnakError = ref('')
 
 const maxAnak = computed(() => currentPlan.value === 'family' ? 5 : 1)
-
 const canAddAnak = computed(() => {
   if (currentPlan.value === 'free') return false
   return props.anakList.length < maxAnak.value
 })
 
+onMounted(async () => {
+  const name = await getSetting('userName')
+  if (name) userName.value = name
+  const email = await getSetting('userEmail')
+  if (email) userEmail.value = email
+  const gender = await getSetting('userGender')
+  if (gender) userGender.value = gender
+})
+
 function startEditName() {
   editNameValue.value = userName.value
+  editGender.value = userGender.value
   editingName.value = true
 }
+
+function setGender(g) { editGender.value = g }
 
 function saveName() {
   if (editNameValue.value.trim()) {
     userName.value = editNameValue.value.trim()
+    saveSetting('userName', userName.value)
   }
+  userGender.value = editGender.value
+  saveSetting('userGender', userGender.value)
   editingName.value = false
 }
 
@@ -252,59 +307,62 @@ function savePassword() {
   cancelPassword()
 }
 
-function openEditAnak(anak) {
-  editAnak.value = anak
-  editAnakForm.value = {
-    nama: anak.nama,
-    tanggal: anak.tanggal || '',
-    bulan: anak.bulan || '',
-    tahun: anak.tahun || ''
-  }
+function toggleMenu(id) {
+  openMenuId.value = openMenuId.value === id ? null : id
 }
 
-function closeEditAnak() {
-  editAnak.value = null
+function openEditAnak(anak) {
+  openMenuId.value = null
+  editAnak.value = anak
+  editAnakForm.value = { nama: anak.nama, gender: anak.gender || '', tanggal: anak.tanggal || '', bulan: anak.bulan || '', tahun: anak.tahun || '' }
 }
+
+function closeEditAnak() { editAnak.value = null }
 
 function saveEditAnak() {
   if (!editAnakForm.value.nama.trim()) return
   const anak = editAnak.value
   anak.nama = editAnakForm.value.nama.trim()
+  anak.gender = editAnakForm.value.gender
   anak.tanggal = editAnakForm.value.tanggal
   anak.bulan = editAnakForm.value.bulan
   anak.tahun = editAnakForm.value.tahun
-  if (anak.tanggal && anak.bulan && anak.tahun) {
-    const age = currentYear - anak.tahun
-    anak.usia = `${age} tahun`
-  }
+  saveAnak(anak)
   closeEditAnak()
 }
 
-function tambahAnak() {
-  addAnakError.value = ''
+async function deleteAnak(anak) {
+  openMenuId.value = null
+  if (!confirm(`Hapus data ${anak.nama}?`)) return
+  await removeAnak(anak.id)
+  const idx = props.anakList.indexOf(anak)
+  if (idx > -1) props.anakList.splice(idx, 1)
+}
 
+async function tambahAnak() {
+  addAnakError.value = ''
   if (currentPlan.value === 'free') {
     addAnakError.value = 'Upgrade ke Premium atau Family untuk menambah anak.'
     return
   }
-
   if (props.anakList.length >= maxAnak.value) {
     addAnakError.value = currentPlan.value === 'premium'
       ? 'Batas 1 anak. Upgrade ke Family untuk menambah hingga 5 anak.'
       : `Batas maksimal ${maxAnak.value} anak.`
     return
   }
-
   const emojis = ['👦', '👧']
   const bgs = ['#E3F2FD', '#FCE4EC', '#E8F5E9', '#FFF3E0', '#F3E5F5']
   const idx = props.anakList.length
-  props.anakList.push({
-    id: Date.now(),
+  const newAnak = {
     nama: `Anak ${idx + 1}`,
-    usia: '0 tahun',
     emoji: emojis[idx % 2],
-    bg: bgs[idx % bgs.length]
-  })
+    bg: bgs[idx % bgs.length],
+    tanggal: null, bulan: null, tahun: null,
+    subpilars: [], completedSubpilars: [], history: []
+  }
+  newAnak.id = await saveAnak(newAnak)
+  props.anakList.push(newAnak)
 }
 
 function upgradePlan() {

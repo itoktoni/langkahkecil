@@ -16,7 +16,7 @@
     <Teleport to="body">
       <div v-if="menuOpen" class="fixed inset-0 z-[200]">
         <div class="absolute inset-0 bg-black/40" @click="menuOpen = false"></div>
-        <div class="absolute top-0 left-0 h-full w-[280px] bg-white shadow-2xl flex flex-col"
+        <div class="absolute top-0 left-0 h-full w-[75%] max-w-[320px] bg-white shadow-2xl flex flex-col"
           :style="{ transform: menuOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform 0.3s ease' }">
           <div class="flex items-center justify-between p-5 border-b border-outline-variant">
             <h2 class="font-headline-sm text-text-main">Menu</h2>

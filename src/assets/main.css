@@ -78,3 +78,13 @@
   .mobile-nav { display: flex !important; }
   .content-wrapper { margin-left: 0; }
 }
+
+.install-bar-enter-active,
+.install-bar-leave-active {
+  transition: all 0.3s ease;
+}
+.install-bar-enter-from,
+.install-bar-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}

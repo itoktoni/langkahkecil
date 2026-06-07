@@ -12,7 +12,7 @@
           </div>
           <div class="flex-1 min-w-0">
             <p class="font-label-lg text-text-main">{{ anak.nama }}</p>
-            <p class="text-sm text-on-surface-variant">{{ anak.usia }}</p>
+            <p class="text-sm text-on-surface-variant">{{ ageLabel(anak.tahun, anak.bulan, anak.tanggal) }}{{ anak.gender ? ' · ' + anak.gender : '' }}</p>
           </div>
           <div class="flex items-center gap-2">
             <span v-if="anak.subpilars" class="text-xs font-bold text-on-surface-variant bg-surface-container-low px-2 py-1 rounded-full">
@@ -47,12 +47,19 @@
                   <span class="material-symbols-outlined text-xs">check_circle</span>
                   <span>{{ Math.round(sp.progress / 20) }} dari 5 aktivitas</span>
                 </div>
-                <button @click="$emit('evaluasi', { anak, subpilar: sp })"
-                  class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200"
-                  :style="{ background: getPilarBg(sp.pilar), color: sp.color }">
-                  <span class="material-symbols-outlined text-sm">rate_review</span>
-                  Evaluasi
-                </button>
+                <div class="flex items-center gap-2">
+                  <button @click.stop="openEvaluasi(anak, sp)"
+                    class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all active:scale-95"
+                    :style="{ background: sp.color }">
+                    <span class="material-symbols-outlined text-sm">rate_review</span>
+                    Evaluasi
+                  </button>
+                  <button @click.stop="shareEvalDirect(anak, sp)"
+                    class="h-8 w-8 rounded-lg flex items-center justify-center border-2 transition-all active:scale-95"
+                    :style="{ borderColor: sp.color + '60', color: sp.color }">
+                    <span class="material-symbols-outlined text-base">share</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -108,12 +115,68 @@
       </div>
     </div>
 
+    <AppModal v-model="showEvaluasi" :title="evalTitle">
+      <div class="text-center mb-4">
+        <div class="text-4xl mb-2">{{ evalEmoji }}</div>
+        <p class="text-xs text-on-surface-variant">{{ evalDesc }}</p>
+      </div>
+
+      <div v-if="evalQuestions.length" class="space-y-2 mb-5">
+        <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Panduan Penilaian</p>
+        <div v-for="(q, i) in evalQuestions" :key="i"
+          class="bg-canvas-cream rounded-xl p-3 text-sm text-text-main">
+          {{ i + 1 }}. {{ q }}
+        </div>
+      </div>
+
+      <div class="bg-canvas-cream rounded-2xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Penilaian Orang Tua</span>
+          <span class="text-xs font-bold" :style="{ color: evalColor }">{{ evalPoints }}/{{ evalMax }}</span>
+        </div>
+        <div class="flex items-center gap-3 mb-3">
+          <div class="flex-1">
+            <div class="w-full h-5 rounded-full overflow-hidden relative" :style="{ background: evalColor + '20' }">
+              <div class="h-full rounded-full transition-all duration-700"
+                :style="{ width: evalPercent + '%', background: evalColor }">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center justify-center gap-2 mt-2">
+          <button @click="removeEvalPoint"
+            class="h-9 px-3 rounded-xl text-sm font-bold border-2 transition-all active:scale-95"
+            :style="{ borderColor: evalColor + '80', color: evalColor }">
+            -1 Poin
+          </button>
+          <button @click="addEvalPoint"
+            class="h-9 px-3 rounded-xl text-sm font-bold text-white transition-all active:scale-95"
+            :style="{ background: evalColor }">
+            +1 Poin
+          </button>
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-5">
+        <AppButton variant="outline" block @click="closeEvaluasi">Tutup</AppButton>
+        <AppButton block @click="shareEval">
+          <span class="material-symbols-outlined text-lg">share</span> Share
+        </AppButton>
+      </div>
+    </AppModal>
+
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { pilars } from '../data/pilars.js'
+import { evaluasiData } from '../data/evaluasi.js'
+import { ageLabel } from '../utils/age.js'
+import { shareProgress } from '../utils/share.js'
+import AppModal from '../components/AppModal.vue'
+import AppButton from '../components/AppButton.vue'
+import { playAddSound, playRemoveSound } from '../utils/sound.js'
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] },
@@ -124,6 +187,12 @@ const props = defineProps({
 defineEmits(['evaluasi', 'reset-subpilar'])
 
 const openId = ref(null)
+const showEvaluasi = ref(false)
+const evalAnak = ref(null)
+const evalSubpilar = ref(null)
+const evalQuestions = ref([])
+const evalPoints = ref(0)
+const evalMax = 10
 
 watch(() => props.selectedAnakId, (id) => {
   if (id) openId.value = id
@@ -141,5 +210,68 @@ function getPilarName(key) {
 function getPilarBg(key) {
   const p = pilars.find(p => p.key === key)
   return p ? p.bg : '#F5F5F5'
+}
+
+const evalTitle = computed(() => {
+  if (!evalSubpilar.value) return 'Evaluasi'
+  return `Evaluasi: ${evalSubpilar.value.title}`
+})
+
+const evalEmoji = computed(() => evalSubpilar.value?.emoji || '⭐')
+const evalColor = computed(() => evalSubpilar.value?.color || '#4CAF50')
+const evalDesc = computed(() => evalSubpilar.value?.desc || '')
+
+const evalPercent = computed(() => Math.min(100, Math.round((evalPoints.value / evalMax) * 100)))
+
+function openEvaluasi(anak, sp) {
+  evalAnak.value = anak
+  evalSubpilar.value = sp
+  const data = evaluasiData[sp.key]
+  evalQuestions.value = data ? data.questions : []
+  evalPoints.value = 0
+  showEvaluasi.value = true
+}
+
+function addEvalPoint() {
+  if (evalPoints.value < evalMax) {
+    evalPoints.value++
+    playAddSound()
+  }
+}
+
+function removeEvalPoint() {
+  if (evalPoints.value > 0) {
+    evalPoints.value--
+    playRemoveSound()
+  }
+}
+
+function closeEvaluasi() {
+  showEvaluasi.value = false
+}
+
+function shareEval() {
+  if (!evalAnak.value || !evalSubpilar.value) return
+  shareProgress({
+    title: `Evaluasi ${evalSubpilar.value.title} - ${evalAnak.value.nama}`,
+    category: getPilarName(evalSubpilar.value.pilar),
+    emoji: evalSubpilar.value.emoji,
+    color: evalColor.value,
+    points: evalPoints.value,
+    maxPoints: evalMax,
+    notes: `${evalPoints.value} dari ${evalMax} poin`
+  })
+}
+
+function shareEvalDirect(anak, sp) {
+  shareProgress({
+    title: `${sp.title} - ${anak.nama}`,
+    category: getPilarName(sp.pilar),
+    emoji: sp.emoji,
+    color: sp.color,
+    points: Math.round(sp.progress / 10),
+    maxPoints: 10,
+    notes: `Progress ${sp.progress}%`
+  })
 }
 </script>
