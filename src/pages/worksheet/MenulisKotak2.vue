@@ -123,7 +123,7 @@ async function downloadPDF() {
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 
-.ws-wrapper { padding-top: 60px; }
+.ws-wrapper { padding-top: 80px !important; }
 
 .ws-toolbar {
   position: fixed; top: 0; left: 0; right: 0;
@@ -172,6 +172,7 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 
 .ws-print-area {
   width: 794px;
+  margin: 0px auto;
   padding: 0px 50px 20px;
   background: white;
   font-family: 'helvetica', sans-serif;
@@ -222,6 +223,7 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
   user-select: none;
 }
 .ws-box-letter {
+  font-size: 80px;
   color: #222;
   background: #f0f0f0;
 }
