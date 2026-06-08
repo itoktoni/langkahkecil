@@ -2,14 +2,7 @@
   <div class="ws-wrapper">
     <div class="ws-toolbar">
       <button class="ws-btn-close" @click="$emit('close')">✕</button>
-      <div class="ws-toolbar-title">✍️ Menulis Huruf (A-Z)</div>
-      <div class="ws-toolbar-options">
-        <select v-model="letterCase" class="ws-select">
-          <option value="upper">Huruf Besar (A)</option>
-          <option value="lower">Huruf Kecil (a)</option>
-          <option value="both">Keduanya (A a)</option>
-        </select>
-      </div>
+      <div class="ws-toolbar-title">✍️ Menulis Angka (1-10)</div>
       <div class="ws-toolbar-actions">
         <button class="ws-btn" @click="downloadPDF" :disabled="generating">
           {{ generating ? 'Membuat PDF...' : '⬇️ Download PDF' }}
@@ -18,10 +11,10 @@
     </div>
 
     <div class="ws-container">
-      <div v-for="(pair, i) in letterPairs" :key="pair.upper" class="ws-page">
+      <div v-for="(num, i) in numbers" :key="num" class="ws-page">
         <div class="ws-header">
           <div class="ws-header-box title-box">
-            <span class="ws-title">Menulis Huruf {{ displayLetter(pair) }}</span>
+            <span class="ws-title">Menulis Angka {{ num }}</span>
           </div>
           <div class="ws-header-box name-box">
             <span class="ws-label">Nama:</span>
@@ -31,18 +24,18 @@
         <div class="ws-guide-section">
           <div class="ws-guide-label">Contoh:</div>
           <div class="ws-guide-box">
-            <span class="ws-guide-letter" :style="guideStyle">{{ displayLetter(pair) }}</span>
+            <span class="ws-guide-letter">{{ num }}</span>
           </div>
         </div>
         <div class="ws-practice-section">
           <div class="ws-practice-label">Latihan:</div>
           <div v-for="n in 5" :key="n" class="ws-practice-row">
-            <span class="ws-practice-hint" :style="hintStyle">{{ displayLetter(pair) }}</span>
+            <span class="ws-practice-hint">{{ num }}</span>
             <div class="ws-practice-line"></div>
           </div>
         </div>
         <div class="ws-footer">
-          <span class="ws-page-num">{{ i + 1 }} / {{ letterPairs.length }}</span>
+          <span class="ws-page-num">{{ i + 1 }} / {{ numbers.length }}</span>
         </div>
       </div>
     </div>
@@ -50,30 +43,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { jsPDF } from 'jspdf'
 
 const emit = defineEmits(['close'])
 
-const letterPairs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(u => ({ upper: u, lower: u.toLowerCase() }))
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const generating = ref(false)
-const letterCase = ref('upper')
-
-function displayLetter(pair) {
-  if (letterCase.value === 'upper') return pair.upper
-  if (letterCase.value === 'lower') return pair.lower
-  return `${pair.upper} ${pair.lower}`
-}
-
-const guideStyle = computed(() => {
-  if (letterCase.value === 'both') return { fontSize: '160px' }
-  return {}
-})
-
-const hintStyle = computed(() => {
-  if (letterCase.value === 'both') return { fontSize: '36px' }
-  return {}
-})
 
 function downloadPDF() {
   generating.value = true
@@ -82,51 +58,18 @@ function downloadPDF() {
     const doc = new jsPDF('p', 'mm', 'a4')
     const W = 210, H = 297, M = 15, CW = W - M * 2
 
-    if (letterCase.value === 'upper') {
-      for (let i = 0; i < 26; i++) {
-        if (i > 0) doc.addPage()
-        drawBorder(doc, W, H)
-        const pair = letterPairs[i]
-        const letter = pair.upper
+    for (let i = 0; i < numbers.length; i++) {
+      if (i > 0) doc.addPage()
+      const num = numbers[i]
 
-        drawTitleBox(doc, M, CW, `Menulis Huruf ${letter}`)
-        drawGuideBox(doc, M, CW, W, H - 100, letter, 250)
-        drawPracticeLines(doc, M, CW, W, H, letter, 50, 5)
-        drawPageNum(doc, W, H, i + 1, 26)
-      }
-      doc.save('Worksheet_MenulisHuruf_Kapital.pdf')
+      drawBorder(doc, W, H)
+      drawTitleBox(doc, M, CW, `Menulis Angka ${num}`)
+      drawGuideBox(doc, M, CW, W, String(num), 250)
+      drawPracticeLines(doc, M, CW, W, H, String(num), 50, 5)
+      drawPageNum(doc, W, H, i + 1, numbers.length)
     }
 
-    if (letterCase.value === 'lower') {
-      for (let i = 0; i < 26; i++) {
-        if (i > 0) doc.addPage()
-        drawBorder(doc, W, H)
-        const pair = letterPairs[i]
-        const letter = pair.lower
-
-        drawTitleBox(doc, M, CW, `Menulis Huruf ${letter}`)
-        drawGuideBox(doc, M, CW, W, H, letter, 200, 'lower')
-        drawPracticeLines(doc, M, CW, W, H, letter, 50, 5)
-        drawPageNum(doc, W, H, i + 1, 26)
-      }
-      doc.save('Worksheet_MenulisHuruf_Kecil.pdf')
-    }
-
-    if (letterCase.value === 'both') {
-      for (let i = 0; i < 26; i++) {
-        if (i > 0) doc.addPage()
-        drawBorder(doc, W, H)
-        const pair = letterPairs[i]
-        const letter = `${pair.upper} ${pair.lower}`
-
-        drawTitleBox(doc, M, CW, `Menulis Huruf ${letter}`)
-        drawGuideBox(doc, M, CW, W, H, letter, 200, 'both')
-        drawPracticeLines(doc, M, CW, W, H, letter, 70, 5, 'both')
-        drawPageNum(doc, W, H, i + 1, 26)
-      }
-      doc.save('Worksheet_MenulisHuruf_Kapital-Kecil.pdf')
-    }
-
+    doc.save('Worksheet_MenulisAngka_1-10.pdf')
     generating.value = false
   }, 100)
 }
@@ -151,15 +94,10 @@ function drawTitleBox(doc, M, CW, title) {
   doc.text('Nama:', M + CW / 2 + 9, 28)
 }
 
-function drawGuideBox(doc, M, CW, W, H, letter, fontSize, type = 'capital') {
+function drawGuideBox(doc, M, CW, W, letter, fontSize) {
   const guideY = 40
   const guideH = 90
-
-  let adjustY = 115;
-
-  if (type === 'lower' || type === 'both') {
-    adjustY = 105;
-  }
+  const adjustY = 115
 
   doc.setDrawColor(34, 34, 34)
   doc.setLineWidth(0.5)
@@ -176,7 +114,7 @@ function drawGuideBox(doc, M, CW, W, H, letter, fontSize, type = 'capital') {
   doc.text(letter, W / 2, adjustY, { align: 'center' })
 }
 
-function drawPracticeLines(doc, M, CW, W, H, letter, fontSize, numLines, type = 'capital') {
+function drawPracticeLines(doc, M, CW, W, H, letter, fontSize, numLines) {
   const practiceY = 148
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(11)
@@ -185,13 +123,8 @@ function drawPracticeLines(doc, M, CW, W, H, letter, fontSize, numLines, type = 
 
   const lineStartY = practiceY
   const lineSpacing = 23
-  let hintX = M + 10
-  let hintDraw = M + 30
-
-  if (type === 'both') {
-    hintX =  M + 25;
-    hintDraw = M + 55;
-  }
+  const hintX = M + 10
+  const hintDraw = M + 30
 
   for (let n = 0; n < numLines; n++) {
     const ly = lineStartY + n * lineSpacing
@@ -233,7 +166,7 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 
 .ws-toolbar {
   position: fixed; top: 0; left: 0; right: 0;
-  background: linear-gradient(135deg, #1565C0, #1E88E5);
+  background: linear-gradient(135deg, #6A1B9A, #8E24AA);
   color: white; padding: 12px 20px;
   display: flex; align-items: center; gap: 12px;
   z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
@@ -247,17 +180,10 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 }
 
 .ws-toolbar-title { font-size: 15px; font-weight: 700; flex: 1; }
-.ws-toolbar-options { display: flex; gap: 8px; align-items: center; }
-.ws-select {
-  background: white; color: #1565C0; border: none;
-  padding: 8px 12px; border-radius: 10px;
-  font-weight: 700; font-size: 13px; cursor: pointer;
-  font-family: 'helvetica', sans-serif;
-}
 .ws-toolbar-actions { display: flex; gap: 8px; }
 
 .ws-btn {
-  background: white; color: #1565C0; border: none;
+  background: white; color: #6A1B9A; border: none;
   padding: 8px 16px; border-radius: 10px;
   font-weight: 700; font-size: 13px; cursor: pointer;
   font-family: 'helvetica', sans-serif;
