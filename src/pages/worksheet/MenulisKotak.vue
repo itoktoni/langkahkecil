@@ -27,8 +27,7 @@
           <div class="ws-name-line"></div>
         </div>
       </div>
-      <template v-for="(page, pi) in pages" :key="pi">
-        <div v-if="pi > 0" pageBreak></div>
+      <div v-for="(page, pi) in pages" :key="pi" data-page>
         <div class="ws-section-title" v-if="pages.length > 1">Hal {{ pi + 1 }}</div>
         <div class="ws-rows" :class="page.length < 6 ? 'ws-rows-tall' : ''">
           <div v-for="(item, i) in page" :key="i" class="ws-row">
@@ -38,7 +37,7 @@
             <span class="ws-box"></span>
           </div>
         </div>
-      </template>
+      </div>
     </div>
   </div>
 </template>

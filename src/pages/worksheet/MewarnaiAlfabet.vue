@@ -1,5 +1,5 @@
 <template>
-  <div class="ws-wrapper">
+  < class="ws-wrapper">
     <div class="ws-toolbar">
       <button class="ws-btn-close" @click="$emit('close')">✕</button>
       <div class="ws-toolbar-title"><Icon icon="mdi:file-document-edit-outline" class="ws-toolbar-icon" /> Mewarnai Alfabet (A-Z)</div>
@@ -18,7 +18,11 @@
     </div>
 
     <div ref="printArea" class="ws-print-area">
-      <div v-for="(pair, i) in letterPairs" :key="pair.upper">
+
+       <div v-for="(pair, i) in letterPairs" :key="pair.upper" data-page class="ws-page">
+
+        <div class="ws-container">
+
         <div class="ws-header">
           <div class="ws-header-box title-box">
             <span class="ws-title">Mewarnai Huruf</span>
@@ -29,14 +33,15 @@
           </div>
         </div>
         <div class="ws-letter-area">
-          <span v-if="letterCase === 'upper' || letterCase === 'both'" class="ws-letter ws-upper">{{ pair.upper }}</span>
-          <span v-if="letterCase === 'lower' || letterCase === 'both'" class="ws-letter ws-lower" :class="letterCase === 'both' ? 'ws-lower' : 'ws-upper'">{{ pair.lower }}</span>
+          <span v-if="letterCase === 'upper' || letterCase === 'both'" class="ws-letter">{{ pair.upper }}</span>
+          <span v-if="letterCase === 'lower' || letterCase === 'both'" class="ws-letter" :class="{ 'ws-letter-sm': letterCase === 'both' }">{{ pair.lower }}</span>
         </div>
         <div class="ws-footer">
           <span class="ws-page-num">{{ i + 1 }} / {{ letterPairs.length }}</span>
         </div>
+        </div>
+
       </div>
-    </div>
   </div>
 </template>
 
@@ -65,7 +70,6 @@ async function downloadPDF() {
     generating.value = false
   }
 }
-
 </script>
 
 <style>
@@ -108,17 +112,36 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 
 .ws-btn:hover { transform: scale(1.03); }
 .ws-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.ws-btn-print { background: rgba(255,255,255,0.2); color: white; }
 
 .ws-print-area {
   width: 794px;
   margin: 0px auto;
-  padding: 20px 50px;
   background: white;
   font-family: 'helvetica', sans-serif;
+  padding: 20px 30px !important;
 }
 
-.ws-header { display: flex; gap: 8px; margin-bottom: 6mm; }
+.ws-container{
+  height: 1123px;
+  width: 700px !important;
+  display: flex;
+  margin-left: -10px !important;
+  flex-direction: column;
+  page-break-after: always;
+  border-radius: 30px;
+  background-color: #fff !important;
+}
+
+.ws-page {
+  border: unset !important;
+  width: 794px !important;
+  height: 1123px;
+  page-break-after: always;
+  margin-bottom: 30px;
+  background-color: #176c33 !important;
+}
+
+.ws-header { display: flex; gap: 8px; margin-bottom: 30px; flex-shrink: 0; }
 .ws-header-box {
   flex: 1; border: 2.5px solid #222; border-radius: 12px;
   padding: 10px 16px; display: flex; align-items: center;
@@ -130,24 +153,35 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 .ws-name-line { flex: 1; border-bottom: 2.5px dashed #aaa; min-height: 22px; }
 
 .ws-letter-area {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 10mm;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  overflow: hidden;
 }
 
 .ws-letter {
-  font-weight: 900; color: white;
+  font-weight: 900;
+  color: white;
   -webkit-text-stroke: 3px #222;
   paint-order: stroke fill;
-  line-height: 1; user-select: none;
+  line-height: 0.85;
+  user-select: none;
+  font-size: 580px;
 }
 
-.ws-upper { font-size: 620px; }
-.ws-lower {
-  font-size: 700px;
-  margin-top: -200px;
+.ws-letter-sm {
+  font-size: 480px;
 }
 
-.ws-footer { text-align: center; padding-top: 4mm; border-top: 1.5px solid #ddd; }
+.ws-footer {
+  text-align: center;
+  padding-top: 12px;
+  border-top: 1.5px solid #ddd;
+  flex-shrink: 0;
+}
 .ws-page-num { font-size: 10px; color: #999; }
 
 .ws-toolbar-icon { width: 18px; height: 18px; vertical-align: -3px; margin-right: 6px; }
@@ -158,5 +192,6 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
   .ws-toolbar { display: none; }
   .ws-wrapper { padding-top: 0; }
   .ws-print-area { padding: 0; width: 100%; }
+  .ws-page { page-break-after: always; width: 100%; height: 297mm; padding: 15mm 20mm 10mm; }
 }
 </style>
