@@ -1,5 +1,5 @@
 <template>
-  <div class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+  <div class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
 
     <!-- Profile Card -->
     <div class="bg-canvas-cream rounded-[32px] border-4 border-[#B7D9BC] p-6 shadow-lg relative overflow-hidden">
@@ -441,6 +441,9 @@ async function deleteAnak(anak) {
   await removeAnak(anak.id)
   const idx = props.anakList.indexOf(anak)
   if (idx > -1) props.anakList.splice(idx, 1)
+  if (app.selectedAnakId === anak.id) {
+    app.selectedAnakId = props.anakList.length ? props.anakList[0].id : null
+  }
 }
 
 async function resetAnak() {
@@ -449,6 +452,7 @@ async function resetAnak() {
     await removeAnak(anak.id)
   }
   props.anakList.splice(0)
+  app.selectedAnakId = null
 }
 
 async function tambahAnak() {

@@ -1,5 +1,5 @@
 <template>
-  <div class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto">
+  <div class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto">
 
     <div v-show="!selectedSub" class="mb-stack-lg">
       <section class="mb-4">
@@ -30,7 +30,7 @@
         <p class="text-sm text-on-surface-variant">Gunakan dropdown di atas untuk memilih anak yang ingin dikembangkan.</p>
       </div>
 
-      <div v-else-if="!selectedChild.tahun"
+      <div v-else-if="!selectedChild || !selectedChild.tahun"
         class="bg-canvas-cream rounded-[32px] p-8 text-center border-4 border-dashed border-[#B7D9BC]">
         <div class="text-5xl mb-4">📅</div>
         <h3 class="font-headline-sm text-text-main mb-2">Set Tanggal Lahir Anak</h3>

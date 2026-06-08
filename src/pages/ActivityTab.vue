@@ -1,5 +1,5 @@
 <template>
-  <div class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+  <div class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
 
     <div v-if="!selectedType">
       <section class="mb-stack-lg">

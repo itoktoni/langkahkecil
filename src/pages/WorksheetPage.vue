@@ -52,31 +52,6 @@
       <p class="text-sm text-on-surface-variant font-medium">Membuat worksheet...</p>
     </div>
 
-    <!-- Saved Worksheets -->
-    <div v-if="savedWorksheets.length" class="mt-2">
-      <h4 class="text-xs font-bold text-primary uppercase tracking-wider mb-3">Worksheet Tersimpan</h4>
-      <div class="space-y-2">
-        <div v-for="ws in savedWorksheets" :key="ws.id"
-          class="bg-canvas-cream rounded-[20px] border-2 border-[#B7D9BC] shadow-sm p-3 flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center border-2 border-white shadow-sm"
-            :style="{ background: ws.bg || '#E1F2E5' }">
-            <Icon :icon="ws.icon || 'mdi:file-document-outline'" class="w-5 h-5" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-bold text-text-main truncate">{{ ws.title }}</p>
-            <p class="text-[11px] text-on-surface-variant">{{ ws.childName }} · {{ ws.date }}</p>
-          </div>
-          <button @click.stop="openSavedWorksheet(ws)"
-            class="w-9 h-9 rounded-xl flex items-center justify-center bg-primary text-white active:scale-95 transition-all">
-            <span class="material-symbols-outlined text-base">open_in_new</span>
-          </button>
-          <button @click.stop="removeSaved(ws.id)"
-            class="w-9 h-9 rounded-xl flex items-center justify-center border-2 border-error/30 text-error active:scale-95 transition-all">
-            <span class="material-symbols-outlined text-base">delete</span>
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- Template Overlays -->
@@ -210,38 +185,12 @@ const filteredTypes = computed(() => {
   return list
 })
 
-const savedWorksheets = computed(() => tools.toolsData.worksheets || [])
-
-function todayStr() {
-  return new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
-}
-
 function openWorksheet(ws) {
   generating.value = true
   setTimeout(() => {
     activeTemplate.value = ws.id
-    tools.addWorksheet({
-      id: Date.now().toString(),
-      templateId: ws.id,
-      title: ws.title,
-      icon: ws.icon,
-      bg: ws.bg,
-      childName: childName.value,
-      date: todayStr(),
-      createdAt: new Date().toISOString()
-    })
     generating.value = false
   }, 200)
-}
-
-function openSavedWorksheet(ws) {
-  if (ws.templateId) {
-    activeTemplate.value = ws.templateId
-  }
-}
-
-function removeSaved(id) {
-  tools.removeWorksheetItem(id)
 }
 </script>
 

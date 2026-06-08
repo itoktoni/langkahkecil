@@ -10,17 +10,17 @@
       <ActivityTab ref="activityTabRef" v-show="app.activeTab === 'activity'" />
       <ProfileTab v-show="app.activeTab === 'profile'" :anak-list="anak.anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" />
 
-      <div v-show="app.activeTab === 'challenge'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+      <div v-show="app.activeTab === 'challenge'" class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
         <AnakSelector v-if="anak.anakList.length" :anak-list="anak.anakList" v-model="tools.toolsAnakId" class="mb-stack-lg" />
         <ChallengePage :challenges="tools.toolsData.challenges" :challenge-history="tools.toolsData.challengeHistory" @add-challenge="tools.addChallenge" @add-point="tools.addPoint" @remove-point="tools.removePoint" @edit-challenge="tools.editChallenge" @delete-challenge="tools.deleteChallenge" />
       </div>
 
-      <div v-show="app.activeTab === 'jadwal'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+      <div v-show="app.activeTab === 'jadwal'" class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
         <AnakSelector v-if="anak.anakList.length" :anak-list="anak.anakList" v-model="tools.toolsAnakId" class="mb-stack-lg" />
         <JadwalPage :schedules="tools.toolsData.schedules" @add-schedule="tools.addSchedule" @remove-schedule="tools.removeSchedule" />
       </div>
 
-      <div v-show="app.activeTab === 'checklist'" class="px-margin-mobile md:px-margin-desktop mt-stack-md max-w-6xl mx-auto pb-8">
+      <div v-show="app.activeTab === 'checklist'" class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
         <AnakSelector v-if="anak.anakList.length" :anak-list="anak.anakList" v-model="tools.toolsAnakId" class="mb-stack-lg" />
         <ChecklistPage :checklists="tools.toolsData.checklists" @add-checklist="tools.addChecklist" @remove-checklist="tools.removeChecklist" @add-item="tools.addChecklistItem" @remove-item="tools.removeChecklistItem" />
       </div>
