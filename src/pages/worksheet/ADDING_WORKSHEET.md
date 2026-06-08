@@ -9,10 +9,17 @@ Dokumen ini menjelaskan cara menambahkan worksheet baru ke sistem. Ada **3 tipe*
 ```
 src/pages/WorksheetPage.vue          ← Halaman utama, daftar semua worksheet
 src/pages/worksheet/                  ← Folder komponen template full-page
-  ├── MewarnaiAlfabet.vue             ← Contoh: mewarnai huruf (full-page template)
-  └── MewarnaiAngka.vue               ← Contoh: mewarnai angka (full-page template)
+  ├── MewarnaiAlfabet.vue             ← Contoh: mewarnai huruf (jsPDF)
+  ├── MewarnaiAngka.vue               ← Contoh: mewarnai angka (jsPDF)
+  ├── MenulisHuruf.vue                ← Contoh: menulis huruf (jsPDF)
+  ├── MenulisAngka.vue                ← Contoh: menulis angka (jsPDF)
+  └── MenulisKotak.vue                ← Contoh: menulis di kotak (dompdf.js)
 src/utils/worksheetGenerator.js       ← Generator helper (word search, maze, dll)
 ```
+
+Library PDF yang digunakan:
+- **jsPDF** — untuk worksheet per-halaman (satu page = satu item besar). Digunakan di MewarnaiAlfabet, MewarnaiAngka, MenulisHuruf, MenulisAngka.
+- **dompdf.js** — untuk worksheet dengan banyak item per halaman + auto pagination. Digunakan di MenulisKotak.
 
 Setiap worksheet punya 3 bagian:
 1. **Card entry** — tombol di grid worksheet (data di `worksheetTypes[]`)
@@ -322,6 +329,82 @@ async function generateLocal(ws) {
 ### Langkah 4: Tambah Card Entry
 
 Sama seperti Tipe 1 Langkah 2.
+
+---
+
+## TIPE 2b: Worksheet Full-Page dengan dompdf.js
+
+Untuk worksheet yang butuh banyak item per halaman + auto pagination, gunakan **dompdf.js**. Contoh: `MenulisKotak.vue`.
+
+### Kelebihan dompdf.js vs jsPDF
+- **Auto pagination** — tidak perlu hitung page break manual
+- **Vector PDF** — bukan image, bisa diedit, file lebih kecil
+- **`pageBreak` attribute** — kontrol page break dari HTML
+
+### Template Structure
+
+```vue
+<template>
+  <div class="ws-wrapper">
+    <div class="ws-toolbar">...</div>
+
+    <!-- 1 container, bukan multiple ws-page -->
+    <div ref="printArea" class="ws-print-area">
+      <div class="ws-header">...</div>
+
+      <template v-for="(page, pi) in pages" :key="pi">
+        <!-- Page break sebelum halaman ke-2 dst -->
+        <div v-if="pi > 0" pageBreak></div>
+
+        <div class="ws-rows">
+          <div v-for="(item, i) in page" :key="i" class="ws-row">
+            <!-- Konten per baris -->
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>
+```
+
+### Script
+
+```js
+import dompdf from 'dompdf.js'
+
+async function downloadPDF() {
+  const el = printArea.value
+  const blob = await dompdf(el, {
+    pagination: true,       // ← Auto pagination
+    format: 'a4',
+    backgroundColor: '#ffffff',
+    compress: true
+  })
+
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'Worksheet_Nama.pdf'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+```
+
+### CSS Penting untuk dompdf
+
+```css
+.ws-print-area {
+  width: 794px;           /* ← A4 dalam pixel (210mm × 3.78) */
+  margin: 0px auto;
+  padding: 0px 50px 20px;
+  background: white;
+}
+```
+
+**Penting:**
+- Width harus **794px** (bukan 210mm) — dompdf lebih akurat dengan pixel
+- Gunakan `pageBreak` attribute di HTML untuk page break, bukan CSS `page-break-after`
+- `pageBreak` di halaman pertama **tidak perlu** (`v-if="pi > 0"`)
 
 ---
 

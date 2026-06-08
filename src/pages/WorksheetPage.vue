@@ -84,15 +84,12 @@
     <MenulisHuruf v-if="activeTemplate === 'menulis_huruf'" ref="menulisHurufRef" @close="activeTemplate = null" />
     <MenulisAngka v-if="activeTemplate === 'menulis_angka'" ref="menulisAngkaRef" @close="activeTemplate = null" />
     <MenulisKotak v-if="activeTemplate === 'menulis_kotak'" ref="menulisKotakRef" @close="activeTemplate = null" />
-    <MenulisKotak2 v-if="activeTemplate === 'menulis_kotak2'" ref="menulisKotak2Ref" @close="activeTemplate = null" />
-    <MenulisKotak3 v-if="activeTemplate === 'menulis_kotak3'" ref="menulisKotak3Ref" @close="activeTemplate = null" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, nextTick } from 'vue'
 import { jsPDF } from 'jspdf'
-import html2canvas from 'html2canvas-pro'
 import { useToolsStore } from '../stores/toolsStore.js'
 import { useAnakStore } from '../stores/anakStore.js'
 import { generateWordSearch, generateMaze, generateDotToDot, generateBarChart, generateVerticalMath, generateFillBlanks, generateGeography } from '../utils/worksheetGenerator.js'
@@ -101,8 +98,6 @@ import MewarnaiAngka from './worksheet/MewarnaiAngka.vue'
 import MenulisHuruf from './worksheet/MenulisHuruf.vue'
 import MenulisAngka from './worksheet/MenulisAngka.vue'
 import MenulisKotak from './worksheet/MenulisKotak.vue'
-import MenulisKotak2 from './worksheet/MenulisKotak2.vue'
-import MenulisKotak3 from './worksheet/MenulisKotak3.vue'
 
 const tools = useToolsStore()
 const anakStore = useAnakStore()
@@ -116,8 +111,6 @@ const mewarnaiAngkaRef = ref(null)
 const menulisHurufRef = ref(null)
 const menulisAngkaRef = ref(null)
 const menulisKotakRef = ref(null)
-const menulisKotak2Ref = ref(null)
-const menulisKotak3Ref = ref(null)
 
 const childName = computed(() => {
   const a = anakStore.anakList.find(a => a.id === tools.toolsAnakId)
@@ -140,8 +133,6 @@ const worksheetTypes = [
   { id: 'menulis_huruf', emoji: '✍️', title: 'Menulis Huruf', desc: 'Latihan menulis huruf A-Z dengan panduan', age: '3-5', ageLabel: '3-5 thn', bg: '#E3F2FD', generate: generateMenulisHuruf },
   { id: 'menulis_angka', emoji: '✏️', title: 'Menulis Angka', desc: 'Latihan menulis angka 1-10 dengan panduan', age: '3-5', ageLabel: '3-5 thn', bg: '#F3E5F5', generate: generateMenulisAngka },
   { id: 'menulis_kotak', emoji: '📝', title: 'Menulis Huruf di Kotak', desc: 'Menulis huruf A-Z berulang dalam kotak', age: '3-5', ageLabel: '3-5 thn', bg: '#FFF3E0', generate: generateMenulisKotak },
-  { id: 'menulis_kotak2', emoji: '📦', title: 'Menulis Kotak (dompdf)', desc: 'Menulis huruf di kotak - versi dompdf.js', age: '3-5', ageLabel: '3-5 thn', bg: '#FFF3E0', generate: generateMenulisKotak2 },
-  { id: 'menulis_kotak3', emoji: '🖼️', title: 'Menulis Kotak (canvas)', desc: 'Menulis huruf di kotak - versi html2canvas-pro', age: '3-5', ageLabel: '3-5 thn', bg: '#FFF3E0', generate: generateMenulisKotak3 },
   { id: 'tracing_huruf', emoji: '✍️', title: 'Mengikuti Garis Huruf', desc: 'Mengikuti garis putus-putus huruf', age: '1-3', ageLabel: '1-3 thn', bg: '#E8F5E9', generate: generateTracingHuruf },
   { id: 'tracing_angka', emoji: '✍️', title: 'Mengikuti Garis Angka', desc: 'Mengikuti garis putus-putus angka', age: '1-3', ageLabel: '1-3 thn', bg: '#FFF3E0', generate: generateTracingAngka },
   { id: 'garis_zigzag', emoji: '〰️', title: 'Garis Zig Zag', desc: 'Mengikuti garis zigzag dan lengkung', age: '1-3', ageLabel: '1-3 thn', bg: '#FCE4EC', generate: generateGarisZigzag },
@@ -234,10 +225,6 @@ async function generateLocal(ws) {
       activeTemplate.value = 'menulis_angka'
     } else if (data.type === 'menulis_kotak') {
       activeTemplate.value = 'menulis_kotak'
-    } else if (data.type === 'menulis_kotak2') {
-      activeTemplate.value = 'menulis_kotak2'
-    } else if (data.type === 'menulis_kotak3') {
-      activeTemplate.value = 'menulis_kotak3'
     } else if (data.pdf) {
       data.pdf()
     } else {
@@ -321,16 +308,6 @@ function generateMenulisAngka() {
 // -- MENULIS KOTAK (3-5) --
 function generateMenulisKotak() {
   return { type: 'menulis_kotak', title: 'Menulis Huruf di Kotak', emoji: '📝', bg: '#FFF3E0', items: [] }
-}
-
-// -- MENULIS KOTAK2 (dompdf) --
-function generateMenulisKotak2() {
-  return { type: 'menulis_kotak2', title: 'Menulis Kotak (dompdf)', emoji: '📦', bg: '#FFF3E0', items: [] }
-}
-
-// -- MENULIS KOTAK3 (html2canvas) --
-function generateMenulisKotak3() {
-  return { type: 'menulis_kotak3', title: 'Menulis Kotak (canvas)', emoji: '🖼️', bg: '#FFF3E0', items: [] }
 }
 
 // -- TRACING HURUF (1-3) --

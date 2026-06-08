@@ -2,7 +2,7 @@
   <div class="ws-wrapper">
     <div class="ws-toolbar">
       <button class="ws-btn-close" @click="$emit('close')">✕</button>
-      <div class="ws-toolbar-title">✍️ Menulis Huruf di Kotak</div>
+      <div class="ws-toolbar-title">✍️ Menulis Huruf di Kotak (dompdf)</div>
       <div class="ws-toolbar-options">
         <select v-model="letterCase" class="ws-select">
           <option value="upper">Huruf Besar (A)</option>
@@ -17,17 +17,19 @@
       </div>
     </div>
 
-    <div ref="printArea" class="ws-container">
-      <div v-for="(page, pi) in pages" :key="pi" class="ws-page">
-        <div class="ws-header">
-          <div class="ws-header-box title-box">
-            <span class="ws-title">Menulis Huruf di Kotak</span>
-          </div>
-          <div class="ws-header-box name-box">
-            <span class="ws-label">Nama:</span>
-            <div class="ws-name-line"></div>
-          </div>
+    <div ref="printArea" class="ws-print-area">
+      <div class="ws-header">
+        <div class="ws-header-box title-box">
+          <span class="ws-title">Menulis Huruf di Kotak</span>
         </div>
+        <div class="ws-header-box name-box">
+          <span class="ws-label">Nama:</span>
+          <div class="ws-name-line"></div>
+        </div>
+      </div>
+      <template v-for="(page, pi) in pages" :key="pi">
+        <div v-if="pi > 0" pageBreak></div>
+        <div class="ws-section-title" v-if="pages.length > 1">Hal {{ pi + 1 }}</div>
         <div class="ws-rows" :class="page.length < 6 ? 'ws-rows-tall' : ''">
           <div v-for="(item, i) in page" :key="i" class="ws-row">
             <span class="ws-box ws-box-letter">{{ letterCase === 'both' ? item.display : displayLetter(item) }}</span>
@@ -36,17 +38,14 @@
             <span class="ws-box"></span>
           </div>
         </div>
-        <div class="ws-footer">
-          <span class="ws-page-num">{{ pi + 1 }} / {{ pages.length }}</span>
-        </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
-import html2pdf from 'html2pdf.js'
+import dompdf from 'dompdf.js'
 
 const emit = defineEmits(['close'])
 
@@ -96,15 +95,21 @@ async function downloadPDF() {
 
     const suffix = letterCase.value === 'upper' ? 'Kapital' : letterCase.value === 'lower' ? 'Kecil' : 'Kapital-Kecil'
 
-    const opt = {
-      margin: 0,
-      filename: `Worksheet_MenulisKotak_${suffix}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }
+    const blob = await dompdf(el, {
+      pagination: true,
+      format: 'a4',
+      backgroundColor: '#ffffff',
+      compress: true
+    })
 
-    await html2pdf().set(opt).from(el).save()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `Worksheet_MenulisKotak_dompdf_${suffix}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
   } catch (e) {
     console.error(e)
     alert('Gagal membuat PDF.')
@@ -118,7 +123,7 @@ async function downloadPDF() {
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 
-.ws-wrapper { padding-top: 60px; }
+.ws-wrapper { padding-top: 80px !important; }
 
 .ws-toolbar {
   position: fixed; top: 0; left: 0; right: 0;
@@ -156,7 +161,8 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 .ws-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .ws-container {
-  width: 100%;
+  width: 794px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -164,19 +170,15 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
   padding: 20px;
 }
 
-.ws-page {
-  width: 210mm;
-  min-height: 297mm;
-  padding: 12mm 15mm;
+.ws-print-area {
+  width: 794px;
+  margin: 0px auto;
+  padding: 0px 50px 20px;
   background: white;
-  display: flex;
-  flex-direction: column;
   font-family: 'helvetica', sans-serif;
-  border: 4px solid #000;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
-.ws-header { display: flex; gap: 8px; margin-bottom: 6mm; }
+.ws-header { display: flex; gap: 8px; margin-bottom: 20px; }
 .ws-header-box {
   flex: 1; border: 2.5px solid #222; border-radius: 12px;
   padding: 10px 16px; display: flex; align-items: center;
@@ -187,25 +189,31 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 .ws-label { font-size: 18px; font-weight: 700; color: #222; white-space: nowrap; }
 .ws-name-line { flex: 1; border-bottom: 2.5px dashed #aaa; min-height: 22px; }
 
+.ws-section-title {
+  font-size: 12px;
+  color: #aaa;
+  margin: 10px 0 5px;
+  text-align: right;
+}
+
 .ws-rows {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 .ws-rows-tall .ws-box {
-  height: 150px;
+  height: 170px;
 }
 .ws-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 .ws-box {
   flex: 1;
   border: 2px solid #ccc;
   border-radius: 6px;
-  height: 110px;
-  margin: 10px;
+  height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,28 +223,18 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
   user-select: none;
 }
 .ws-box-letter {
+  font-size: 80px;
   color: #222;
   background: #f0f0f0;
 }
 
-.ws-footer { text-align: center; padding-top: 4mm; border-top: unset; }
+.ws-footer { text-align: center; padding-top: 10px; border-top: 1px solid #eee; }
 .ws-page-num { font-size: 10px; color: #999; }
 
 @media print {
   html, body { background: white; }
   .ws-toolbar { display: none; }
   .ws-wrapper { padding-top: 0; }
-  .ws-container { padding: 0; gap: 0; }
-  .ws-page {
-    box-shadow: none;
-    border: none;
-    page-break-after: always;
-    width: 100%;
-    min-height: 0;
-    height: 297mm;
-    padding: 12mm 15mm;
-    overflow: hidden;
-  }
-  .ws-page:last-child { page-break-after: auto; }
+  .ws-print-area { padding: 0; width: 100%; }
 }
 </style>
