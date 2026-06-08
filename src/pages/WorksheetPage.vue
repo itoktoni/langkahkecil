@@ -78,7 +78,9 @@
     </div>
   </div>
 
-  <MewarnaiAlfabet ref="mewarnaiAlfabetRef" />
+  <div v-if="activeTemplate" class="fixed inset-0 z-[100] bg-white overflow-y-auto">
+    <MewarnaiAlfabet v-if="activeTemplate === 'mewarnai_alfabet'" ref="mewarnaiRef" @close="activeTemplate = null" />
+  </div>
 </template>
 
 <script setup>
@@ -95,45 +97,13 @@ const anakStore = useAnakStore()
 
 const selectedAge = ref('all')
 const generating = ref(false)
-const mewarnaiAlfabetRef = ref(null)
+const activeTemplate = ref(null)
+const mewarnaiRef = ref(null)
 
 const childName = computed(() => {
   const a = anakStore.anakList.find(a => a.id === tools.toolsAnakId)
   return a ? a.nama : 'Anak'
 })
-
-async function downloadAlfabetPdf() {
-  const el = mewarnaiAlfabetRef.value?.container
-  if (!el) return
-
-  generating.value = true
-  try {
-    const pages = el.querySelectorAll('.ws-page')
-    const pdf = new jsPDF('p', 'mm', 'a4')
-    const pageW = 210
-    const pageH = 297
-
-    for (let i = 0; i < pages.length; i++) {
-      const canvas = await html2canvas(pages[i], {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        width: pages[i].offsetWidth,
-        height: pages[i].offsetHeight
-      })
-      const imgData = canvas.toDataURL('image/png')
-      if (i > 0) pdf.addPage()
-      pdf.addImage(imgData, 'PNG', 0, 0, pageW, pageH)
-    }
-
-    pdf.save(`Worksheet_MewarnaiAlfabet_A-Z.pdf`)
-  } catch (e) {
-    console.error(e)
-    alert('Gagal membuat PDF.')
-  } finally {
-    generating.value = false
-  }
-}
 
 const ageFilters = [
   { value: 'all', label: 'Semua' },
@@ -224,8 +194,7 @@ async function generateLocal(ws) {
   try {
     const data = ws.generate()
     if (data.type === 'mewarnai_alfabet') {
-      await nextTick()
-      await downloadAlfabetPdf()
+      activeTemplate.value = 'mewarnai_alfabet'
     } else if (data.pdf) {
       data.pdf()
     } else {
