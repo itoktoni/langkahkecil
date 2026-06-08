@@ -3,11 +3,17 @@
     <div class="ws-toolbar">
       <button class="ws-btn-close" @click="$emit('close')">✕</button>
       <div class="ws-toolbar-title">📝 Mewarnai Alfabet (A-Z)</div>
+      <div class="ws-toolbar-options">
+        <select v-model="letterCase" class="ws-select">
+          <option value="upper">Huruf Besar (A)</option>
+          <option value="lower">Huruf Kecil (a)</option>
+          <option value="both">Keduanya (A a)</option>
+        </select>
+      </div>
       <div class="ws-toolbar-actions">
         <button class="ws-btn" @click="downloadPDF" :disabled="generating">
           {{ generating ? 'Membuat PDF...' : '⬇️ Download PDF' }}
         </button>
-        <button class="ws-btn ws-btn-print" @click="printPage">🖨️ Print</button>
       </div>
     </div>
 
@@ -23,7 +29,8 @@
           </div>
         </div>
         <div class="ws-letter-area">
-          <span class="ws-letter ws-upper">{{ pair.upper }}</span>
+          <span v-if="letterCase === 'upper' || letterCase === 'both'" class="ws-letter ws-upper">{{ pair.upper }}</span>
+          <span v-if="letterCase === 'lower' || letterCase === 'both'" class="ws-letter ws-lower" :class="letterCase === 'both' ? 'ws-lower' : 'ws-upper'">{{ pair.lower }}</span>
         </div>
         <div class="ws-footer">
           <span class="ws-page-num">{{ i + 1 }} / {{ letterPairs.length }}</span>
@@ -37,10 +44,11 @@
 import { ref } from 'vue'
 import { jsPDF } from 'jspdf'
 
-defineEmits(['close'])
+const emit = defineEmits(['close'])
 
 const letterPairs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(u => ({ upper: u, lower: u.toLowerCase() }))
 const generating = ref(false)
+const letterCase = ref('upper')
 
 function downloadPDF() {
   generating.value = true
@@ -74,19 +82,61 @@ function downloadPDF() {
       const centerY = topY + (bottomY - topY) / 2
 
       doc.setFont('helvetica', 'bold')
-      doc.setFontSize(650)
-      if(i === 22)
-      {
-        doc.setFontSize(500)
-      }
-
       doc.setTextColor(255, 255, 255)
       doc.setDrawColor(34, 34, 34)
       doc.setLineWidth(2)
-      doc.text(letterPairs[i].upper, centerX, centerY + 80, { align: 'center', renderingMode: 1 })
 
-      // doc.setFontSize(280)
-      // doc.text(letterPairs[i].lower, centerX, centerY + 110, { align: 'center', renderingMode: 1 })
+      if (letterCase.value === 'both') {
+        doc.setFontSize(300)
+        const upperY = centerY - 20
+        doc.text(letterPairs[i].upper, centerX, upperY, { align: 'center', renderingMode: 1 })
+        doc.setFontSize(350)
+
+        let lowerY = centerY + 100
+
+        if (i === 6 || i === 15 || i === 16 || i === 24) {
+          lowerY = centerY + 70
+        }
+        else if(i === 9 ){
+          doc.setFontSize(300)
+          lowerY = centerY + 80
+        }
+
+        doc.text(letterPairs[i].lower, centerX, lowerY, { align: 'center', renderingMode: 1 })
+      }
+
+      if (letterCase.value === 'upper') {
+        doc.setFontSize(650)
+        if (i === 22) doc.setFontSize(450)
+        const upperY = centerY + 90
+        doc.text(letterPairs[i].upper, centerX, upperY, { align: 'center', renderingMode: 1 })
+      }
+
+      if (letterCase.value === 'lower') {
+
+        doc.setFontSize(750)
+        if (i === 22) doc.setFontSize(550)
+        if (i === 12) doc.setFontSize(500)
+        if (i === 9) doc.setFontSize(550)
+
+        let lowerY = centerY;
+
+        if (i === 1 || i === 3 || i === 5 || i === 7 || i === 8 || i === 19) {
+          lowerY = centerY + 100;
+        }
+        else if (i === 6 || i == 9 || i === 15 || i === 16 || i === 24) {
+          lowerY = centerY + 40;
+        }
+        else if (i === 10 || i === 11) {
+          lowerY = centerY + 90;
+        }
+        else{
+          lowerY = centerY + 70;
+        }
+
+        doc.text(letterPairs[i].lower, centerX, lowerY, { align: 'center', renderingMode: 1 })
+
+      }
 
       doc.setDrawColor(200, 200, 200)
       doc.setLineWidth(0.3)
@@ -97,19 +147,17 @@ function downloadPDF() {
       doc.text(`${i + 1} / 26`, W / 2, H - 14, { align: 'center' })
     }
 
-    doc.save('Worksheet_MewarnaiAlfabet_A-Z.pdf')
+    const suffix = letterCase.value === 'upper' ? 'Kapital' : letterCase.value === 'lower' ? 'Kecil' : 'Kapital-Kecil'
+    doc.save(`Worksheet_MewarnaiAlfabet_${suffix}.pdf`)
     generating.value = false
   }, 100)
 }
 
-function printPage() {
-  window.print()
-}
 </script>
 
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { background: #e8e8e8; font-family: 'Fredoka', sans-serif; }
+html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 
 .ws-wrapper { padding-top: 60px; }
 
@@ -119,7 +167,7 @@ html, body { background: #e8e8e8; font-family: 'Fredoka', sans-serif; }
   color: white; padding: 12px 20px;
   display: flex; align-items: center; gap: 12px;
   z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'helvetica', sans-serif;
 }
 
 .ws-btn-close {
@@ -129,13 +177,20 @@ html, body { background: #e8e8e8; font-family: 'Fredoka', sans-serif; }
 }
 
 .ws-toolbar-title { font-size: 15px; font-weight: 700; flex: 1; }
+.ws-toolbar-options { display: flex; gap: 8px; align-items: center; }
+.ws-select {
+  background: white; color: #176c33; border: none;
+  padding: 8px 12px; border-radius: 10px;
+  font-weight: 700; font-size: 13px; cursor: pointer;
+  font-family: 'helvetica', sans-serif;
+}
 .ws-toolbar-actions { display: flex; gap: 8px; }
 
 .ws-btn {
   background: white; color: #176c33; border: none;
   padding: 8px 16px; border-radius: 10px;
   font-weight: 700; font-size: 13px; cursor: pointer;
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'helvetica', sans-serif;
 }
 
 .ws-btn:hover { transform: scale(1.03); }
@@ -158,7 +213,7 @@ html, body { background: #e8e8e8; font-family: 'Fredoka', sans-serif; }
   background: white;
   display: flex;
   flex-direction: column;
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'helvetica', sans-serif;
   border: 4px solid #000;
   box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
@@ -186,8 +241,11 @@ html, body { background: #e8e8e8; font-family: 'Fredoka', sans-serif; }
   line-height: 1; user-select: none;
 }
 
-.ws-upper { font-size: 220px; }
-.ws-lower { font-size: 180px; }
+.ws-upper { font-size: 620px; }
+.ws-lower {
+  font-size: 700px;
+  margin-top: -200px;
+}
 
 .ws-footer { text-align: center; padding-top: 4mm; border-top: 1.5px solid #ddd; }
 .ws-page-num { font-size: 10px; color: #999; }
