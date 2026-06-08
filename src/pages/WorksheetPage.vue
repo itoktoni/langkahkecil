@@ -1,15 +1,15 @@
 <template>
   <div class="space-y-4">
     <!-- Header -->
-    <div class="flex items-center justify-between">
-      <h3 class="font-headline-md text-text-main flex items-center gap-2">
-        <span class="w-8 h-8 rounded-full bg-success-soft border-2 border-[#B7D9BC] flex items-center justify-center text-base">📝</span>
-        Worksheet
-      </h3>
+    <!-- Search -->
+    <div class="relative">
+      <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant text-base">search</span>
+      <input v-model="searchQuery" type="text" placeholder="Cari worksheet..."
+        class="w-full pl-9 pr-4 py-2.5 rounded-2xl border-2 border-[#B7D9BC] bg-white text-sm font-medium text-text-main placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary transition-colors">
     </div>
 
     <!-- Age Filter -->
-    <div class="flex gap-2 overflow-x-auto pb-1">
+    <div class="flex gap-2 overflow-x-auto pb-3 scrollbar-hide">
       <button v-for="age in ageFilters" :key="age.value"
         @click="selectedAge = age.value"
         class="px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 border-2"
@@ -21,7 +21,7 @@
     </div>
 
     <!-- Worksheet Types Grid -->
-    <div class="grid grid-cols-2 gap-3">
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
       <div v-for="ws in filteredTypes" :key="ws.id"
         class="bg-canvas-cream rounded-[24px] border-4 border-[#B7D9BC] shadow-md p-4 cursor-pointer hover:shadow-lg hover:scale-[1.01] transition-all active:scale-[0.98]"
         @click="ws.isApi ? generateFromApi(ws) : generateLocal(ws)">
@@ -80,6 +80,8 @@
 
   <div v-if="activeTemplate" class="fixed inset-0 z-[100] bg-white overflow-y-auto">
     <MewarnaiAlfabet v-if="activeTemplate === 'mewarnai_alfabet'" ref="mewarnaiRef" @close="activeTemplate = null" />
+    <MewarnaiAngka v-if="activeTemplate === 'mewarnai_angka'" ref="mewarnaiAngkaRef" @close="activeTemplate = null" />
+    <MenulisHuruf v-if="activeTemplate === 'menulis_huruf'" ref="menulisHurufRef" @close="activeTemplate = null" />
   </div>
 </template>
 
@@ -91,14 +93,19 @@ import { useToolsStore } from '../stores/toolsStore.js'
 import { useAnakStore } from '../stores/anakStore.js'
 import { generateWordSearch, generateMaze, generateDotToDot, generateBarChart, generateVerticalMath, generateFillBlanks, generateGeography } from '../utils/worksheetGenerator.js'
 import MewarnaiAlfabet from './worksheet/MewarnaiAlfabet.vue'
+import MewarnaiAngka from './worksheet/MewarnaiAngka.vue'
+import MenulisHuruf from './worksheet/MenulisHuruf.vue'
 
 const tools = useToolsStore()
 const anakStore = useAnakStore()
 
 const selectedAge = ref('all')
+const searchQuery = ref('')
 const generating = ref(false)
 const activeTemplate = ref(null)
 const mewarnaiRef = ref(null)
+const mewarnaiAngkaRef = ref(null)
+const menulisHurufRef = ref(null)
 
 const childName = computed(() => {
   const a = anakStore.anakList.find(a => a.id === tools.toolsAnakId)
@@ -116,8 +123,9 @@ const ageFilters = [
 
 const worksheetTypes = [
   // === USIA 1-3 TAHUN ===
-  { id: 'mewarnai_alfabet', emoji: '🖍️', title: 'Mewarnai Alfabet', desc: 'Mewarnai huruf A-Z dengan krayon', age: '1-3', ageLabel: '1-3 thn', bg: '#E3F2FD', generate: generateMewarnaiAlfabet },
+  { id: 'mewarnai_alfabet', emoji: '🖍️', title: 'Mewarnai Huruf', desc: 'Mewarnai huruf A-Z dengan krayon', age: '1-3', ageLabel: '1-3 thn', bg: '#E3F2FD', generate: generateMewarnaiAlfabet },
   { id: 'mewarnai_angka', emoji: '🔢', title: 'Mewarnai Angka', desc: 'Mewarnai angka 1-10', age: '1-3', ageLabel: '1-3 thn', bg: '#F3E5F5', generate: generateMewarnaiAngka },
+  { id: 'menulis_huruf', emoji: '✍️', title: 'Menulis Huruf', desc: 'Latihan menulis huruf A-Z dengan panduan', age: '3-5', ageLabel: '3-5 thn', bg: '#E3F2FD', generate: generateMenulisHuruf },
   { id: 'tracing_huruf', emoji: '✍️', title: 'Mengikuti Garis Huruf', desc: 'Mengikuti garis putus-putus huruf', age: '1-3', ageLabel: '1-3 thn', bg: '#E8F5E9', generate: generateTracingHuruf },
   { id: 'tracing_angka', emoji: '✍️', title: 'Mengikuti Garis Angka', desc: 'Mengikuti garis putus-putus angka', age: '1-3', ageLabel: '1-3 thn', bg: '#FFF3E0', generate: generateTracingAngka },
   { id: 'garis_zigzag', emoji: '〰️', title: 'Garis Zig Zag', desc: 'Mengikuti garis zigzag dan lengkung', age: '1-3', ageLabel: '1-3 thn', bg: '#FCE4EC', generate: generateGarisZigzag },
@@ -166,8 +174,15 @@ const worksheetTypes = [
 ]
 
 const filteredTypes = computed(() => {
-  if (selectedAge.value === 'all') return worksheetTypes
-  return worksheetTypes.filter(ws => ws.age === selectedAge.value)
+  let list = worksheetTypes
+  if (selectedAge.value !== 'all') {
+    list = list.filter(ws => ws.age === selectedAge.value)
+  }
+  if (searchQuery.value.trim()) {
+    const q = searchQuery.value.toLowerCase()
+    list = list.filter(ws => ws.title.toLowerCase().includes(q) || ws.desc.toLowerCase().includes(q))
+  }
+  return list
 })
 
 const savedWorksheets = computed(() => tools.toolsData.worksheets || [])
@@ -195,6 +210,10 @@ async function generateLocal(ws) {
     const data = ws.generate()
     if (data.type === 'mewarnai_alfabet') {
       activeTemplate.value = 'mewarnai_alfabet'
+    } else if (data.type === 'mewarnai_angka') {
+      activeTemplate.value = 'mewarnai_angka'
+    } else if (data.type === 'menulis_huruf') {
+      activeTemplate.value = 'menulis_huruf'
     } else if (data.pdf) {
       data.pdf()
     } else {
@@ -263,6 +282,11 @@ function generateMewarnaiAlfabet() {
 function generateMewarnaiAngka() {
   const nums = Array.from({ length: 10 }, (_, i) => i + 1)
   return { type: 'mewarnai_angka', title: 'Mewarnai Angka', emoji: '🔢', bg: '#F3E5F5', items: nums.map(n => ({ number: n })) }
+}
+
+// -- MENULIS HURUF (1-3) --
+function generateMenulisHuruf() {
+  return { type: 'menulis_huruf', title: 'Menulis Huruf A-Z', emoji: '✍️', bg: '#E3F2FD', items: [] }
 }
 
 // -- TRACING HURUF (1-3) --
