@@ -20,8 +20,7 @@
           <div class="ws-name-line"></div>
         </div>
       </div>
-      <template v-for="(page, pi) in pages" :key="pi">
-        <div v-if="pi > 0" pageBreak></div>
+      <div v-for="(page, pi) in pages" :key="pi" data-page>
         <div class="ws-rows ws-rows-tall">
           <div v-for="(item, i) in page" :key="i" class="ws-row">
             <span class="ws-box ws-box-letter">{{ item }}</span>
@@ -30,7 +29,7 @@
             <span class="ws-box ws-box-trace">{{ item }}</span>
           </div>
         </div>
-      </template>
+      </div>
     </div>
   </div>
 </template>
