@@ -1,5 +1,5 @@
 <template>
-  < class="ws-wrapper">
+  <div class="ws-wrapper">
     <div class="ws-toolbar">
       <button class="ws-btn-close" @click="$emit('close')">✕</button>
       <div class="ws-toolbar-title"><Icon icon="mdi:file-document-edit-outline" class="ws-toolbar-icon" /> Mewarnai Alfabet (A-Z)</div>
@@ -23,15 +23,13 @@
 
         <div class="ws-container">
 
-        <div class="ws-header">
-          <div class="ws-header-box title-box">
-            <span class="ws-title">Mewarnai Huruf</span>
-          </div>
-          <div class="ws-header-box name-box">
-            <span class="ws-label">Nama:</span>
-            <div class="ws-name-line"></div>
-          </div>
-        </div>
+        <table class="ws-header-table">
+          <tr>
+            <td class="ws-header-title">Mewarnai Huruf</td>
+            <td class="ws-header-name">Nama: </td>
+          </tr>
+        </table>
+
         <div class="ws-letter-area">
           <span v-if="letterCase === 'upper' || letterCase === 'both'" class="ws-letter">{{ pair.upper }}</span>
           <span v-if="letterCase === 'lower' || letterCase === 'both'" class="ws-letter" :class="{ 'ws-letter-sm': letterCase === 'both' }">{{ pair.lower }}</span>
@@ -42,6 +40,7 @@
         </div>
 
       </div>
+  </div>
   </div>
 </template>
 
@@ -141,25 +140,41 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
   background-color: #176c33 !important;
 }
 
-.ws-header { display: flex; gap: 8px; margin-bottom: 30px; flex-shrink: 0; }
-.ws-header-box {
-  flex: 1; border: 2.5px solid #222; border-radius: 12px;
-  padding: 10px 16px; display: flex; align-items: center;
+.ws-header-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 8px 0;
+  margin-bottom: 30px;
+  flex-shrink: 0;
 }
-.title-box { justify-content: center; }
-.ws-title { font-size: 20px; font-weight: 700; color: #222; }
-.name-box { gap: 10px; }
+.ws-header-table td {
+  width: 50%;
+  border: 2.5px solid #222;
+  border-radius: 12px;
+  padding: 10px 16px;
+  vertical-align: middle;
+}
+.ws-header-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+}
+.ws-header-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+}
 .ws-label { font-size: 18px; font-weight: 700; color: #222; white-space: nowrap; }
 .ws-name-line { flex: 1; border-bottom: 2.5px dashed #aaa; min-height: 22px; }
 
 .ws-letter-area {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
   overflow: hidden;
+  padding-top: 20px;
 }
 
 .ws-letter {
@@ -167,13 +182,13 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
   color: white;
   -webkit-text-stroke: 3px #222;
   paint-order: stroke fill;
-  line-height: 0.85;
+  line-height: 1;
   user-select: none;
-  font-size: 580px;
+  font-size: 420px;
 }
 
 .ws-letter-sm {
-  font-size: 480px;
+  font-size: 340px;
 }
 
 .ws-footer {

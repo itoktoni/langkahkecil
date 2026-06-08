@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => {
       include: ['@iconify/vue']
     },
     server: {
+      headers: mode === 'development' ? { 'Cache-Control': 'no-store' } : undefined,
       proxy: {
         '/api/quotes': {
           target: 'https://quotes.liupurnomo.com',
