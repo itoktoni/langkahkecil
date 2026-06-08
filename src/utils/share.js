@@ -1,5 +1,5 @@
 import { createApp, h } from 'vue'
-import html2canvas from 'html2canvas-pro'
+import { toBlob } from 'html-to-image'
 import ShareCard from '../components/ShareCard.vue'
 import ShareChecklistCard from '../components/ShareChecklistCard.vue'
 
@@ -10,7 +10,7 @@ function generateRefCode() {
   return code
 }
 
-async function renderToCanvas(component, props) {
+async function renderToBlob(component, props) {
   const container = document.createElement('div')
   container.style.position = 'fixed'
   container.style.left = '-9999px'
@@ -24,27 +24,22 @@ async function renderToCanvas(component, props) {
   await new Promise(r => setTimeout(r, 300))
 
   const el = container.firstElementChild
-  const canvas = await html2canvas(el, {
+  const blob = await toBlob(el, {
     width: el.scrollWidth,
     height: el.scrollHeight,
-    scale: 2,
-    useCORS: true,
+    pixelRatio: 2,
     backgroundColor: null
   })
 
   app.unmount()
   document.body.removeChild(container)
 
-  return canvas
-}
-
-async function canvasToBlob(canvas) {
-  return new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
+  return blob
 }
 
 async function doShare(challenge, isComplete) {
   const refCode = challenge.referralCode || generateRefCode()
-  const canvas = await renderToCanvas(ShareCard, {
+  const blob = await renderToBlob(ShareCard, {
     emoji: challenge.emoji || '🏆',
     challengeTitle: challenge.title,
     category: challenge.category,
@@ -57,7 +52,6 @@ async function doShare(challenge, isComplete) {
     referralCode: refCode
   })
 
-  const blob = await canvasToBlob(canvas)
   const label = isComplete ? 'selesai' : 'progress'
   const file = new File([blob], `challenge-${challenge.title}-${label}.png`, { type: 'image/png' })
 
@@ -94,7 +88,7 @@ export function shareProgress(challenge) {
 
 export async function shareChecklistImage(title, items, checkedCount, percent, options = {}) {
   const refCode = options.referralCode || generateRefCode()
-  const canvas = await renderToCanvas(ShareChecklistCard, {
+  const blob = await renderToBlob(ShareChecklistCard, {
     title,
     items,
     checkedCount,
@@ -102,7 +96,6 @@ export async function shareChecklistImage(title, items, checkedCount, percent, o
     referralCode: refCode
   })
 
-  const blob = await canvasToBlob(canvas)
   const file = new File([blob], `checklist-${title}.png`, { type: 'image/png' })
 
   if (navigator.share && navigator.canShare({ files: [file] })) {
