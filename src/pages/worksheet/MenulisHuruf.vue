@@ -133,7 +133,7 @@ function downloadPDF() {
 
         drawTitleBox(doc, M, CW, `Menulis Huruf ${letter}`)
         drawGuideBox(doc, M, CW, W, H - 100, letter, 250)
-        drawPracticeLines(doc, M, CW, W, H, letter, 120, 5)
+        drawPracticeLines(doc, M, CW, W, H, letter, 50, 5)
         drawPageNum(doc, W, H, i + 1, 26)
       }
       doc.save('Worksheet_MenulisHuruf_Kapital.pdf')
@@ -147,8 +147,8 @@ function downloadPDF() {
         const letter = pair.lower
 
         drawTitleBox(doc, M, CW, `Menulis Huruf ${letter}`)
-        drawGuideBox(doc, M, CW, W, H, letter, 350)
-        drawPracticeLines(doc, M, CW, W, H, letter, 120, 5)
+        drawGuideBox(doc, M, CW, W, H, letter, 200, 'lower')
+        drawPracticeLines(doc, M, CW, W, H, letter, 50, 5)
         drawPageNum(doc, W, H, i + 1, 26)
       }
       doc.save('Worksheet_MenulisHuruf_Kecil.pdf')
@@ -162,8 +162,8 @@ function downloadPDF() {
         const letter = `${pair.upper} ${pair.lower}`
 
         drawTitleBox(doc, M, CW, `Menulis Huruf ${letter}`)
-        drawGuideBox(doc, M, CW, W, H, letter, 200)
-        drawPracticeLines(doc, M, CW, W, H, letter, 80, 5)
+        drawGuideBox(doc, M, CW, W, H, letter, 200, 'both')
+        drawPracticeLines(doc, M, CW, W, H, letter, 70, 5, 'both')
         drawPageNum(doc, W, H, i + 1, 26)
       }
       doc.save('Worksheet_MenulisHuruf_Kapital-Kecil.pdf')
@@ -254,9 +254,16 @@ function drawTitleBox(doc, M, CW, title) {
   doc.text('Nama:', M + CW / 2 + 9, 28)
 }
 
-function drawGuideBox(doc, M, CW, W, H, letter, fontSize) {
-  const guideY = 48
+function drawGuideBox(doc, M, CW, W, H, letter, fontSize, type = 'capital') {
+  const guideY = 40
   const guideH = 90
+
+  let adjustY = 115;
+
+  if (type === 'lower' || type === 'both') {
+    adjustY = 105;
+  }
+
   doc.setDrawColor(34, 34, 34)
   doc.setLineWidth(0.5)
   doc.roundedRect(M, guideY, CW, guideH, 3, 3)
@@ -269,10 +276,10 @@ function drawGuideBox(doc, M, CW, W, H, letter, fontSize) {
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(fontSize)
   doc.setTextColor(230, 230, 230)
-  doc.text(letter, W / 2, 125, { align: 'center' })
+  doc.text(letter, W / 2, adjustY, { align: 'center' })
 }
 
-function drawPracticeLines(doc, M, CW, W, H, letter, fontSize, numLines) {
+function drawPracticeLines(doc, M, CW, W, H, letter, fontSize, numLines, type = 'capital') {
   const practiceY = 148
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(11)
@@ -280,8 +287,14 @@ function drawPracticeLines(doc, M, CW, W, H, letter, fontSize, numLines) {
   doc.text('Latihan:', M + 4, practiceY)
 
   const lineStartY = practiceY
-  const lineSpacing = 38
-  const hintX = M + 25
+  const lineSpacing = 23
+  let hintX = M + 10
+  let hintDraw = M + 30
+
+  if (type === 'both') {
+    hintX =  M + 25;
+    hintDraw = M + 55;
+  }
 
   for (let n = 0; n < numLines; n++) {
     const ly = lineStartY + n * lineSpacing
@@ -290,17 +303,17 @@ function drawPracticeLines(doc, M, CW, W, H, letter, fontSize, numLines) {
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(fontSize)
     doc.setTextColor(215, 215, 215)
-    doc.text(letter, hintX, ly + fontSize * 0.3, { align: 'center' })
+    doc.text(letter, hintX, ly + 80 * 0.3, { align: 'center' })
 
     doc.setDrawColor(183, 217, 188)
     doc.setLineWidth(0.5)
     doc.setLineDashPattern([3, 3], 0)
-    doc.line(M + 50, ly + 7, M + CW - 10, ly + 7)
+    doc.line(hintDraw, ly + 10, M + CW - 10, ly + 10)
     doc.setLineDashPattern([], 0)
 
     doc.setDrawColor(200, 200, 200)
     doc.setLineWidth(0.3)
-    doc.line(M + 50, ly + 36, M + CW - 10, ly + 36)
+    doc.line(hintDraw, ly + 24, M + CW - 10, ly + 24)
   }
 }
 
@@ -474,6 +487,16 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
   .ws-toolbar { display: none; }
   .ws-wrapper { padding-top: 0; }
   .ws-container { padding: 0; gap: 0; }
-  .ws-page { box-shadow: none; page-break-after: always; }
+  .ws-page {
+    box-shadow: none;
+    border: none;
+    page-break-after: always;
+    width: 100%;
+    min-height: 0;
+    height: 297mm;
+    padding: 12mm 15mm;
+    overflow: hidden;
+  }
+  .ws-page:last-child { page-break-after: auto; }
 }
 </style>

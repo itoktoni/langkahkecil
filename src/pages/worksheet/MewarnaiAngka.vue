@@ -189,6 +189,16 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
   .ws-toolbar { display: none; }
   .ws-wrapper { padding-top: 0; }
   .ws-container { padding: 0; gap: 0; }
-  .ws-page { box-shadow: none; page-break-after: always; }
+  .ws-page {
+    box-shadow: none;
+    border: none;
+    page-break-after: always;
+    width: 100%;
+    min-height: 0;
+    height: 297mm;
+    padding: 12mm 15mm;
+    overflow: hidden;
+  }
+  .ws-page:last-child { page-break-after: auto; }
 }
 </style>

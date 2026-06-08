@@ -1792,3 +1792,13 @@ function downloadPDF(data, title) {
   }
 }
 </script>
+
+<style>
+@media print {
+  .fixed.inset-0.z-\[100\] {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+}
+</style>
