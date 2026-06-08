@@ -2,7 +2,7 @@
   <div class="ws-wrapper">
     <div class="ws-toolbar">
       <button class="ws-btn-close" @click="$emit('close')">✕</button>
-      <div class="ws-toolbar-title">✍️ Menulis Huruf di Kotak (dompdf)</div>
+      <div class="ws-toolbar-title"><Icon icon="mdi:square-edit-outline" class="ws-toolbar-icon" /> Menulis Huruf di Kotak (dompdf)</div>
       <div class="ws-toolbar-options">
         <select v-model="letterCase" class="ws-select">
           <option value="upper">Huruf Besar (A)</option>
@@ -12,7 +12,7 @@
       </div>
       <div class="ws-toolbar-actions">
         <button class="ws-btn" @click="downloadPDF" :disabled="generating">
-          {{ generating ? 'Membuat PDF...' : '⬇️ Download PDF' }}
+          <Icon icon="mdi:download" class="ws-dl-icon" /> {{ generating ? 'Membuat PDF...' : 'Download PDF' }}
         </button>
       </div>
     </div>
@@ -45,6 +45,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { Icon } from '@iconify/vue'
 import dompdf from 'dompdf.js'
 
 const emit = defineEmits(['close'])
@@ -230,6 +231,9 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 
 .ws-footer { text-align: center; padding-top: 10px; border-top: 1px solid #eee; }
 .ws-page-num { font-size: 10px; color: #999; }
+
+.ws-toolbar-icon { width: 18px; height: 18px; vertical-align: -3px; margin-right: 6px; }
+.ws-dl-icon { width: 16px; height: 16px; vertical-align: -3px; margin-right: 4px; }
 
 @media print {
   html, body { background: white; }

@@ -110,7 +110,7 @@ const contentKeyMap = {
   story: 'stories', roleplay: 'roles', game: 'games',
   monolog: 'scripts', project: 'projects', music: 'songs',
   puzzle: 'puzzles', mindfulness: 'exercises', outdoor: 'activities',
-  ilmu_pengetahuan: 'experiments'
+  ilmu_pengetahuan: 'experiments', worksheet: 'worksheets'
 }
 
 function getItems(type) {

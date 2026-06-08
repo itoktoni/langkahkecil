@@ -2,7 +2,7 @@
   <div class="ws-wrapper">
     <div class="ws-toolbar">
       <button class="ws-btn-close" @click="$emit('close')">✕</button>
-      <div class="ws-toolbar-title"><Icon icon="mdi:pencil-outline" class="ws-toolbar-icon" /> Menulis Huruf (A-Z)</div>
+      <div class="ws-toolbar-title"><Icon icon="mdi:pencil-outline" class="ws-toolbar-icon" /> Menebalkan Huruf</div>
       <div class="ws-toolbar-options">
         <select v-model="letterCase" class="ws-select">
           <option value="upper">Huruf Besar (A)</option>
@@ -18,33 +18,27 @@
     </div>
 
     <div ref="printArea" class="ws-print-area">
-      <div v-for="(pair, i) in letterPairs" :key="pair.upper">
-        <div class="ws-header">
-          <div class="ws-header-box title-box">
-            <span class="ws-title">Menulis Huruf {{ displayLetter(pair) }}</span>
-          </div>
-          <div class="ws-header-box name-box">
-            <span class="ws-label">Nama:</span>
-            <div class="ws-name-line"></div>
-          </div>
+      <div class="ws-header">
+        <div class="ws-header-box title-box">
+          <span class="ws-title">Menebalkan Huruf</span>
         </div>
-        <div class="ws-guide-section">
-          <div class="ws-guide-label">Contoh:</div>
-          <div class="ws-guide-box">
-            <span class="ws-guide-letter" :style="guideStyle">{{ displayLetter(pair) }}</span>
-          </div>
-        </div>
-        <div class="ws-practice-section">
-          <div class="ws-practice-label">Latihan:</div>
-          <div v-for="n in 5" :key="n" class="ws-practice-row">
-            <span class="ws-practice-hint" :style="hintStyle">{{ displayLetter(pair) }}</span>
-            <div class="ws-practice-line"></div>
-          </div>
-        </div>
-        <div class="ws-footer">
-          <span class="ws-page-num">{{ i + 1 }} / {{ letterPairs.length }}</span>
+        <div class="ws-header-box name-box">
+          <span class="ws-label">Nama:</span>
+          <div class="ws-name-line"></div>
         </div>
       </div>
+      <template v-for="(page, pi) in pages" :key="pi">
+        <div v-if="pi > 0" pageBreak></div>
+        <div class="ws-section-title" v-if="pages.length > 1">Hal {{ pi + 1 }}</div>
+        <div class="ws-rows" :class="page.length < 6 ? 'ws-rows-tall' : ''">
+          <div v-for="(item, i) in page" :key="i" class="ws-row">
+            <span class="ws-box ws-box-letter">{{ letterCase === 'both' ? item.display : displayLetter(item) }}</span>
+            <span class="ws-box ws-box-trace">{{ letterCase === 'both' ? item.display : displayLetter(item) }}</span>
+            <span class="ws-box ws-box-trace">{{ letterCase === 'both' ? item.display : displayLetter(item) }}</span>
+            <span class="ws-box ws-box-trace">{{ letterCase === 'both' ? item.display : displayLetter(item) }}</span>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -58,42 +52,61 @@ const emit = defineEmits(['close'])
 
 const letterPairs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(u => ({ upper: u, lower: u.toLowerCase() }))
 const generating = ref(false)
-const printArea = ref(null)
 const letterCase = ref('upper')
+const printArea = ref(null)
 
 function displayLetter(pair) {
   if (letterCase.value === 'upper') return pair.upper
   if (letterCase.value === 'lower') return pair.lower
-  return `${pair.upper} ${pair.lower}`
+  return `${pair.upper}${pair.lower}`
 }
 
-const guideStyle = computed(() => {
-  if (letterCase.value === 'both') return { fontSize: '160px' }
-  return {}
-})
+const pages = computed(() => {
+  const chunk5 = (arr) => {
+    const result = []
+    for (let i = 0; i < arr.length; i += 5) {
+      result.push(arr.slice(i, i + 5))
+    }
+    if (result.length > 1 && result[result.length - 1].length < 3) {
+      const last = result.pop()
+      result[result.length - 1] = result[result.length - 1].concat(last)
+    }
+    return result
+  }
 
-const hintStyle = computed(() => {
-  if (letterCase.value === 'both') return { fontSize: '36px' }
-  return {}
+  if (letterCase.value === 'both') {
+    const expanded = []
+    for (const pair of letterPairs) {
+      expanded.push({ upper: pair.upper, lower: pair.lower, display: pair.upper })
+      expanded.push({ upper: pair.upper, lower: pair.lower, display: pair.lower })
+    }
+    return chunk5(expanded)
+  }
+  return chunk5(letterPairs)
 })
 
 async function downloadPDF() {
   generating.value = true
+
   try {
     await new Promise(r => setTimeout(r, 200))
+
     const el = printArea.value
     if (!el) return
+
+    const suffix = letterCase.value === 'upper' ? 'Kapital' : letterCase.value === 'lower' ? 'Kecil' : 'Kapital-Kecil'
+
     const blob = await dompdf(el, {
       pagination: true,
       format: 'a4',
       backgroundColor: '#ffffff',
       compress: true
     })
+
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    const suffix = letterCase.value === 'upper' ? 'Kapital' : letterCase.value === 'lower' ? 'Kecil' : 'Kapital-Kecil'
-    a.download = `Worksheet_MenulisHuruf_${suffix}.pdf`
+    a.download = `Worksheet_MenebalkanHuruf_${suffix}.pdf`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -111,11 +124,11 @@ async function downloadPDF() {
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 
-.ws-wrapper { padding-top: 60px; }
+.ws-wrapper { padding-top: 80px !important; }
 
 .ws-toolbar {
   position: fixed; top: 0; left: 0; right: 0;
-  background: linear-gradient(135deg, #1565C0, #1E88E5);
+  background: linear-gradient(135deg, #2E7D32, #43A047);
   color: white; padding: 12px 20px;
   display: flex; align-items: center; gap: 12px;
   z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
@@ -131,7 +144,7 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 .ws-toolbar-title { font-size: 15px; font-weight: 700; flex: 1; }
 .ws-toolbar-options { display: flex; gap: 8px; align-items: center; }
 .ws-select {
-  background: white; color: #1565C0; border: none;
+  background: white; color: #2E7D32; border: none;
   padding: 8px 12px; border-radius: 10px;
   font-weight: 700; font-size: 13px; cursor: pointer;
   font-family: 'helvetica', sans-serif;
@@ -139,7 +152,7 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 .ws-toolbar-actions { display: flex; gap: 8px; }
 
 .ws-btn {
-  background: white; color: #1565C0; border: none;
+  background: white; color: #2E7D32; border: none;
   padding: 8px 16px; border-radius: 10px;
   font-weight: 700; font-size: 13px; cursor: pointer;
   font-family: 'helvetica', sans-serif;
@@ -151,12 +164,12 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 .ws-print-area {
   width: 794px;
   margin: 0px auto;
-  padding: 20px 50px;
+  padding: 0px 50px 20px;
   background: white;
   font-family: 'helvetica', sans-serif;
 }
 
-.ws-header { display: flex; gap: 8px; margin-bottom: 6mm; }
+.ws-header { display: flex; gap: 8px; margin-bottom: 20px; }
 .ws-header-box {
   flex: 1; border: 2.5px solid #222; border-radius: 12px;
   padding: 10px 16px; display: flex; align-items: center;
@@ -167,58 +180,51 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 .ws-label { font-size: 18px; font-weight: 700; color: #222; white-space: nowrap; }
 .ws-name-line { flex: 1; border-bottom: 2.5px dashed #aaa; min-height: 22px; }
 
-.ws-guide-section {
-  margin-bottom: 8mm;
-  border: 2px solid #222;
-  border-radius: 12px;
-  padding: 4mm 6mm;
-  flex-shrink: 0;
+.ws-section-title {
+  font-size: 12px;
+  color: #aaa;
+  margin: 10px 0 5px;
+  text-align: right;
 }
-.ws-guide-label { font-size: 14px; font-weight: 700; color: #666; margin-bottom: 2mm; }
-.ws-guide-box {
+
+.ws-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.ws-rows-tall .ws-box {
+  height: 170px;
+}
+.ws-row {
+  display: flex;
+  gap: 10px;
+}
+.ws-box {
+  flex: 1;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 80mm;
-  padding-bottom: 3rem;
-}
-.ws-guide-letter {
   font-weight: 900;
-  color: #e6e6e6;
-  font-size: 400px;
-  line-height: 0;
-  user-select: none;
-}
-
-.ws-practice-section { flex: 1; display: flex; flex-direction: column; }
-.ws-practice-label { font-size: 14px; font-weight: 700; color: #666; margin-bottom: 3mm; }
-.ws-practice-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6mm;
-  position: relative;
-  height: 28mm;
-}
-.ws-practice-hint {
-  font-weight: 900;
+  font-size: 32px;
   color: #e0e0e0;
-  font-size: 100px;
-  line-height: 1;
-  width: 40px;
-  text-align: center;
-  flex-shrink: 0;
   user-select: none;
 }
-.ws-practice-line {
-  flex: 1;
-  border-top: 2px dotted #ccc;
-  border-bottom: 2px solid #ccc;
-  height: 70px;
-  margin-left: 50px;
+.ws-box-letter {
+  font-size: 80px;
+  color: #222;
+  background: #f0f0f0;
+}
+.ws-box-trace {
+  font-size: 80px;
+  color: #eeeeee;
+  background: white;
 }
 
-.ws-footer { text-align: center; padding-top: 4mm; border-top: unset; }
+.ws-footer { text-align: center; padding-top: 10px; border-top: 1px solid #eee; }
 .ws-page-num { font-size: 10px; color: #999; }
 
 .ws-toolbar-icon { width: 18px; height: 18px; vertical-align: -3px; margin-right: 6px; }

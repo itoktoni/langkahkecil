@@ -1,3 +1,5 @@
+import { worksheetTypes } from './worksheetTypes.js'
+
 const meta = {
   storytelling: { emoji: '📖', title: 'Story Telling', desc: 'Anak belajar mendengar, bercerita dan menyampaikan ide secara verbal.', color: '#4CAF50', bg: '#E8F5E9', feature: 'story', skills: ['spiritual', 'karakter', 'kreatifitas', 'emosi', 'sosial'] },
   bermain_peran: { emoji: '🎭', title: 'Bermain Peran', desc: 'Anak belajar memahami perspektif orang lain melalui peran.', color: '#FF9800', bg: '#FFF3E0', feature: 'roleplay', skills: ['karakter', 'sosial', 'emosi', 'kreatifitas'] },
@@ -45,7 +47,7 @@ function collectAges(items) {
 
 function buildAktivitasData() {
   return Object.entries(meta).map(([key, m]) => {
-    const items = loadItems(globs[key] || {})
+    const items = key === 'worksheet' ? worksheetTypes : loadItems(globs[key] || {})
     const ages = collectAges(items)
     const contentKey = {
       storytelling: 'stories',
@@ -57,7 +59,8 @@ function buildAktivitasData() {
       puzzle: 'puzzles',
       mindfulness: 'exercises',
       outdoor: 'activities',
-      ilmu_pengetahuan: 'experiments'
+      ilmu_pengetahuan: 'experiments',
+      worksheet: 'worksheets'
     }[key]
     return { key, ...m, ages, [contentKey]: items }
   })
@@ -71,7 +74,7 @@ export function filterActivities(childAge, skillKey) {
       storytelling: 'stories', bermain_peran: 'roles', permainan: 'games',
       monolog: 'scripts', proyek_kreatif: 'projects', musik_gerak: 'songs',
       puzzle: 'puzzles', mindfulness: 'exercises', outdoor: 'activities',
-      ilmu_pengetahuan: 'experiments'
+      ilmu_pengetahuan: 'experiments', worksheet: 'worksheets'
     }[a.key]
     const items = (a[contentKey] || []).filter(item => {
       const ageOk = childAge == null || (item.ages && item.ages.includes(childAge))
@@ -85,7 +88,7 @@ export function filterActivities(childAge, skillKey) {
       storytelling: 'stories', bermain_peran: 'roles', permainan: 'games',
       monolog: 'scripts', proyek_kreatif: 'projects', musik_gerak: 'songs',
       puzzle: 'puzzles', mindfulness: 'exercises', outdoor: 'activities',
-      ilmu_pengetahuan: 'experiments'
+      ilmu_pengetahuan: 'experiments', worksheet: 'worksheets'
     }[a.key]
     return (a[contentKey] || []).length > 0
   })

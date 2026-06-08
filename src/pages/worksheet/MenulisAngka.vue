@@ -2,16 +2,16 @@
   <div class="ws-wrapper">
     <div class="ws-toolbar">
       <button class="ws-btn-close" @click="$emit('close')">✕</button>
-      <div class="ws-toolbar-title">✍️ Menulis Angka (1-10)</div>
+      <div class="ws-toolbar-title"><Icon icon="mdi:square-edit-outline" class="ws-toolbar-icon" /> Menulis Angka (1-10)</div>
       <div class="ws-toolbar-actions">
         <button class="ws-btn" @click="downloadPDF" :disabled="generating">
-          {{ generating ? 'Membuat PDF...' : '⬇️ Download PDF' }}
+          <Icon icon="mdi:download" class="ws-dl-icon" /> {{ generating ? 'Membuat PDF...' : 'Download PDF' }}
         </button>
       </div>
     </div>
 
-    <div class="ws-container">
-      <div v-for="(num, i) in numbers" :key="num" class="ws-page">
+    <div ref="printArea" class="ws-print-area">
+      <div v-for="(num, i) in numbers" :key="num">
         <div class="ws-header">
           <div class="ws-header-box title-box">
             <span class="ws-title">Menulis Angka {{ num }}</span>
@@ -44,117 +44,41 @@
 
 <script setup>
 import { ref } from 'vue'
-import { jsPDF } from 'jspdf'
+import { Icon } from '@iconify/vue'
+import dompdf from 'dompdf.js'
 
 const emit = defineEmits(['close'])
 
 const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const generating = ref(false)
+const printArea = ref(null)
 
-function downloadPDF() {
+async function downloadPDF() {
   generating.value = true
-
-  setTimeout(() => {
-    const doc = new jsPDF('p', 'mm', 'a4')
-    const W = 210, H = 297, M = 15, CW = W - M * 2
-
-    for (let i = 0; i < numbers.length; i++) {
-      if (i > 0) doc.addPage()
-      const num = numbers[i]
-
-      drawBorder(doc, W, H)
-      drawTitleBox(doc, M, CW, `Menulis Angka ${num}`)
-      drawGuideBox(doc, M, CW, W, String(num), 250)
-      drawPracticeLines(doc, M, CW, W, H, String(num), 50, 5)
-      drawPageNum(doc, W, H, i + 1, numbers.length)
-    }
-
-    doc.save('Worksheet_MenulisAngka_1-10.pdf')
+  try {
+    await new Promise(r => setTimeout(r, 200))
+    const el = printArea.value
+    if (!el) return
+    const blob = await dompdf(el, {
+      pagination: true,
+      format: 'a4',
+      backgroundColor: '#ffffff',
+      compress: true
+    })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'Worksheet_MenulisAngka_1-10.pdf'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  } catch (e) {
+    console.error(e)
+    alert('Gagal membuat PDF.')
+  } finally {
     generating.value = false
-  }, 100)
-}
-
-function drawBorder(doc, W, H) {
-  doc.setDrawColor(0, 0, 0)
-  doc.setLineWidth(1.5)
-  doc.roundedRect(10, 10, W - 20, H - 20, 4, 4)
-}
-
-function drawTitleBox(doc, M, CW, title) {
-  doc.setDrawColor(34, 34, 34)
-  doc.setLineWidth(0.8)
-  doc.roundedRect(M, 16, CW / 2 - 3, 18, 3, 3)
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(16)
-  doc.setTextColor(34, 34, 34)
-  doc.text(title, M + CW / 4 - 1.5, 28, { align: 'center' })
-
-  doc.roundedRect(M + CW / 2 + 3, 16, CW / 2 - 3, 18, 3, 3)
-  doc.setFontSize(16)
-  doc.text('Nama:', M + CW / 2 + 9, 28)
-}
-
-function drawGuideBox(doc, M, CW, W, letter, fontSize) {
-  const guideY = 40
-  const guideH = 90
-  const adjustY = 115
-
-  doc.setDrawColor(34, 34, 34)
-  doc.setLineWidth(0.5)
-  doc.roundedRect(M, guideY, CW, guideH, 3, 3)
-
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(11)
-  doc.setTextColor(100, 100, 100)
-  doc.text('Contoh:', M + 4, guideY + 8)
-
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(fontSize)
-  doc.setTextColor(230, 230, 230)
-  doc.text(letter, W / 2, adjustY, { align: 'center' })
-}
-
-function drawPracticeLines(doc, M, CW, W, H, letter, fontSize, numLines) {
-  const practiceY = 148
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(11)
-  doc.setTextColor(100, 100, 100)
-  doc.text('Latihan:', M + 4, practiceY)
-
-  const lineStartY = practiceY
-  const lineSpacing = 23
-  const hintX = M + 10
-  const hintDraw = M + 30
-
-  for (let n = 0; n < numLines; n++) {
-    const ly = lineStartY + n * lineSpacing
-    if (ly + lineSpacing > H - 26) break
-
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(fontSize)
-    doc.setTextColor(215, 215, 215)
-    doc.text(letter, hintX, ly + 80 * 0.3, { align: 'center' })
-
-    doc.setDrawColor(183, 217, 188)
-    doc.setLineWidth(0.5)
-    doc.setLineDashPattern([3, 3], 0)
-    doc.line(hintDraw, ly + 10, M + CW - 10, ly + 10)
-    doc.setLineDashPattern([], 0)
-
-    doc.setDrawColor(200, 200, 200)
-    doc.setLineWidth(0.3)
-    doc.line(hintDraw, ly + 24, M + CW - 10, ly + 24)
   }
-}
-
-function drawPageNum(doc, W, H, current, total) {
-  doc.setDrawColor(200, 200, 200)
-  doc.setLineWidth(0.3)
-  doc.line(15, H - 20, W - 15, H - 20)
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(9)
-  doc.setTextColor(150, 150, 150)
-  doc.text(`${current} / ${total}`, W / 2, H - 14, { align: 'center' })
 }
 </script>
 
@@ -192,25 +116,12 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 .ws-btn:hover { transform: scale(1.03); }
 .ws-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.ws-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  padding: 20px;
-}
-
-.ws-page {
-  width: 210mm;
-  min-height: 297mm;
-  padding: 12mm 15mm;
+.ws-print-area {
+  width: 794px;
+  margin: 0px auto;
+  padding: 20px 50px;
   background: white;
-  display: flex;
-  flex-direction: column;
   font-family: 'helvetica', sans-serif;
-  border: 4px solid #000;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 .ws-header { display: flex; gap: 8px; margin-bottom: 6mm; }
@@ -278,21 +189,13 @@ html, body { background: #e8e8e8; font-family: 'helvetica', sans-serif; }
 .ws-footer { text-align: center; padding-top: 4mm; border-top: unset; }
 .ws-page-num { font-size: 10px; color: #999; }
 
+.ws-toolbar-icon { width: 18px; height: 18px; vertical-align: -3px; margin-right: 6px; }
+.ws-dl-icon { width: 16px; height: 16px; vertical-align: -3px; margin-right: 4px; }
+
 @media print {
   html, body { background: white; }
   .ws-toolbar { display: none; }
   .ws-wrapper { padding-top: 0; }
-  .ws-container { padding: 0; gap: 0; }
-  .ws-page {
-    box-shadow: none;
-    border: none;
-    page-break-after: always;
-    width: 100%;
-    min-height: 0;
-    height: 297mm;
-    padding: 12mm 15mm;
-    overflow: hidden;
-  }
-  .ws-page:last-child { page-break-after: auto; }
+  .ws-print-area { padding: 0; width: 100%; }
 }
 </style>

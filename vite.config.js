@@ -5,6 +5,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   return {
+    optimizeDeps: {
+      include: ['@iconify/vue']
+    },
     server: {
       proxy: {
         '/api/quotes': {
@@ -47,6 +50,11 @@ export default defineConfig(({ mode }) => {
         workbox: {
           globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
           runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/api\.iconify\.design\/.*/i,
+              handler: 'CacheFirst',
+              options: { cacheName: 'iconify-cache', expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 } }
+            },
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
               handler: 'CacheFirst',
