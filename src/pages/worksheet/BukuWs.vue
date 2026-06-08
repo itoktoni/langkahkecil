@@ -41,7 +41,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
-import dompdf from 'dompdf.js'
+import { downloadWorksheetPDF } from '../../utils/worksheetPdf.js'
 import { useToolsStore } from '../../stores/toolsStore.js'
 import { useAnakStore } from '../../stores/anakStore.js'
 
@@ -86,22 +86,7 @@ async function downloadPDF() {
   generating.value = true
   try {
     await new Promise(r => setTimeout(r, 200))
-    const el = printArea.value
-    if (!el) return
-    const blob = await dompdf(el, {
-      pagination: true,
-      format: 'a4',
-      backgroundColor: '#ffffff',
-      compress: true
-    })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'Worksheet_RangkumanBuku.pdf'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    await downloadWorksheetPDF(printArea.value, 'Worksheet_RangkumanBuku.pdf')
   } catch (e) {
     console.error(e)
     alert('Gagal membuat PDF.')

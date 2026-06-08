@@ -46,7 +46,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { Icon } from '@iconify/vue'
-import dompdf from 'dompdf.js'
+import { downloadWorksheetPDF } from '../../utils/worksheetPdf.js'
 
 const emit = defineEmits(['close'])
 
@@ -87,30 +87,10 @@ const pages = computed(() => {
 
 async function downloadPDF() {
   generating.value = true
-
   try {
     await new Promise(r => setTimeout(r, 200))
-
-    const el = printArea.value
-    if (!el) return
-
     const suffix = letterCase.value === 'upper' ? 'Kapital' : letterCase.value === 'lower' ? 'Kecil' : 'Kapital-Kecil'
-
-    const blob = await dompdf(el, {
-      pagination: true,
-      format: 'a4',
-      backgroundColor: '#ffffff',
-      compress: true
-    })
-
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `Worksheet_MenebalkanHuruf_${suffix}.pdf`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    await downloadWorksheetPDF(printArea.value, `Worksheet_MenebalkanHuruf_${suffix}.pdf`)
   } catch (e) {
     console.error(e)
     alert('Gagal membuat PDF.')

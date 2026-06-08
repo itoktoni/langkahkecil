@@ -82,13 +82,12 @@ const referralDisplay = computed(() => props.referralCode ? `${appUrl.replace('h
 }
 
 .b-1 {
-  width: 100px;
-  height: 100px;
+  width: 130px;
+  height: 130px;
   background-color: #ffeaa7;
-  top: -50px;
-  right: -50px;
-  opacity: 0.7;
-  z-index: 1;
+  top: -40px;
+  right: -40px;
+  opacity: 0.8;
 }
 
 .b-2 {
@@ -163,7 +162,6 @@ const referralDisplay = computed(() => props.referralCode ? `${appUrl.replace('h
 .child-name {
   color: #ff6b81;
   font-weight: 900;
-  background-color: #ffe8ec;
   padding: 4px 14px;
   border-radius: 16px;
   display: inline-block;

@@ -1,5 +1,5 @@
 import { createApp, h } from 'vue'
-import { toBlob } from 'html-to-image'
+import html2canvas from 'html2canvas'
 import ShareCard from '../components/ShareCard.vue'
 import ShareChecklistCard from '../components/ShareChecklistCard.vue'
 
@@ -24,12 +24,8 @@ async function renderToBlob(component, props) {
   await new Promise(r => setTimeout(r, 300))
 
   const el = container.firstElementChild
-  const blob = await toBlob(el, {
-    width: el.scrollWidth,
-    height: el.scrollHeight,
-    pixelRatio: 2,
-    backgroundColor: null
-  })
+  const canvas = await html2canvas(el, { scale: 2, useCORS: true })
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
 
   app.unmount()
   document.body.removeChild(container)

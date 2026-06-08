@@ -169,10 +169,6 @@ const referralDisplay = computed(() => props.referralCode ? `${appUrl.replace('h
 .child-name {
   color: rgb(46 125 50);
   font-weight: 900;
-  background-color: rgb(46 125 50);
-  color: #fffef9;
-  padding: 4px 14px;
-  border-radius: 16px;
   display: inline-block;
 }
 
