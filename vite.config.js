@@ -25,6 +25,11 @@ export default defineConfig(({ mode }) => {
           target: 'https://pixabay.com',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api\/pixabay/, '/api')
+        },
+        '/api': {
+          target: 'https://startok.test',
+          changeOrigin: true,
+          secure: false,
         }
       }
     },
@@ -50,6 +55,7 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+          importScripts: ['push-sw.js'],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/api\.iconify\.design\/.*/i,

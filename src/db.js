@@ -1,4 +1,5 @@
 import Dexie from 'dexie'
+import { toRaw } from 'vue'
 
 const db = new Dexie('HaloBunda')
 
@@ -19,7 +20,9 @@ export async function getAnakList() {
 }
 
 export async function saveAnak(anak) {
-  return db.anak.put(anak)
+  const raw = toRaw(anak)
+  const { challenges, challengeHistory, challenge_history, checklists, schedules, worksheets, ...anakData } = raw
+  return db.anak.put(JSON.parse(JSON.stringify(anakData)))
 }
 
 export async function removeAnak(id) {
@@ -97,4 +100,74 @@ export async function saveWorksheet(item) {
 
 export async function removeWorksheet(id) {
   return db.worksheets.delete(id)
+}
+
+function cleanRecord(obj, foreignKey, foreignValue) {
+  const { anak_id, id, ...rest } = obj
+  const record = { ...rest, [foreignKey]: foreignValue }
+  if (id != null) record.id = id
+  return record
+}
+
+export async function syncServerData(anakList) {
+  await db.transaction('rw', db.anak, db.challenges, db.challengeHistory, db.checklists, db.schedules, db.worksheets, async () => {
+    for (const anak of anakList) {
+      if (!anak.id) continue
+      const anakId = anak.id
+      await db.anak.put({
+        id: anakId,
+        nama: anak.nama,
+        gender: anak.gender,
+        umur: anak.umur,
+        tanggal: anak.tanggal_lahir || anak.tanggal,
+        bulan: anak.bulan_lahir || anak.bulan,
+        tahun: anak.tahun_lahir || anak.tahun,
+        tanggal_lahir: anak.tanggal_lahir,
+        bulan_lahir: anak.bulan_lahir,
+        tahun_lahir: anak.tahun_lahir,
+        emoji: anak.emoji,
+        avatar: anak.avatar,
+        skills: anak.skills || [],
+        history: anak.history || [],
+        completed_skills: anak.completed_skills || [],
+        settings: anak.settings || [],
+      })
+
+      if (Array.isArray(anak.challenges)) {
+        await db.challenges.where('anakId').equals(anakId).delete()
+        for (const c of anak.challenges) {
+          await db.challenges.put(cleanRecord(c, 'anakId', anakId))
+        }
+      }
+
+      const historyData = anak.challengeHistory || anak.challenge_history
+      if (Array.isArray(historyData)) {
+        await db.challengeHistory.where('anakId').equals(anakId).delete()
+        for (const h of historyData) {
+          await db.challengeHistory.put(cleanRecord(h, 'anakId', anakId))
+        }
+      }
+
+      if (Array.isArray(anak.checklists)) {
+        await db.checklists.where('anakId').equals(anakId).delete()
+        for (const cl of anak.checklists) {
+          await db.checklists.put(cleanRecord(cl, 'anakId', anakId))
+        }
+      }
+
+      if (Array.isArray(anak.schedules)) {
+        await db.schedules.where('anakId').equals(anakId).delete()
+        for (const s of anak.schedules) {
+          await db.schedules.put(cleanRecord(s, 'anakId', anakId))
+        }
+      }
+
+      if (Array.isArray(anak.worksheets)) {
+        await db.worksheets.where('anakId').equals(anakId).delete()
+        for (const w of anak.worksheets) {
+          await db.worksheets.put(cleanRecord(w, 'anakId', anakId))
+        }
+      }
+    }
+  })
 }

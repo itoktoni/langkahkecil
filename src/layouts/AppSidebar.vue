@@ -18,7 +18,7 @@
     </div>
 
     <nav class="flex-1 px-3 space-y-2">
-      <button v-for="tab in tabs" :key="tab.id"
+      <button v-for="tab in sidebarTabs" :key="tab.id"
         class="w-full flex items-center gap-3 px-4 py-3 border-2 shadow-sm rounded-2xl transition-all duration-200"
         :class="activeTab === tab.id
           ? 'bg-primary text-on-primary'
@@ -32,6 +32,14 @@
       </button>
     </nav>
 
+    <div v-if="canInstall" class="px-3 mb-3">
+      <button @click="$emit('install')"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 bg-canvas-cream text-on-surface-variant border-2 border-[#B7D9BC] hover:shadow-md hover:border-primary/30">
+        <span class="material-symbols-outlined text-xl">download</span>
+        <span class="font-label-lg">Install App</span>
+      </button>
+    </div>
+
     <div class="p-4 mx-3 mb-4 bg-success-soft rounded-[20px] border-4 border-[#B7D9BC]">
       <div class="flex items-center gap-3">
         <span class="w-8 h-8 rounded-full bg-white border-2 border-[#B7D9BC] flex items-center justify-center text-base">💡</span>
@@ -41,26 +49,23 @@
         </div>
       </div>
     </div>
-
-    <div class="border-t-4 border-[#B7D9BC]">
-      <div class="flex items-center gap-3 px-6 py-4">
-        <span class="material-symbols-outlined text-on-surface-variant text-xl">notifications</span>
-        <span class="font-label-lg text-on-surface-variant">Notifikasi</span>
-        <span class="ml-auto w-5 h-5 rounded-full bg-error text-on-error text-xs font-bold flex items-center justify-center">3</span>
-      </div>
-    </div>
   </aside>
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   tabs: { type: Array, required: true },
   activeTab: { type: String, required: true },
   userName: { type: String, default: 'Bunda' },
-  userGender: { type: String, default: '' }
+  userGender: { type: String, default: '' },
+  canInstall: { type: Boolean, default: false }
 })
 
-defineEmits(['switch'])
+defineEmits(['switch', 'install'])
+
+const sidebarTabs = computed(() => props.tabs.filter(t => t.id !== 'profile'))
 
 function iconStyle(tabId) {
   return { fontVariationSettings: props.activeTab === tabId ? "'FILL' 1" : "'FILL' 0" }

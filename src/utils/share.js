@@ -79,7 +79,7 @@ export function shareChallenge(challenge) {
 }
 
 export function shareProgress(challenge) {
-  return doShare(challenge, false)
+  return doShare(challenge, challenge.isComplete || false)
 }
 
 export async function shareChecklistImage(title, items, checkedCount, percent, options = {}) {

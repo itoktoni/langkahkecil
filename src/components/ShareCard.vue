@@ -39,6 +39,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { appConfig } from '../config/appConfig.js'
 
 const props = defineProps({
   emoji: { type: String, default: '🚀' },
@@ -54,8 +55,8 @@ const props = defineProps({
 })
 
 const headline = computed(() => props.isComplete ? 'YAY! HEBAT MAKSIMAL' : 'TERUS SEMANGAT YA!')
-const appName = import.meta.env.VITE_APP_NAME || 'Halo Bunda'
-const appTagline = import.meta.env.VITE_APP_TAGLINE || 'App Pengembangan Anak'
+const appName = appConfig.name
+const appTagline = appConfig.tagline
 const appUrl = import.meta.env.VITE_APP_URL || 'https://halobunda.app'
 const referralUrl = computed(() => props.referralCode ? `${appUrl}?ref=${props.referralCode}` : '#')
 const referralDisplay = computed(() => props.referralCode ? `${appUrl.replace('https://', '')}?ref=${props.referralCode}` : appUrl.replace('https://', ''))

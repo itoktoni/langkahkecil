@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { appConfig } from '../config/appConfig.js'
 
 export const useAppStore = defineStore('app', () => {
   const activeTab = ref('pilar')
@@ -9,19 +10,19 @@ export const useAppStore = defineStore('app', () => {
   const userGender = ref('')
   const toolsAnakId = ref(null)
   const appReady = ref(false)
-  const installDismissed = ref(false)
 
   const pageTitle = computed(() => {
     const titles = {
-      pilar: `Halo ${userName.value}!`,
+      pilar: `Welcome to ${appConfig.name}`,
       progress: 'Statistik',
       activity: 'Aktivitas',
       profile: 'Profile',
+      settings: 'Pengaturan',
       challenge: 'Challenge',
       jadwal: 'Jadwal Harian',
       checklist: 'Checklist Harian'
     }
-    return titles[activeTab.value] || `Halo ${userName.value}!`
+    return titles[activeTab.value] || `Welcome to ${appConfig.name}`
   })
 
   const switchCounter = ref(0)
@@ -46,7 +47,7 @@ export const useAppStore = defineStore('app', () => {
 
   return {
     activeTab, selectedPilar, selectedAnakId, userName, userGender, toolsAnakId,
-    appReady, installDismissed, pageTitle, switchCounter,
+    appReady, pageTitle, switchCounter,
     switchTab, openPilarSub, closePilarSub
   }
 })

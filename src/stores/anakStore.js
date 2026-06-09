@@ -1,6 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { getAnakList, saveAnak as dbSaveAnak, removeAnak as dbRemoveAnak } from '../db.js'
+import { getAnakList as dbGetAnakList, saveAnak as dbSaveAnak, removeAnak as dbRemoveAnak, getSetting } from '../db.js'
+import * as api from '../services/api.js'
+
+async function shouldAutoSync() {
+  if (!api.isAuthenticated()) return false
+  const val = await getSetting('autoSync')
+  return val !== false
+}
 
 export const useAnakStore = defineStore('anak', () => {
   const anakList = ref([])
@@ -19,10 +26,55 @@ export const useAnakStore = defineStore('anak', () => {
   })
 
   async function loadAnakList() {
-    anakList.value = await getAnakList()
+    if (api.isAuthenticated()) {
+      try {
+        const serverList = await api.getAnakList()
+        anakList.value = serverList.map(a => ({
+          ...a,
+          tanggal: a.tanggal_lahir || a.tanggal,
+          bulan: a.bulan_lahir || a.bulan,
+          tahun: a.tahun_lahir || a.tahun,
+          skills: (a.skills || []).map(s => ({
+            ...s,
+            activities: s.activities || [],
+          })),
+          completedSkills: a.completed_skills || a.completedSkills || [],
+        }))
+        for (const a of anakList.value) {
+          await dbSaveAnak(JSON.parse(JSON.stringify(a)))
+        }
+        return
+      } catch (e) {
+        console.warn('Failed to load from server, using local:', e)
+      }
+    }
+    anakList.value = await dbGetAnakList()
   }
 
   async function addAnak(anak) {
+    if (await shouldAutoSync()) {
+      try {
+        const payload = {
+          nama: anak.nama,
+          gender: anak.gender,
+          umur: anak.umur,
+          tanggal_lahir: anak.tanggal || anak.tanggal_lahir,
+          bulan_lahir: anak.bulan || anak.bulan_lahir,
+          tahun_lahir: anak.tahun || anak.tahun_lahir,
+          emoji: anak.emoji,
+          settings: anak.settings,
+        }
+        const saved = await api.addAnak(payload)
+        anak.id = saved.id
+        anak.skills = anak.skills || []
+        anak.completedSkills = anak.completedSkills || []
+        anakList.value.push(anak)
+        await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
+        return saved.id
+      } catch (e) {
+        console.warn('Failed to save to server, saving locally:', e)
+      }
+    }
     const id = await dbSaveAnak(anak)
     anak.id = id
     anakList.value.push(anak)
@@ -30,20 +82,51 @@ export const useAnakStore = defineStore('anak', () => {
   }
 
   async function updateAnak(anak) {
-    await dbSaveAnak(anak)
+    if (await shouldAutoSync()) {
+      try {
+        const payload = {
+          nama: anak.nama,
+          gender: anak.gender,
+          umur: anak.umur,
+          tanggal_lahir: anak.tanggal || anak.tanggal_lahir,
+          bulan_lahir: anak.bulan || anak.bulan_lahir,
+          tahun_lahir: anak.tahun || anak.tahun_lahir,
+          emoji: anak.emoji,
+          settings: anak.settings,
+        }
+        await api.updateAnak(anak.id, payload)
+      } catch (e) {
+        console.warn('Failed to update on server:', e)
+      }
+    }
+    await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
   }
 
   async function deleteAnak(id) {
+    if (await shouldAutoSync()) {
+      try {
+        await api.deleteAnak(id)
+      } catch (e) {
+        console.warn('Failed to delete on server:', e)
+      }
+    }
     await dbRemoveAnak(id)
     const idx = anakList.value.findIndex(a => a.id === id)
     if (idx > -1) anakList.value.splice(idx, 1)
   }
 
-  function resetSkill({ anak, skill }) {
+  async function resetSkill({ anak, skill }) {
     const idx = anak.completedSkills.findIndex(s => s.key === skill.key)
     if (idx > -1) {
       anak.completedSkills.splice(idx, 1)
-      anak.skills.push({ ...skill, progress: 0 })
+      anak.skills.push({ ...skill, progress: 0, activities: skill.activities || [] })
+      if (await shouldAutoSync()) {
+        try {
+          await api.deleteCompletedSkill(anak.id, skill.key)
+          await api.addSkill(anak.id, { key: skill.key, emoji: skill.emoji, title: skill.title, pilar: skill.pilar, color: skill.color })
+        } catch (e) { console.warn('Sync resetSkill failed:', e.message) }
+      }
+      await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
     }
   }
 
@@ -51,6 +134,13 @@ export const useAnakStore = defineStore('anak', () => {
     const idx = (anak.skills || []).findIndex(s => s.key === skill.key)
     if (idx > -1) {
       anak.skills.splice(idx, 1)
+      if (await shouldAutoSync()) {
+        try {
+          await api.deleteSkill(anak.id, skill.key)
+        } catch (e) {
+          console.warn('Failed to delete skill on server:', e)
+        }
+      }
       await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
     }
   }
@@ -70,6 +160,13 @@ export const useAnakStore = defineStore('anak', () => {
       color: skillData.color,
       activities: []
     })
+    if (await shouldAutoSync()) {
+      try {
+        await api.addSkill(anakId, skillData)
+      } catch (e) {
+        console.warn('Failed to add skill on server:', e)
+      }
+    }
     await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
   }
 
@@ -87,6 +184,18 @@ export const useAnakStore = defineStore('anak', () => {
       feature: activityData.feature,
       date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
     })
+    if (await shouldAutoSync()) {
+      try {
+        await api.addActivity(anakId, {
+          skill_key: skillKey,
+          title: activityData.title,
+          emoji: activityData.emoji,
+          feature: activityData.feature,
+        })
+      } catch (e) {
+        console.warn('Failed to add activity on server:', e)
+      }
+    }
     await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
   }
 

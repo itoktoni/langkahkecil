@@ -1,5 +1,25 @@
 <template>
-  <div class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
+  <div class="px-margin-mobile md:px-margin-desktop pt-5 mx-auto pb-8">
+
+    <!-- Sync Banner -->
+    <div v-if="auth.isAuthenticated && !selectedType"
+      class="mb-4 bg-canvas-cream rounded-2xl p-4 border-4 border-[#B7D9BC] shadow-md flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center border-2 border-[#B7D9BC] shadow-sm shrink-0">
+        <span class="material-symbols-outlined text-lg text-primary">cloud_download</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-bold text-text-main">
+          {{ act.localCount > 0 ? `${act.localCount} aktivitas di perangkat` : 'Belum ada aktivitas' }}
+        </p>
+        <p class="text-[10px] text-on-surface-variant">Download dari server untuk mendapatkan konten terbaru</p>
+      </div>
+      <button @click="doDownload" :disabled="act.downloading"
+        class="px-4 py-2 rounded-xl text-xs font-bold text-white shrink-0 transition-all active:scale-95"
+        :style="{ background: (act.serverCount - act.localCount) > 0 ? '#176c33' : '#999' }">
+        <span class="material-symbols-outlined text-sm align-middle" :class="act.downloading ? 'animate-spin' : ''">cloud_download</span>
+        {{ act.downloading ? '...' : ((act.serverCount - act.localCount) > 0 ? `+${act.serverCount - act.localCount} Baru` : 'Sync') }}
+      </button>
+    </div>
 
     <div v-if="!selectedType">
       <section class="mb-stack-lg">
@@ -46,6 +66,20 @@
             <p class="font-body-md text-body-md text-on-surface-variant">{{ sortedItems.length }} aktivitas</p>
           </div>
         </div>
+
+        <!-- Sync banner inside type -->
+        <div v-if="auth.isAuthenticated"
+          class="bg-white rounded-xl p-3 border-2 border-[#B7D9BC] flex items-center gap-2 mt-2">
+          <span class="material-symbols-outlined text-primary text-sm">sync</span>
+          <p class="text-xs text-on-surface-variant flex-1">
+            {{ (act.serverCount - act.localCount) > 0 ? `${act.serverCount - act.localCount} aktivitas baru di server` : 'Semua sudah terunduh' }}
+          </p>
+          <button @click="doDownload" :disabled="act.downloading"
+            class="px-3 py-1.5 rounded-lg text-[10px] font-bold text-white"
+            :style="{ background: (act.serverCount - act.localCount) > 0 ? '#176c33' : '#999' }">
+            {{ act.downloading ? '...' : ((act.serverCount - act.localCount) > 0 ? `+${act.serverCount - act.localCount} Baru` : 'Sync') }}
+          </button>
+        </div>
       </section>
 
       <StorySection v-if="selectedType.feature === 'story'" :stories="sortedItems" :color="selectedType.color" @open-story="openStory" />
@@ -69,8 +103,10 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { aktivitasData } from '../data/activities.js'
+import { ref, computed, watch, onMounted } from 'vue'
+import { aktivitasData, setAktivitasData, buildAktivitasDataFromAPI } from '../data/activities.js'
+import { useActivityStore } from '../stores/activityStore.js'
+import { useAuthStore } from '../stores/authStore.js'
 import { useAppStore } from '../stores/appStore.js'
 import StorySection from './aktivitas/StorySection.vue'
 import RoleplaySection from './aktivitas/RoleplaySection.vue'
@@ -89,6 +125,26 @@ import ProjectReader from './ProjectReader.vue'
 import PuzzleReader from './PuzzleReader.vue'
 
 const app = useAppStore()
+const auth = useAuthStore()
+const act = useActivityStore()
+
+onMounted(async () => {
+  await act.loadFromCache()
+})
+
+watch(() => app.activeTab, (tab) => {
+  if (tab === 'activity') {
+    act.checkServer()
+  }
+}, { immediate: true })
+
+async function doDownload() {
+  await act.downloadActivities()
+  if (act.activitiesCache) {
+    const aktivitas = buildAktivitasDataFromAPI(act.activitiesCache)
+    setAktivitasData(aktivitas)
+  }
+}
 
 const selectedType = ref(null)
 const activeStory = ref(null)

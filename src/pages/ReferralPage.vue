@@ -7,14 +7,14 @@
 
       <div class="ref-header">
         <span class="ref-logo">🌸</span>
-        <h1 class="ref-title">Halo Bunda</h1>
+        <h1 class="ref-title">{{ appName }}</h1>
       </div>
 
       <div class="ref-body">
         <div class="ref-emoji">🎉</div>
         <h2 class="ref-headline">KAMU DIUNDANG!</h2>
         <p class="ref-desc">
-          Temanmu membagikan progress anaknya dari aplikasi <strong>Halo Bunda</strong>.
+          Temanmu membagikan progress anaknya dari aplikasi <strong>{{ appName }}</strong>.
           Yuk ikutan bantu perkembangan anakmu juga!
         </p>
         <div class="ref-code-box">
@@ -36,9 +36,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { appConfig } from '../config/appConfig.js'
 
-const appName = import.meta.env.VITE_APP_NAME || 'Halo Bunda'
-const appTagline = import.meta.env.VITE_APP_TAGLINE || 'Aplikasi Pengembangan Anak'
+const appName = appConfig.name
+const appTagline = appConfig.tagline
 const appUrl = import.meta.env.VITE_APP_URL || 'https://halobunda.app'
 
 const refCode = ref('')

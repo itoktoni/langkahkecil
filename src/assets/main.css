@@ -70,23 +70,13 @@
   body { padding-bottom: 0 !important; }
   .desktop-sidebar { display: flex !important; }
   .mobile-nav { display: none !important; }
-  .content-wrapper { margin-left: 280px; }
+  .content-wrapper { margin-left: 280px; padding-top: 96px; }
 }
 
 @media (max-width: 1023px) {
   .desktop-sidebar { display: none !important; }
   .mobile-nav { display: flex !important; }
   .content-wrapper { margin-left: 0; }
-}
-
-.install-bar-enter-active,
-.install-bar-leave-active {
-  transition: all 0.3s ease;
-}
-.install-bar-enter-from,
-.install-bar-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
 }
 
 .scrollbar-hide {

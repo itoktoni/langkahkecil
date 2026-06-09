@@ -21,10 +21,10 @@
       <div v-for="(pair, i) in letterPairs" :key="pair.upper" data-page class="ws-page">
         <div class="ws-container">
           <table class="ws-header-table">
-            <tr>
+            <tbody><tr>
               <td class="ws-header-title">Mewarnai Huruf</td>
               <td class="ws-header-name">Nama: _________________________</td>
-            </tr>
+            </tr></tbody>
           </table>
           <div class="ws-letter-area">
             <span v-if="letterCase === 'upper' || letterCase === 'both'" class="ws-letter">{{ pair.upper }}</span>

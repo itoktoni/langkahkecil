@@ -1,61 +1,102 @@
 <template>
   <div class="space-y-4">
-    <!-- Search -->
-    <div class="relative">
-      <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant text-base">search</span>
-      <input v-model="searchQuery" type="text" placeholder="Cari worksheet..."
-        class="w-full pl-9 pr-4 py-2.5 rounded-2xl border-2 border-[#B7D9BC] bg-white text-sm font-medium text-text-main placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary transition-colors">
+
+    <!-- Header with child name -->
+    <div class="flex items-center gap-3 mb-2">
+      <div class="w-10 h-10 rounded-xl bg-success-soft flex items-center justify-center border-2 border-white shadow-sm">
+        <Icon icon="mdi:pencil-outline" class="w-5 h-5 text-primary" />
+      </div>
+      <div>
+        <h3 class="font-label-lg text-text-main">Worksheet {{ childName }}</h3>
+        <p class="text-[10px] text-on-surface-variant">Latihan menulis dan berhitung</p>
+      </div>
     </div>
 
-    <!-- Age Filter -->
-    <div class="flex gap-2 overflow-x-auto pb-3 scrollbar-hide">
+    <!-- Search -->
+    <div class="relative">
+      <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant text-lg">search</span>
+      <input v-model="searchQuery" type="text" placeholder="Cari worksheet..."
+        class="w-full pl-10 pr-4 py-3 rounded-2xl border-2 border-[#B7D9BC] bg-white text-sm font-medium text-text-main placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary transition-colors">
+    </div>
+
+    <!-- Age Filter Pills -->
+    <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
       <button v-for="age in ageFilters" :key="age.value"
         @click="selectedAge = age.value"
         class="px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 border-2"
         :class="selectedAge === age.value
-          ? 'bg-primary text-on-primary border-primary'
+          ? 'bg-primary text-on-primary border-primary shadow-md'
           : 'bg-white text-on-surface-variant border-[#B7D9BC] hover:border-primary/30'">
         {{ age.label }}
       </button>
     </div>
 
+    <!-- Count -->
+    <p class="text-xs text-on-surface-variant font-medium">
+      {{ filteredTypes.length }} worksheet tersedia
+    </p>
+
     <!-- Worksheet Types Grid -->
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
       <div v-for="ws in filteredTypes" :key="ws.id"
-        class="bg-canvas-cream rounded-[24px] border-4 border-[#B7D9BC] shadow-md p-4 cursor-pointer hover:shadow-lg hover:scale-[1.01] transition-all active:scale-[0.98]"
+        class="group bg-canvas-cream rounded-[20px] border-4 border-[#B7D9BC] shadow-md overflow-hidden cursor-pointer transition-all hover:shadow-lg active:scale-[0.97]"
         @click="openWorksheet(ws)">
 
-        <div class="w-12 h-12 rounded-2xl flex items-center justify-center border-2 border-white shadow-sm mb-3"
-          :style="{ background: ws.bg }">
-          <Icon :icon="ws.icon" class="w-6 h-6" :style="{ color: ws.iconColor || '#333' }" />
+        <!-- Icon header -->
+        <div class="p-4 pb-3 flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl flex items-center justify-center border-2 border-white shadow-sm shrink-0"
+            :style="{ background: ws.bg }">
+            <Icon :icon="ws.icon" class="w-5 h-5" :style="{ color: ws.iconColor || '#333' }" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <h4 class="font-label-sm text-text-main leading-tight line-clamp-2">{{ ws.title }}</h4>
+          </div>
         </div>
 
-        <h4 class="font-label-lg text-text-main mb-1 leading-tight">{{ ws.title }}</h4>
-        <p class="text-[11px] text-on-surface-variant mb-2 line-clamp-2">{{ ws.desc }}</p>
+        <!-- Description -->
+        <div class="px-4 pb-3">
+          <p class="text-[10px] text-on-surface-variant line-clamp-2 leading-relaxed">{{ ws.desc }}</p>
+        </div>
 
-        <div class="flex items-center gap-1">
-          <span class="text-[10px] font-bold text-primary bg-success-soft px-2 py-0.5 rounded-full">
+        <!-- Footer badges -->
+        <div class="px-4 pb-3 flex items-center gap-1.5 flex-wrap">
+          <span class="text-[9px] font-bold text-primary bg-success-soft px-2 py-0.5 rounded-full">
             {{ ws.ageLabel }}
           </span>
-          <span v-if="ws.isApi" class="text-[10px] font-bold text-warm-bonding bg-warm-bonding/10 px-2 py-0.5 rounded-full">
-            API
+          <span v-if="ws.isApi" class="text-[9px] font-bold text-warm-bonding bg-warm-bonding/10 px-2 py-0.5 rounded-full">
+            Online
           </span>
         </div>
       </div>
     </div>
 
+    <!-- Empty state -->
+    <div v-if="filteredTypes.length === 0"
+      class="bg-canvas-cream rounded-[24px] p-8 border-4 border-dashed border-[#B7D9BC] text-center">
+      <div class="text-4xl mb-3">🔍</div>
+      <p class="text-sm font-bold text-text-main mb-1">Tidak ditemukan</p>
+      <p class="text-xs text-on-surface-variant">Coba kata kunci atau filter usia lain</p>
+    </div>
+
     <!-- Loading -->
-    <div v-if="generating" class="bg-canvas-cream rounded-[24px] p-6 border-4 border-dashed border-[#B7D9BC] text-center">
+    <div v-if="generating"
+      class="bg-canvas-cream rounded-[24px] p-6 border-4 border-dashed border-[#B7D9BC] text-center">
       <div class="text-3xl mb-2 animate-bounce">
         <Icon icon="mdi:pencil-outline" class="w-8 h-8 text-primary mx-auto" />
       </div>
       <p class="text-sm text-on-surface-variant font-medium">Membuat worksheet...</p>
     </div>
-
   </div>
 
   <!-- Template Overlays -->
   <div v-if="activeTemplate" class="fixed inset-0 z-[100] bg-white overflow-y-auto">
+    <!-- Back button -->
+    <button @click="activeTemplate = null"
+      class="sticky top-0 z-10 flex items-center gap-2 text-primary font-label-lg bg-white/90 backdrop-blur-sm px-4 py-3 border-b-2 border-[#B7D9BC]">
+      <span class="material-symbols-outlined text-xl">arrow_back</span>
+      Kembali
+    </button>
+
     <!-- 1-3 Tahun -->
     <MewarnaiAlfabet v-if="activeTemplate === 'mewarnai_alfabet'" @close="activeTemplate = null" />
     <MewarnaiAngka v-if="activeTemplate === 'mewarnai_angka'" @close="activeTemplate = null" />
@@ -164,11 +205,11 @@ const childName = computed(() => {
 
 const ageFilters = [
   { value: 'all', label: 'Semua' },
-  { value: '1-3', label: '1-3 tahun' },
-  { value: '3-5', label: '3-5 tahun' },
-  { value: '4-7', label: '4-7 tahun' },
-  { value: '6-9', label: '6-9 tahun' },
-  { value: '7+', label: '7+ tahun' }
+  { value: '1-3', label: '1-3 thn' },
+  { value: '3-5', label: '3-5 thn' },
+  { value: '4-7', label: '4-7 thn' },
+  { value: '6-9', label: '6-9 thn' },
+  { value: '7+', label: '7+ thn' }
 ]
 
 import { worksheetTypes } from '../data/worksheetTypes.js'
@@ -195,6 +236,8 @@ function openWorksheet(ws) {
 </script>
 
 <style>
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 @media print {
   .fixed.inset-0.z-\[100\] {
     position: static !important;

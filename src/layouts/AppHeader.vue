@@ -8,11 +8,107 @@
       </button>
       <h1 class="font-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-text-main">{{ title }}</h1>
     </div>
-    <button
-      class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white border-2 border-[#B7D9BC] shadow-sm text-primary hover:opacity-80 transition-opacity duration-200">
-      <span class="material-symbols-outlined">notifications</span>
-    </button>
+    <div class="flex items-center gap-2">
+      <button v-if="canInstall" @click="$emit('install')"
+        class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white border-2 border-[#B7D9BC] shadow-sm text-primary hover:opacity-80 transition-opacity duration-200">
+        <span class="material-symbols-outlined">download</span>
+      </button>
+      <button @click="$emit('sync')"
+        class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white border-2 border-[#B7D9BC] shadow-sm text-primary hover:opacity-80 transition-opacity duration-200">
+        <span class="material-symbols-outlined">cloud_sync</span>
+      </button>
+      <button @click="showNotifPanel = !showNotifPanel"
+        class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white border-2 border-[#B7D9BC] shadow-sm text-primary hover:opacity-80 transition-opacity duration-200 relative">
+        <span class="material-symbols-outlined">notifications</span>
+        <span v-if="unreadCount > 0" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-error text-on-error text-[10px] font-bold flex items-center justify-center">{{ unreadCount }}</span>
+      </button>
 
+      <!-- User Avatar with Dropdown -->
+      <div class="relative">
+        <button @click="showUserMenu = !showUserMenu"
+          class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-success-soft border-2 border-[#B7D9BC] shadow-sm text-lg hover:opacity-80 transition-opacity duration-200">
+          {{ userEmoji }}
+        </button>
+
+        <Teleport to="body">
+          <div v-if="showUserMenu" class="fixed inset-0 z-[180]" @click="showUserMenu = false">
+            <div class="absolute inset-0"></div>
+            <div class="absolute top-16 right-4 w-56 bg-white rounded-2xl shadow-2xl border-2 border-[#B7D9BC] overflow-hidden py-1">
+              <!-- User info -->
+              <div class="px-4 py-3 border-b border-[#B7D9BC]/50">
+                <p class="text-sm font-bold text-text-main truncate">{{ userName }}</p>
+                <p class="text-[11px] text-on-surface-variant truncate">{{ userEmail }}</p>
+              </div>
+
+              <button @click.stop="$emit('profile'); showUserMenu = false"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-success-soft/30 transition-colors">
+                <span class="material-symbols-outlined text-lg text-primary">person</span>
+                <span class="text-sm text-text-main">Profile</span>
+              </button>
+              <button @click.stop="$emit('settings'); showUserMenu = false"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-success-soft/30 transition-colors">
+                <span class="material-symbols-outlined text-lg text-primary">settings</span>
+                <span class="text-sm text-text-main">Pengaturan</span>
+              </button>
+
+              <div class="border-t border-[#B7D9BC]/50 my-1"></div>
+
+              <button @click.stop="$emit('logout'); showUserMenu = false"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-error/5 transition-colors text-error">
+                <span class="material-symbols-outlined text-lg">logout</span>
+                <span class="text-sm">Logout</span>
+              </button>
+            </div>
+          </div>
+        </Teleport>
+      </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <Teleport to="body">
+      <div v-if="showNotifPanel" class="fixed inset-0 z-[180]" @click.self="showNotifPanel = false">
+        <div class="absolute inset-0 bg-black/30"></div>
+        <div class="absolute top-16 right-4 w-[320px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border-2 border-[#B7D9BC] overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3 border-b-2 border-[#B7D9BC]">
+            <h3 class="font-label-lg text-text-main">Notifikasi</h3>
+            <button @click="showNotifPanel = false"
+              class="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-gray-100">
+              <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+          </div>
+          <div class="max-h-80 overflow-y-auto">
+            <div v-if="notifications.length === 0" class="p-6 text-center">
+              <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">notifications_off</span>
+              <p class="text-sm text-on-surface-variant mt-2">Tidak ada notifikasi</p>
+            </div>
+            <button v-for="n in notifications" :key="n.id"
+              class="w-full flex items-start gap-3 px-4 py-3 text-left hover:bg-success-soft/30 transition-colors border-b border-[#B7D9BC]/30"
+              :class="{ 'bg-primary-container/20': !n.read }"
+              @click="markRead(n)">
+              <span class="material-symbols-outlined text-xl mt-0.5" :class="n.iconColor || 'text-primary'">{{ n.icon || 'info' }}</span>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-text-main">{{ n.title }}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">{{ n.body }}</p>
+                <p class="text-[10px] text-on-surface-variant/50 mt-1">{{ n.time }}</p>
+              </div>
+              <span v-if="!n.read" class="w-2 h-2 mt-2 rounded-full bg-primary shrink-0"></span>
+            </button>
+          </div>
+          <div v-if="notifications.length > 0" class="flex border-t-2 border-[#B7D9BC]">
+            <button @click="markAllRead"
+              class="flex-1 py-2.5 text-xs font-bold text-primary hover:bg-gray-50 border-r border-[#B7D9BC]">
+              Tandai Dibaca
+            </button>
+            <button @click="clearAll"
+              class="flex-1 py-2.5 text-xs font-bold text-on-surface-variant hover:bg-gray-50">
+              Hapus Semua
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Mobile Sidebar Menu -->
     <Teleport to="body">
       <div v-if="menuOpen" class="fixed inset-0 z-[200]">
         <div class="absolute inset-0 bg-black/40" @click="menuOpen = false"></div>
@@ -26,6 +122,15 @@
             </button>
           </div>
           <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <button
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200"
+              :class="activeTab === 'pilar'
+                ? 'bg-primary text-on-primary shadow-md'
+                : 'bg-white text-on-surface-variant border-2 border-[#B7D9BC] hover:shadow-md hover:border-primary/30'"
+              @click="$emit('switch', 'pilar'); menuOpen = false">
+              <span class="material-symbols-outlined text-xl" :style="iconStyle('pilar')">home</span>
+              <span class="font-label-lg">Home</span>
+            </button>
             <button v-for="item in extraMenus" :key="item.id"
               class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200"
               :class="activeTab === item.id
@@ -34,6 +139,12 @@
               @click="$emit('switch', item.id); menuOpen = false">
               <span class="material-symbols-outlined text-xl" :style="iconStyle(item.id)">{{ item.icon }}</span>
               <span class="font-label-lg">{{ item.label }}</span>
+            </button>
+            <button v-if="canInstall"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 bg-white text-on-surface-variant border-2 border-[#B7D9BC] hover:shadow-md hover:border-primary/30"
+              @click="$emit('install'); menuOpen = false">
+              <span class="material-symbols-outlined text-xl">download</span>
+              <span class="font-label-lg">Install App</span>
             </button>
           </nav>
           <div class="p-4 mx-3 mb-4 bg-success-soft rounded-[20px] border-4 border-[#B7D9BC]">
@@ -45,13 +156,6 @@
               </div>
             </div>
           </div>
-          <div class="border-t-4 border-[#B7D9BC]">
-            <div class="flex items-center gap-3 px-6 py-4">
-              <span class="material-symbols-outlined text-on-surface-variant text-xl">notifications</span>
-              <span class="font-label-lg text-on-surface-variant">Notifikasi</span>
-              <span class="ml-auto w-5 h-5 rounded-full bg-error text-on-error text-xs font-bold flex items-center justify-center">3</span>
-            </div>
-          </div>
         </div>
       </div>
     </Teleport>
@@ -59,18 +163,31 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { appConfig } from '../config/appConfig.js'
+import { useNotifications } from '../composables/useNotifications.js'
+
+const { notifications, unreadCount, fetchNotifications, markRead, markAllRead, clearAll } = useNotifications()
 
 const props = defineProps({
-  title: { type: String, default: 'Halo Bunda 👋' },
+  title: { type: String, default: `${appConfig.name} 👋` },
   tabs: { type: Array, default: () => [] },
   activeTab: { type: String, default: '' },
-  userName: { type: String, default: 'Bunda' }
+  userName: { type: String, default: 'Bunda' },
+  userGender: { type: String, default: '' },
+  userEmail: { type: String, default: '' },
+  canInstall: { type: Boolean, default: false }
 })
 
-defineEmits(['switch'])
+defineEmits(['switch', 'sync', 'install', 'profile', 'settings', 'logout'])
 
 const menuOpen = ref(false)
+const showUserMenu = ref(false)
+const showNotifPanel = ref(false)
+
+onMounted(() => { fetchNotifications() })
+
+const userEmoji = computed(() => props.userGender === 'Perempuan' ? '👩' : '👨')
 
 const extraMenus = computed(() => {
   const footerIds = ['pilar', 'progress', 'tools', 'profile']

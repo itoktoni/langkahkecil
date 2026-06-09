@@ -149,32 +149,29 @@
           <div>
             <p class="font-label-lg text-text-main">Billing</p>
             <p class="text-sm text-on-surface-variant">
-              Paket saat ini: <span class="font-bold capitalize text-primary">{{ currentPlan }}</span>
+              Anak pertama: <span class="font-bold text-primary">Gratis</span> • Anak tambahan: <span class="font-bold text-primary">Rp99.000/tahun</span>
             </p>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 mb-4">
-          <div v-for="plan in plans" :key="plan.id"
-            class="text-center p-4 rounded-2xl border-2 transition-all cursor-pointer"
-            :class="selectedPlan === plan.id
-              ? 'border-primary bg-success-soft'
-              : 'border-[#B7D9BC] bg-white hover:border-primary/50'"
-            @click="selectedPlan = plan.id">
-            <p class="text-2xl mb-1">{{ plan.emoji }}</p>
-            <p class="text-sm font-bold" :class="selectedPlan === plan.id ? 'text-primary' : 'text-on-surface-variant'">{{ plan.label }}</p>
-            <p class="text-xs text-on-surface-variant mt-0.5">{{ plan.price }}</p>
-            <p class="text-xs text-on-surface-variant mt-1">{{ plan.desc }}</p>
+        <!-- Info pricing -->
+        <div class="bg-white rounded-2xl p-4 border-2 border-[#B7D9BC] mb-4">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">👶</span>
+            <div>
+              <p class="text-sm font-bold text-text-main">Anak Pertama</p>
+              <p class="text-xs text-on-surface-variant">Gratis selamanya</p>
+            </div>
+            <span class="ml-auto text-lg font-bold text-primary">GRATIS</span>
           </div>
-        </div>
-
-        <button v-if="currentPlan !== selectedPlan"
-          @click="upgradePlan"
-          class="w-full py-3 rounded-2xl font-label-lg text-white btn-pop-green">
-          {{ currentPlan === 'free' ? 'Upgrade Sekarang' : 'Ubah Paket' }}
-        </button>
-        <div v-else class="text-center text-sm text-on-surface-variant py-2 font-medium">
-          ✅ Paket aktif
+          <div class="flex items-center gap-3 pt-3 border-t-2 border-[#B7D9BC]/50">
+            <span class="text-2xl">👧</span>
+            <div>
+              <p class="text-sm font-bold text-text-main">Anak Tambahan</p>
+              <p class="text-xs text-on-surface-variant">Per anak, per tahun</p>
+            </div>
+            <span class="ml-auto text-lg font-bold text-primary">Rp99rb</span>
+          </div>
         </div>
 
         <div class="mt-4 pt-4 border-t-2 border-[#B7D9BC]/50">
@@ -186,6 +183,124 @@
           <p v-if="referralCode" class="text-center text-xs text-on-surface-variant mt-2">
             Kode: <span class="font-bold text-primary">{{ referralCode }}</span>
           </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Modal for Additional Child -->
+    <div v-if="showPricingModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" @click.self="showPricingModal = false">
+      <div class="bg-canvas-cream rounded-[32px] p-6 border-4 border-[#B7D9BC] shadow-xl max-w-md w-full">
+        <div class="text-center mb-4">
+          <span class="text-4xl">👧</span>
+          <h3 class="font-headline-md text-text-main mt-2">Tambah Anak</h3>
+          <p class="text-sm text-on-surface-variant mt-1">Anak ke-{{ anakList.length + 1 }}</p>
+        </div>
+
+        <!-- Price Display -->
+        <div class="bg-white rounded-2xl p-4 border-2 border-[#B7D9BC] mb-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-bold text-text-main">Langganan Tahunan</p>
+              <p class="text-xs text-on-surface-variant">Akses semua fitur untuk 1 anak</p>
+            </div>
+            <div class="text-right">
+              <p v-if="discountApplied && discountPercent === 100" class="text-lg font-bold text-primary">GRATIS</p>
+              <template v-else>
+                <p v-if="discountApplied" class="text-xs text-on-surface-variant line-through">Rp{{ PRICE_PER_CHILD.toLocaleString('id-ID') }}</p>
+                <p class="text-lg font-bold text-primary">Rp{{ finalPrice.toLocaleString('id-ID') }}</p>
+              </template>
+              <p class="text-xs text-on-surface-variant">/tahun</p>
+            </div>
+          </div>
+
+          <!-- Discount Badge -->
+          <div v-if="discountApplied" class="mt-3 flex items-center gap-2 bg-success-soft rounded-xl p-2">
+            <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+            <span class="text-xs font-bold text-primary">Diskon {{ discountPercent }}% diterapkan</span>
+            <button @click="removeDiscount" class="ml-auto text-xs text-on-surface-variant hover:text-error">
+              <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Discount Code Input -->
+        <div v-if="!discountApplied" class="mb-4">
+          <button v-if="!showDiscountInput" @click="showDiscountInput = true"
+            class="w-full py-2.5 rounded-xl border-2 border-dashed border-[#B7D9BC] text-sm text-on-surface-variant hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-sm">local_offer</span>
+            Punya kode diskon?
+          </button>
+          <div v-else class="space-y-2">
+            <div class="flex gap-2">
+              <input v-model="discountCode"
+                class="flex-1 px-3 py-2.5 rounded-xl border-2 border-[#B7D9BC] text-sm focus:outline-none focus:border-primary bg-white uppercase"
+                placeholder="Masukkan kode diskon"
+                @keyup.enter="applyDiscount" />
+              <button @click="applyDiscount"
+                class="px-4 py-2.5 rounded-xl text-sm font-bold text-white btn-pop-green">
+                Pakai
+              </button>
+            </div>
+            <p v-if="discountError" class="text-xs text-error font-medium">{{ discountError }}</p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3">
+          <button @click="showPricingModal = false"
+            class="flex-1 py-3 rounded-2xl text-sm font-bold text-on-surface-variant btn-pop-gray">
+            Batal
+          </button>
+          <button @click="processPayment"
+            class="flex-1 py-3 rounded-2xl text-white text-sm font-bold btn-pop-green">
+            {{ finalPrice === 0 ? 'Klaim Gratis' : `Bayar Rp${finalPrice.toLocaleString('id-ID')}` }}
+          </button>
+        </div>
+
+        <p class="text-center text-xs text-on-surface-variant mt-4">
+          Pembayaran aman melalui Midtrans
+        </p>
+      </div>
+    </div>
+
+    <!-- Account Section -->
+    <div class="mt-6">
+      <div class="bg-canvas-cream rounded-[32px] p-6 border-4 border-[#B7D9BC] shadow-lg">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-success-soft flex items-center justify-center border-2 border-white shadow-sm">
+            <span class="material-symbols-outlined text-primary">account_circle</span>
+          </div>
+          <div>
+            <p class="font-label-lg text-text-main">Akun</p>
+            <p class="text-sm text-on-surface-variant">
+              {{ auth.isAuthenticated ? appConfig.connectedText : appConfig.offlineText }}
+            </p>
+          </div>
+        </div>
+
+        <div v-if="auth.isAuthenticated" class="space-y-3">
+          <div class="flex items-center gap-3 p-3 bg-white rounded-xl border-2 border-[#B7D9BC]">
+            <span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+            <div class="flex-1">
+              <p class="text-sm font-bold text-text-main">{{ auth.user?.name || 'User' }}</p>
+              <p class="text-xs text-on-surface-variant">{{ auth.user?.email || '' }}</p>
+            </div>
+            <span class="text-xs text-primary font-bold bg-success-soft px-2 py-1 rounded-lg">Online</span>
+          </div>
+
+          <button @click="$emit('logout')"
+            class="w-full py-3 rounded-2xl text-sm font-bold border-2 border-error/30 text-error hover:bg-error/5 transition-colors flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-lg">logout</span>
+            Logout
+          </button>
+        </div>
+
+        <div v-else>
+          <button @click="$emit('logout')"
+            class="w-full py-3 rounded-2xl text-sm font-bold text-primary btn-pop-green flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-lg">login</span>
+            {{ appConfig.loginText }}
+          </button>
         </div>
       </div>
     </div>
@@ -265,14 +380,20 @@ import { ref, computed, onMounted } from 'vue'
 import { saveAnak, removeAnak, getSetting, saveSetting } from '../db.js'
 import { ageLabel } from '../utils/age.js'
 import { useAppStore } from '../stores/appStore.js'
+import { useAuthStore } from '../stores/authStore.js'
+import { useAnakStore } from '../stores/anakStore.js'
+import { appConfig } from '../config/appConfig.js'
+import * as api from '../services/api.js'
 
 const app = useAppStore()
+const auth = useAuthStore()
+const anakStore = useAnakStore()
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] }
 })
 
-const emit = defineEmits(['select-anak'])
+const emit = defineEmits(['select-anak', 'logout', 'sync'])
 
 const fillIcon = { fontVariationSettings: "'FILL' 1" }
 
@@ -299,13 +420,60 @@ const currentYear = new Date().getFullYear()
 const years = Array.from({ length: currentYear - 1999 }, (_, i) => currentYear - i)
 
 const currentPlan = ref('free')
-const plans = [
-  { id: 'premium', label: 'Premium', emoji: '👑', price: 'Rp99.000/bulan', desc: '1 anak, semua fitur' },
-  { id: 'family', label: 'Family', emoji: '👨‍👩‍👧‍👦', price: 'Rp299.000/bulan', desc: 'Maks 5 anak' }
-]
 const selectedPlan = ref('premium')
 const addAnakError = ref('')
 const referralCode = ref('')
+
+// Pricing per child
+const PRICE_PER_CHILD = 99000
+const discountCode = ref('')
+const discountApplied = ref(false)
+const discountPercent = ref(0)
+const discountError = ref('')
+const showDiscountInput = ref(false)
+const showPricingModal = ref(false)
+
+// Simulated discount codes (in real app, this would be server-validated)
+const VALID_DISCOUNTS = {
+  'HEMAT10': 10,
+  'LAUNCH20': 20,
+  'SAHABAT30': 30,
+  'GRATIS': 100,
+}
+
+function applyDiscount() {
+  discountError.value = ''
+  const code = discountCode.value.trim().toUpperCase()
+  if (!code) {
+    discountError.value = 'Masukkan kode diskon'
+    return
+  }
+  if (VALID_DISCOUNTS[code]) {
+    discountPercent.value = VALID_DISCOUNTS[code]
+    discountApplied.value = true
+    discountError.value = ''
+  } else {
+    discountError.value = 'Kode diskon tidak valid'
+    discountApplied.value = false
+    discountPercent.value = 0
+  }
+}
+
+function removeDiscount() {
+  discountCode.value = ''
+  discountApplied.value = false
+  discountPercent.value = 0
+  discountError.value = ''
+  showDiscountInput.value = false
+}
+
+const finalPrice = computed(() => {
+  if (discountApplied.value && discountPercent.value === 100) return 0
+  if (discountApplied.value) {
+    return Math.round(PRICE_PER_CHILD * (1 - discountPercent.value / 100))
+  }
+  return PRICE_PER_CHILD
+})
 
 function generateRefCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -318,7 +486,7 @@ function shareReferral() {
   const code = referralCode.value || generateRefCode()
   referralCode.value = code
   const appUrl = import.meta.env.VITE_APP_URL || 'https://halobunda.app'
-  const appName = import.meta.env.VITE_APP_NAME || 'Halo Bunda'
+  const appName = appConfig.name
   const url = `${appUrl}?ref=${code}`
   const text = `Yuk coba ${appName}! Aplikasi pengembangan anak. Pakai kode referral: ${code} 🌸\n${url}`
 
@@ -331,9 +499,9 @@ function shareReferral() {
   }
 }
 
-const maxAnak = computed(() => currentPlan.value === 'family' ? 5 : 1)
+const maxAnak = computed(() => 10) // Max 10 anak
 const canAddAnak = computed(() => {
-  if (currentPlan.value === 'free') return false
+  // First child is free, subsequent children require payment
   return props.anakList.length < maxAnak.value
 })
 
@@ -344,6 +512,11 @@ onMounted(async () => {
   if (email) userEmail.value = email
   const gender = await getSetting('userGender')
   if (gender) userGender.value = gender
+
+  if (auth.user) {
+    if (auth.user.name) userName.value = auth.user.name
+    if (auth.user.email) userEmail.value = auth.user.email
+  }
 })
 
 function startEditName() {
@@ -354,7 +527,7 @@ function startEditName() {
 
 function setGender(g) { editGender.value = g }
 
-function saveName() {
+async function saveName() {
   nameError.value = ''
   if (!editNameValue.value.trim()) {
     nameError.value = 'Nama wajib diisi'
@@ -367,6 +540,18 @@ function saveName() {
   app.userGender = editGender.value
   saveSetting('userGender', userGender.value)
   editingName.value = false
+
+  if (auth.isAuthenticated) {
+    try {
+      const res = await api.updateProfile({ name: userName.value })
+      if (res.user) {
+        auth.user = res.user
+        localStorage.setItem('lk_user', JSON.stringify(res.user))
+      }
+    } catch (e) {
+      console.warn('Failed to update profile on server:', e)
+    }
+  }
 }
 
 function cancelPassword() {
@@ -376,7 +561,7 @@ function cancelPassword() {
   passwordError.value = ''
 }
 
-function savePassword() {
+async function savePassword() {
   passwordError.value = ''
   if (!oldPassword.value || !newPassword.value) {
     passwordError.value = 'Password lama dan baru wajib diisi'
@@ -386,6 +571,16 @@ function savePassword() {
     passwordError.value = 'Password baru minimal 6 karakter'
     return
   }
+
+  if (auth.isAuthenticated) {
+    try {
+      await api.changePassword(oldPassword.value, newPassword.value, newPassword.value)
+    } catch (e) {
+      passwordError.value = e.message || 'Gagal mengubah password'
+      return
+    }
+  }
+
   cancelPassword()
 }
 
@@ -431,7 +626,7 @@ async function saveEditAnak() {
   anak.tanggal = editAnakForm.value.tanggal
   anak.bulan = editAnakForm.value.bulan
   anak.tahun = editAnakForm.value.tahun
-  await saveAnak(JSON.parse(JSON.stringify(anak)))
+  await anakStore.updateAnak(anak)
   closeEditAnak()
 }
 
@@ -457,16 +652,41 @@ async function resetAnak() {
 
 async function tambahAnak() {
   addAnakError.value = ''
-  if (currentPlan.value === 'free') {
-    addAnakError.value = 'Upgrade ke Premium atau Family untuk menambah anak.'
+
+  // First child is free
+  if (props.anakList.length === 0) {
+    const emojis = ['👦', '👧']
+    const bgs = ['#E3F2FD', '#FCE4EC', '#E8F5E9', '#FFF3E0', '#F3E5F5']
+    const idx = props.anakList.length
+    const newAnak = {
+      nama: `Anak ${idx + 1}`,
+      emoji: emojis[idx % 2],
+      bg: bgs[idx % bgs.length],
+      tanggal: null, bulan: null, tahun: null,
+      skills: [], completedSkills: [], history: []
+    }
+    newAnak.id = await saveAnak(newAnak)
+    props.anakList.push(newAnak)
+    app.selectedAnakId = newAnak.id
+    currentPlan.value = 'active'
     return
   }
-  if (props.anakList.length >= maxAnak.value) {
-    addAnakError.value = currentPlan.value === 'premium'
-      ? 'Batas 1 anak. Upgrade ke Family untuk menambah hingga 5 anak.'
-      : `Batas maksimal ${maxAnak.value} anak.`
-    return
-  }
+
+  // For 2nd+ child, show pricing modal
+  showPricingModal.value = true
+}
+
+function upgradePlan() {
+  currentPlan.value = selectedPlan.value
+  addAnakError.value = ''
+}
+
+async function processPayment() {
+  // In real app, this would integrate with payment gateway
+  // For now, simulate successful payment
+  addAnakError.value = ''
+  showPricingModal.value = false
+
   const emojis = ['👦', '👧']
   const bgs = ['#E3F2FD', '#FCE4EC', '#E8F5E9', '#FFF3E0', '#F3E5F5']
   const idx = props.anakList.length
@@ -480,11 +700,9 @@ async function tambahAnak() {
   newAnak.id = await saveAnak(newAnak)
   props.anakList.push(newAnak)
   app.selectedAnakId = newAnak.id
-}
 
-function upgradePlan() {
-  currentPlan.value = selectedPlan.value
-  addAnakError.value = ''
+  // Reset discount after use
+  removeDiscount()
 }
 </script>
 

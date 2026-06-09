@@ -1,26 +1,29 @@
 <template>
   <ReferralPage v-if="isReferral" />
+  <LoginPage v-else-if="showLogin" @success="onLoginSuccess" @skip="showLogin = false" />
   <div v-else class="bg-canvas-cream text-text-main min-h-screen">
-    <AppSidebar :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" :user-gender="app.userGender" @switch="app.switchTab" />
-    <AppHeader :title="app.pageTitle" :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" @switch="app.switchTab" />
+    <AppSidebar :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" :user-gender="app.userGender" :can-install="canInstall" @switch="app.switchTab" @install="installApp" />
+    <DesktopHeader :title="app.pageTitle" :can-install="canInstall" :user-name="app.userName" :user-email="userEmail" :user-gender="app.userGender" @sync="showSyncModal = true" @install="installApp" @profile="app.switchTab('profile')" @settings="app.switchTab('settings')" @billing="app.switchTab('profile')" @logout="handleLogout" />
+    <AppHeader :title="app.pageTitle" :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" :user-gender="app.userGender" :user-email="userEmail" :can-install="canInstall" @switch="app.switchTab" @sync="showSyncModal = true" @install="installApp" @profile="app.switchTab('profile')" @settings="app.switchTab('settings')" @logout="handleLogout" />
 
     <main class="content-wrapper pb-24 lg:pb-8">
       <PilarTab ref="pilarTabRef" v-show="app.activeTab === 'pilar'" :anak-list="anak.anakList" :selected-pilar="app.selectedPilar" :selected-anak-id="app.selectedAnakId" @select-pilar="app.openPilarSub" @close-pilar="app.closePilarSub" @update:anak-id="app.selectedAnakId = $event" @go-profile="app.switchTab('profile')" />
-      <ProgressTab v-show="app.activeTab === 'progress'" :anak-list="anak.anakList" :selected-anak-id="app.selectedAnakId" @reset-skill="anak.resetSkill" @delete-skill="anak.deleteSkill" />
+      <ProgressTab v-show="app.activeTab === 'progress'" :anak-list="anak.anakList" :selected-anak-id="app.selectedAnakId" @reset-skill="anak.resetSkill" @delete-skill="anak.deleteSkill" @open-skill="openSkillFromProgress" />
       <ActivityTab ref="activityTabRef" v-show="app.activeTab === 'activity'" />
-      <ProfileTab v-show="app.activeTab === 'profile'" :anak-list="anak.anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" />
+      <ProfileTab v-show="app.activeTab === 'profile'" :anak-list="anak.anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" @logout="handleLogout" @sync="showSyncModal = true" />
+      <SettingsTab v-show="app.activeTab === 'settings'" @go-profile="app.switchTab('profile')" />
 
-      <div v-show="app.activeTab === 'challenge'" class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
+      <div v-show="app.activeTab === 'challenge'" class="px-margin-mobile md:px-margin-desktop pt-5 mx-auto pb-8">
         <AnakSelector v-if="anak.anakList.length" :anak-list="anak.anakList" v-model="tools.toolsAnakId" class="mb-stack-lg" />
         <ChallengePage :challenges="tools.toolsData.challenges" :challenge-history="tools.toolsData.challengeHistory" @add-challenge="tools.addChallenge" @add-point="tools.addPoint" @remove-point="tools.removePoint" @edit-challenge="tools.editChallenge" @delete-challenge="tools.deleteChallenge" />
       </div>
 
-      <div v-show="app.activeTab === 'jadwal'" class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
+      <div v-show="app.activeTab === 'jadwal'" class="px-margin-mobile md:px-margin-desktop pt-5 mx-auto pb-8">
         <AnakSelector v-if="anak.anakList.length" :anak-list="anak.anakList" v-model="tools.toolsAnakId" class="mb-stack-lg" />
         <JadwalPage :schedules="tools.toolsData.schedules" @add-schedule="tools.addSchedule" @remove-schedule="tools.removeSchedule" />
       </div>
 
-      <div v-show="app.activeTab === 'checklist'" class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
+      <div v-show="app.activeTab === 'checklist'" class="px-margin-mobile md:px-margin-desktop pt-5 mx-auto pb-8">
         <AnakSelector v-if="anak.anakList.length" :anak-list="anak.anakList" v-model="tools.toolsAnakId" class="mb-stack-lg" />
         <ChecklistPage :checklists="tools.toolsData.checklists" @add-checklist="tools.addChecklist" @remove-checklist="tools.removeChecklist" @add-item="tools.addChecklistItem" @remove-item="tools.removeChecklistItem" />
       </div>
@@ -28,27 +31,8 @@
 
     <BottomNav :tabs="tabs" :active-tab="app.activeTab" @switch="app.switchTab" />
 
-    <Transition name="install-bar">
-      <div v-if="showInstallBar" class="fixed bottom-24 left-4 right-4 z-50 lg:bottom-4 lg:left-auto lg:right-4 lg:w-80">
-        <div class="bg-white rounded-2xl p-4 shadow-xl border-2 border-primary-container flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-success-soft flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-primary">download</span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="font-label-lg text-text-main text-sm">Install {{ appName }}</p>
-            <p class="text-xs text-on-surface-variant">Akses lebih cepat dari layar utama</p>
-          </div>
-          <button @click="installApp"
-            class="px-4 py-2 rounded-xl bg-primary text-on-primary text-sm font-bold active:scale-95 transition-transform">
-            Install
-          </button>
-          <button @click="app.installDismissed = true"
-            class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low">
-            <span class="material-symbols-outlined text-lg">close</span>
-          </button>
-        </div>
-      </div>
-    </Transition>
+    <!-- Sync Modal -->
+    <SyncModal :show="showSyncModal" @close="showSyncModal = false" @synced="onSynced" />
   </div>
 </template>
 
@@ -56,43 +40,120 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { tabs } from './data/tabs.js'
 import { useInstall } from './composables/useInstall.js'
-import { getSetting } from './db.js'
+import { getSetting, saveSetting, getAnakList as getLocalAnakList, syncServerData } from './db.js'
 import { useAppStore } from './stores/appStore.js'
 import { useAnakStore } from './stores/anakStore.js'
 import { useToolsStore } from './stores/toolsStore.js'
+import { useAuthStore } from './stores/authStore.js'
 import AppHeader from './layouts/AppHeader.vue'
+import DesktopHeader from './layouts/DesktopHeader.vue'
 import AppSidebar from './layouts/AppSidebar.vue'
 import BottomNav from './layouts/BottomNav.vue'
 import PilarTab from './pages/PilarTab.vue'
 import ProgressTab from './pages/ProgressTab.vue'
 import ActivityTab from './pages/ActivityTab.vue'
 import ProfileTab from './pages/ProfileTab.vue'
+import SettingsTab from './pages/SettingsTab.vue'
 import ChallengePage from './pages/ChallengePage.vue'
 import JadwalPage from './pages/JadwalPage.vue'
 import ChecklistPage from './pages/ChecklistPage.vue'
 import ReferralPage from './pages/ReferralPage.vue'
+import LoginPage from './pages/LoginPage.vue'
 import AnakSelector from './components/AnakSelector.vue'
+import SyncModal from './components/SyncModal.vue'
+
+import * as api from './services/api.js'
+import { useActivityStore } from './stores/activityStore.js'
+import { buildAktivitasDataFromAPI, setAktivitasData } from './data/activities.js'
 
 const isReferral = computed(() => new URLSearchParams(window.location.search).has('ref'))
-const appName = import.meta.env.VITE_APP_NAME || 'Halo Bunda'
 
 const app = useAppStore()
 const anak = useAnakStore()
 const tools = useToolsStore()
+const auth = useAuthStore()
+const activityStore = useActivityStore()
 
 const pilarTabRef = ref(null)
 const activityTabRef = ref(null)
 const { canInstall, install: installApp } = useInstall()
 
-const showInstallBar = computed(() => canInstall.value && !app.installDismissed)
+const showSyncModal = ref(false)
+const showLogin = ref(false)
+const userEmail = computed(() => auth.user?.email || '')
+
+// Show login page if not authenticated (first visit)
+// User can skip login to use app offline
+onMounted(() => {
+  if (!auth.isAuthenticated) {
+    // Check if user has chosen to skip login before
+    const skipLogin = localStorage.getItem('lk_skip_login')
+    if (!skipLogin) {
+      showLogin.value = true
+    }
+  }
+})
+
+async function onLoginSuccess() {
+  showLogin.value = false
+  localStorage.removeItem('lk_skip_login')
+
+  if (auth.serverAnakList.length) {
+    await syncServerData(auth.serverAnakList)
+  }
+
+  await syncLocalToServer()
+  await seedAndLoad()
+}
+
+async function syncLocalToServer() {
+  const localList = await getLocalAnakList()
+  if (localList.length) {
+    try {
+      await api.syncToServer(localList)
+    } catch (e) {
+      console.warn('Failed to sync local data to server:', e)
+    }
+  }
+}
+
+function handleLogout() {
+  auth.logout()
+  showLogin.value = true
+  localStorage.removeItem('lk_skip_login')
+}
+
+async function onSynced() {
+  await seedAndLoad()
+}
 
 async function seedAndLoad() {
   const savedName = await getSetting('userName')
   if (savedName) app.userName = savedName
   const savedGender = await getSetting('userGender')
   if (savedGender) app.userGender = savedGender
+
+  // If authenticated, use server user info
+  if (auth.user) {
+    if (auth.user.name) {
+      app.userName = auth.user.name
+      await saveSetting('userName', auth.user.name)
+    }
+    if (auth.user.email) {
+      await saveSetting('userEmail', auth.user.email)
+    }
+  }
+
   await anak.loadAnakList()
   await tools.loadToolsData(anak.anakList)
+
+  // Load activities from cache (download is manual via Settings/Activity)
+  await activityStore.loadFromCache()
+  if (activityStore.activitiesCache) {
+    const aktivitas = buildAktivitasDataFromAPI(activityStore.activitiesCache)
+    setAktivitasData(aktivitas)
+  }
+
   if (!app.selectedAnakId && anak.anakList.length) {
     app.selectedAnakId = anak.anakList[0].id
   }
@@ -107,6 +168,14 @@ function goToAnakProgress(anakItem) {
   if (app.activeTab !== 'progress') history.pushState({ action: 'tab', from: app.activeTab }, '')
   app.selectedAnakId = anakItem.id
   app.activeTab = 'progress'
+  window.scrollTo(0, 0)
+}
+
+function openSkillFromProgress({ anakId, skillKey, pilarKey }) {
+  app.selectedAnakId = anakId
+  app.selectedPilar = pilarKey
+  if (app.activeTab !== 'pilar') history.pushState({ action: 'tab', from: app.activeTab }, '')
+  app.activeTab = 'pilar'
   window.scrollTo(0, 0)
 }
 

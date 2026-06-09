@@ -39,6 +39,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { appConfig } from '../config/appConfig.js'
 
 const props = defineProps({
   title: { type: String, default: '' },
@@ -48,8 +49,8 @@ const props = defineProps({
   referralCode: { type: String, default: '' }
 })
 
-const appName = import.meta.env.VITE_APP_NAME || 'Halo Bunda'
-const appTagline = import.meta.env.VITE_APP_TAGLINE || 'Aplikasi Pengembangan Anak'
+const appName = appConfig.name
+const appTagline = appConfig.tagline
 const appUrl = import.meta.env.VITE_APP_URL || 'https://halobunda.app'
 
 const referralUrl = computed(() => props.referralCode ? `${appUrl}?ref=${props.referralCode}` : '#')
