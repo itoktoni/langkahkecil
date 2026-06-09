@@ -1,5 +1,7 @@
 <template>
   <ReferralPage v-if="isReferral" />
+  <ResetPasswordPage v-else-if="auth.isRecovery" />
+  <LoginPage v-else-if="!auth.isAuthenticated" />
   <div v-else class="bg-canvas-cream text-text-main min-h-screen">
     <AppSidebar :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" :user-gender="app.userGender" @switch="app.switchTab" />
     <AppHeader :title="app.pageTitle" :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" @switch="app.switchTab" />
@@ -60,6 +62,8 @@ import { getSetting } from './db.js'
 import { useAppStore } from './stores/appStore.js'
 import { useAnakStore } from './stores/anakStore.js'
 import { useToolsStore } from './stores/toolsStore.js'
+import { useAuthStore } from './stores/authStore.js'
+import { setupAutoSync, syncNow } from './services/sync.js'
 import AppHeader from './layouts/AppHeader.vue'
 import AppSidebar from './layouts/AppSidebar.vue'
 import BottomNav from './layouts/BottomNav.vue'
@@ -71,6 +75,8 @@ import ChallengePage from './pages/ChallengePage.vue'
 import JadwalPage from './pages/JadwalPage.vue'
 import ChecklistPage from './pages/ChecklistPage.vue'
 import ReferralPage from './pages/ReferralPage.vue'
+import LoginPage from './pages/LoginPage.vue'
+import ResetPasswordPage from './pages/ResetPasswordPage.vue'
 import AnakSelector from './components/AnakSelector.vue'
 
 const isReferral = computed(() => new URLSearchParams(window.location.search).has('ref'))
@@ -79,6 +85,7 @@ const appName = import.meta.env.VITE_APP_NAME || 'Halo Bunda'
 const app = useAppStore()
 const anak = useAnakStore()
 const tools = useToolsStore()
+const auth = useAuthStore()
 
 const pilarTabRef = ref(null)
 const activityTabRef = ref(null)
@@ -86,7 +93,15 @@ const { canInstall, install: installApp } = useInstall()
 
 const showInstallBar = computed(() => canInstall.value && !app.installDismissed)
 
+let cleanupSync = null
+
 async function seedAndLoad() {
+  await auth.init()
+
+  if (auth.isAuthenticated) {
+    await syncNow(auth.userId)
+  }
+
   const savedName = await getSetting('userName')
   if (savedName) app.userName = savedName
   const savedGender = await getSetting('userGender')
@@ -97,6 +112,10 @@ async function seedAndLoad() {
     app.selectedAnakId = anak.anakList[0].id
   }
   app.appReady = true
+
+  if (auth.isAuthenticated) {
+    cleanupSync = setupAutoSync(auth.userId)
+  }
 }
 
 function handleProfileMenu(menuId) {
@@ -125,5 +144,6 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('popstate', handleBack)
+  if (cleanupSync) cleanupSync()
 })
 </script>

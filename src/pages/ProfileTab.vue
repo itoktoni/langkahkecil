@@ -190,6 +190,14 @@
       </div>
     </div>
 
+    <!-- Logout -->
+    <div class="mt-6">
+      <button @click="logout"
+        class="w-full py-3 rounded-2xl text-sm font-bold border-2 border-error/30 text-error hover:bg-error/5 transition-colors">
+        Keluar
+      </button>
+    </div>
+
     <!-- Edit Anak Modal -->
     <div v-if="editAnak" class="fixed inset-0 z-[100] flex items-end justify-center lg:items-center">
       <div class="absolute inset-0 bg-black/40" @click="closeEditAnak"></div>
@@ -265,8 +273,10 @@ import { ref, computed, onMounted } from 'vue'
 import { saveAnak, removeAnak, getSetting, saveSetting } from '../db.js'
 import { ageLabel } from '../utils/age.js'
 import { useAppStore } from '../stores/appStore.js'
+import { useAuthStore } from '../stores/authStore.js'
 
 const app = useAppStore()
+const auth = useAuthStore()
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] }
@@ -386,6 +396,12 @@ function savePassword() {
     passwordError.value = 'Password baru minimal 6 karakter'
     return
   }
+  const stored = localStorage.getItem('userPassword')
+  if (stored && oldPassword.value !== stored) {
+    passwordError.value = 'Password lama salah'
+    return
+  }
+  localStorage.setItem('userPassword', newPassword.value)
   cancelPassword()
 }
 
@@ -485,6 +501,11 @@ async function tambahAnak() {
 function upgradePlan() {
   currentPlan.value = selectedPlan.value
   addAnakError.value = ''
+}
+
+async function logout() {
+  if (!confirm('Yakin ingin keluar?')) return
+  await auth.signOut()
 }
 </script>
 

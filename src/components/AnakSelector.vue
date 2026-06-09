@@ -33,7 +33,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] },
-  modelValue: { type: Number, default: null }
+  modelValue: { type: String, default: null }
 })
 
 const emit = defineEmits(['update:modelValue'])

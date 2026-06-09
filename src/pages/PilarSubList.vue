@@ -41,7 +41,7 @@ import { getSkillsByPilar } from '../data/skills.js'
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] },
-  selectedAnakId: { type: Number, default: null },
+  selectedAnakId: { type: String, default: null },
   pilarKey: { type: String, required: true },
   childAge: { type: Number, default: null }
 })

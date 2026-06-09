@@ -1,25 +1,47 @@
 import Dexie from 'dexie'
 
-const db = new Dexie('HaloBunda')
+const DB_NAME = 'HaloBunda'
 
-db.version(2).stores({
-  anak: '++id, nama',
-  challenges: '++id, anakId, category',
-  challengeHistory: '++id, anakId, category',
-  checklists: '++id, anakId',
-  schedules: '++id, anakId',
-  worksheets: '++id, anakId',
-  settings: 'key'
-})
+async function initDB() {
+  try {
+    const db = new Dexie(DB_NAME)
+    db.version(3).stores({
+      anak: 'id, nama, _synced',
+      challenges: 'id, anakId, category, _synced',
+      challengeHistory: 'id, anakId, category, _synced',
+      checklists: 'id, anakId, _synced',
+      schedules: 'id, anakId, _synced',
+      worksheets: '++id, anakId',
+      settings: 'key'
+    })
+    await db.open()
+    return db
+  } catch (e) {
+    if (e.name === 'UpgradeError') {
+      await new Dexie(DB_NAME).delete()
+      location.reload()
+    }
+    throw e
+  }
+}
+
+const db = await initDB()
 
 export default db
+
+function markUnsynced(record) {
+  return { ...record, _synced: 0, updated_at: new Date().toISOString() }
+}
 
 export async function getAnakList() {
   return db.anak.toArray()
 }
 
 export async function saveAnak(anak) {
-  return db.anak.put(anak)
+  if (!anak.id) anak.id = crypto.randomUUID()
+  const data = markUnsynced(anak)
+  await db.anak.put(data)
+  return data.id
 }
 
 export async function removeAnak(id) {
@@ -37,7 +59,10 @@ export async function getChallenges(anakId) {
 }
 
 export async function saveChallenge(item) {
-  return db.challenges.put(item)
+  if (!item.id) item.id = crypto.randomUUID()
+  const data = markUnsynced(item)
+  await db.challenges.put(data)
+  return data.id
 }
 
 export async function removeChallenge(id) {
@@ -49,7 +74,9 @@ export async function getChallengeHistory(anakId) {
 }
 
 export async function saveChallengeHistory(item) {
-  return db.challengeHistory.add(item)
+  if (!item.id) item.id = crypto.randomUUID()
+  const data = markUnsynced(item)
+  return db.challengeHistory.add(data)
 }
 
 export async function getChecklists(anakId) {
@@ -59,7 +86,10 @@ export async function getChecklists(anakId) {
 }
 
 export async function saveChecklist(item) {
-  return db.checklists.put(item)
+  if (!item.id) item.id = crypto.randomUUID()
+  const data = markUnsynced(item)
+  await db.checklists.put(data)
+  return data.id
 }
 
 export async function removeChecklist(id) {
@@ -71,7 +101,10 @@ export async function getSchedules(anakId) {
 }
 
 export async function saveSchedule(item) {
-  return db.schedules.put(item)
+  if (!item.id) item.id = crypto.randomUUID()
+  const data = markUnsynced(item)
+  await db.schedules.put(data)
+  return data.id
 }
 
 export async function removeSchedule(id) {

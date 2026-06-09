@@ -130,7 +130,7 @@ const anak = useAnakStore()
 const props = defineProps({
   anakList: { type: Array, default: () => [] },
   selectedPilar: { type: String, default: null },
-  selectedAnakId: { type: Number, default: null }
+  selectedAnakId: { type: String, default: null }
 })
 
 const emit = defineEmits(['select-pilar', 'close-pilar', 'update:anak-id', 'go-profile'])

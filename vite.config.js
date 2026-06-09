@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       include: ['@iconify/vue']
     },
+    build: {
+      emptyOutDir: true
+    },
     server: {
       headers: mode === 'development' ? { 'Cache-Control': 'no-store' } : undefined,
       proxy: {

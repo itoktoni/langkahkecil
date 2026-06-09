@@ -180,7 +180,7 @@ import { playAddSound, playRemoveSound } from '../utils/sound.js'
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] },
-  selectedAnakId: { type: Number, default: null }
+  selectedAnakId: { type: String, default: null }
 })
 
 defineEmits(['evaluasi', 'reset-skill', 'delete-skill'])

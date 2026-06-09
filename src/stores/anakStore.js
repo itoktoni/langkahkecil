@@ -1,9 +1,16 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { getAnakList, saveAnak as dbSaveAnak, removeAnak as dbRemoveAnak } from '../db.js'
+import { scheduleSync } from '../services/sync.js'
+import { useAuthStore } from './authStore.js'
 
 export const useAnakStore = defineStore('anak', () => {
   const anakList = ref([])
+
+  function sync() {
+    const auth = useAuthStore()
+    if (auth.userId) scheduleSync(auth.userId)
+  }
 
   const allHistory = computed(() => {
     return anakList.value
@@ -26,17 +33,20 @@ export const useAnakStore = defineStore('anak', () => {
     const id = await dbSaveAnak(anak)
     anak.id = id
     anakList.value.push(anak)
+    sync()
     return id
   }
 
   async function updateAnak(anak) {
     await dbSaveAnak(anak)
+    sync()
   }
 
   async function deleteAnak(id) {
     await dbRemoveAnak(id)
     const idx = anakList.value.findIndex(a => a.id === id)
     if (idx > -1) anakList.value.splice(idx, 1)
+    sync()
   }
 
   function resetSkill({ anak, skill }) {
@@ -52,6 +62,7 @@ export const useAnakStore = defineStore('anak', () => {
     if (idx > -1) {
       anak.skills.splice(idx, 1)
       await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
+      sync()
     }
   }
 
@@ -71,6 +82,7 @@ export const useAnakStore = defineStore('anak', () => {
       activities: []
     })
     await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
+    sync()
   }
 
   async function addActivity(anakId, skillKey, activityData) {
@@ -88,6 +100,7 @@ export const useAnakStore = defineStore('anak', () => {
       date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
     })
     await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
+    sync()
   }
 
   return {
