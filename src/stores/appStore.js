@@ -13,11 +13,12 @@ export const useAppStore = defineStore('app', () => {
 
   const pageTitle = computed(() => {
     const titles = {
-      pilar: `Welcome to ${appConfig.name}`,
+      pilar: `Selamat Datang`,
       progress: 'Statistik',
       activity: 'Aktivitas',
       profile: 'Profile',
       settings: 'Pengaturan',
+      billing: 'Billing',
       challenge: 'Challenge',
       jadwal: 'Jadwal Harian',
       checklist: 'Checklist Harian'

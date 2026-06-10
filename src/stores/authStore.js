@@ -8,10 +8,16 @@ export const useAuthStore = defineStore('auth', () => {
   const loading = ref(false)
   const error = ref('')
   const serverAnakList = ref([])
+  const serverDate = ref(null)
+  const trialDays = ref(10)
+  const plans = ref([])
+  const discounts = ref({})
 
   const isAuthenticated = computed(() => !!token.value)
 
-  // Initialize from localStorage
+  const userPlan = computed(() => user.value?.plan || null)
+  const userRole = computed(() => user.value?.role || '')
+
   function init() {
     const storedToken = api.getAuthToken()
     const storedUser = localStorage.getItem('lk_user')
@@ -28,6 +34,28 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  function applyServerData(data) {
+    if (data.user) {
+      user.value = data.user
+      localStorage.setItem('lk_user', JSON.stringify(data.user))
+    }
+    if (data.anak_list) {
+      serverAnakList.value = data.anak_list
+    }
+    if (data.server_date) {
+      serverDate.value = data.server_date
+    }
+    if (data.trial_days) {
+      trialDays.value = data.trial_days
+    }
+    if (data.plans) {
+      plans.value = data.plans
+    }
+    if (data.discounts) {
+      discounts.value = data.discounts
+    }
+  }
+
   async function login(email, password) {
     loading.value = true
     error.value = ''
@@ -35,17 +63,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const data = await api.login(email, password)
       token.value = data.access_token
-
-      // Store user info
-      if (data.user) {
-        user.value = data.user
-        localStorage.setItem('lk_user', JSON.stringify(data.user))
-      }
-
-      if (data.anak_list) {
-        serverAnakList.value = data.anak_list
-      }
-
+      applyServerData(data)
       return data
     } catch (err) {
       error.value = err.message || 'Login gagal'
@@ -55,19 +73,14 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(name, email, password, passwordConfirmation) {
+  async function register(name, email, phone, password, passwordConfirmation) {
     loading.value = true
     error.value = ''
 
     try {
-      const data = await api.register(name, email, password, passwordConfirmation)
+      const data = await api.register(name, email, phone, password, passwordConfirmation)
       token.value = data.access_token
-
-      if (data.user) {
-        user.value = data.user
-        localStorage.setItem('lk_user', JSON.stringify(data.user))
-      }
-
+      applyServerData(data)
       return data
     } catch (err) {
       error.value = err.message || 'Registrasi gagal'
@@ -82,6 +95,7 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null
     user.value = null
     serverAnakList.value = []
+    serverDate.value = null
     localStorage.removeItem('lk_user')
   }
 
@@ -95,9 +109,16 @@ export const useAuthStore = defineStore('auth', () => {
     error,
     isAuthenticated,
     serverAnakList,
+    serverDate,
+    trialDays,
+    plans,
+    discounts,
+    userPlan,
+    userRole,
     login,
     register,
     logout,
-    init
+    init,
+    applyServerData
   }
 })

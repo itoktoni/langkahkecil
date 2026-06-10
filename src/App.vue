@@ -3,15 +3,16 @@
   <LoginPage v-else-if="showLogin" @success="onLoginSuccess" @skip="showLogin = false" />
   <div v-else class="bg-canvas-cream text-text-main min-h-screen">
     <AppSidebar :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" :user-gender="app.userGender" :can-install="canInstall" @switch="app.switchTab" @install="installApp" />
-    <DesktopHeader :title="app.pageTitle" :can-install="canInstall" :user-name="app.userName" :user-email="userEmail" :user-gender="app.userGender" @sync="showSyncModal = true" @install="installApp" @profile="app.switchTab('profile')" @settings="app.switchTab('settings')" @billing="app.switchTab('profile')" @logout="handleLogout" />
-    <AppHeader :title="app.pageTitle" :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" :user-gender="app.userGender" :user-email="userEmail" :can-install="canInstall" @switch="app.switchTab" @sync="showSyncModal = true" @install="installApp" @profile="app.switchTab('profile')" @settings="app.switchTab('settings')" @logout="handleLogout" />
+    <DesktopHeader :title="app.pageTitle" :can-install="canInstall" :user-name="app.userName" :user-email="userEmail" :user-gender="app.userGender" @sync="showSyncModal = true" @install="installApp" @profile="app.switchTab('profile')" @settings="app.switchTab('settings')" @billing="app.switchTab('billing')" @logout="handleLogout" />
+    <AppHeader :title="app.pageTitle" :tabs="tabs" :active-tab="app.activeTab" :user-name="app.userName" :user-gender="app.userGender" :user-email="userEmail" :can-install="canInstall" @switch="app.switchTab" @sync="showSyncModal = true" @install="installApp" @profile="app.switchTab('profile')" @settings="app.switchTab('settings')" @billing="app.switchTab('billing')" @logout="handleLogout" />
 
     <main class="content-wrapper pb-24 lg:pb-8">
       <PilarTab ref="pilarTabRef" v-show="app.activeTab === 'pilar'" :anak-list="anak.anakList" :selected-pilar="app.selectedPilar" :selected-anak-id="app.selectedAnakId" @select-pilar="app.openPilarSub" @close-pilar="app.closePilarSub" @update:anak-id="app.selectedAnakId = $event" @go-profile="app.switchTab('profile')" />
       <ProgressTab v-show="app.activeTab === 'progress'" :anak-list="anak.anakList" :selected-anak-id="app.selectedAnakId" @reset-skill="anak.resetSkill" @delete-skill="anak.deleteSkill" @open-skill="openSkillFromProgress" />
       <ActivityTab ref="activityTabRef" v-show="app.activeTab === 'activity'" />
-      <ProfileTab v-show="app.activeTab === 'profile'" :anak-list="anak.anakList" @select="handleProfileMenu" @select-anak="goToAnakProgress" @logout="handleLogout" @sync="showSyncModal = true" />
+      <ProfileTab v-show="app.activeTab === 'profile'" :anak-list="anak.anakList" @select="handleProfileMenu" @logout="handleLogout" @sync="showSyncModal = true" />
       <SettingsTab v-show="app.activeTab === 'settings'" @go-profile="app.switchTab('profile')" />
+      <BillingTab v-show="app.activeTab === 'billing'" :anak-list="anak.anakList" />
 
       <div v-show="app.activeTab === 'challenge'" class="px-margin-mobile md:px-margin-desktop pt-5 mx-auto pb-8">
         <AnakSelector v-if="anak.anakList.length" :anak-list="anak.anakList" v-model="tools.toolsAnakId" class="mb-stack-lg" />
@@ -54,6 +55,7 @@ import ProgressTab from './pages/ProgressTab.vue'
 import ActivityTab from './pages/ActivityTab.vue'
 import ProfileTab from './pages/ProfileTab.vue'
 import SettingsTab from './pages/SettingsTab.vue'
+import BillingTab from './pages/BillingTab.vue'
 import ChallengePage from './pages/ChallengePage.vue'
 import JadwalPage from './pages/JadwalPage.vue'
 import ChecklistPage from './pages/ChecklistPage.vue'

@@ -47,13 +47,22 @@
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <input
-            v-model="password"
-            type="password"
-            placeholder="••••••••"
-            class="w-full px-4 py-3 rounded-xl border-2 border-[#B7D9BC] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition bg-white"
-            @keyup.enter="handleLogin"
-          />
+          <div class="relative">
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="••••••••"
+              class="w-full px-4 py-3 pr-12 rounded-xl border-2 border-[#B7D9BC] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition bg-white"
+              @keyup.enter="handleLogin"
+            />
+            <button
+              type="button"
+              @click="showPassword = !showPassword"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+            >
+              <Icon :icon="showPassword ? 'mdi:eye-off' : 'mdi:eye'" class="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         <button
@@ -76,7 +85,7 @@
           <input
             v-model="name"
             type="text"
-            placeholder="Nama lengkap"
+            placeholder="Nama Orang Tua / Wali"
             class="w-full px-4 py-3 rounded-xl border-2 border-[#B7D9BC] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition bg-white"
           />
         </div>
@@ -90,23 +99,50 @@
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>
           <input
-            v-model="password"
-            type="password"
-            placeholder="Minimal 8 karakter"
+            v-model="phone"
+            type="tel"
+            placeholder="08xxxxxxxxxx"
             class="w-full px-4 py-3 rounded-xl border-2 border-[#B7D9BC] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition bg-white"
           />
         </div>
         <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <div class="relative">
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="Minimal 6 karakter"
+              class="w-full px-4 py-3 pr-12 rounded-xl border-2 border-[#B7D9BC] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition bg-white"
+            />
+            <button
+              type="button"
+              @click="showPassword = !showPassword"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+            >
+              <Icon :icon="showPassword ? 'mdi:eye-off' : 'mdi:eye'" class="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+        <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
-          <input
-            v-model="passwordConfirmation"
-            type="password"
-            placeholder="Ulangi password"
-            class="w-full px-4 py-3 rounded-xl border-2 border-[#B7D9BC] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition bg-white"
-            @keyup.enter="handleRegister"
-          />
+          <div class="relative">
+            <input
+              v-model="passwordConfirmation"
+              :type="showPasswordConfirmation ? 'text' : 'password'"
+              placeholder="Ulangi password"
+              class="w-full px-4 py-3 pr-12 rounded-xl border-2 border-[#B7D9BC] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition bg-white"
+              @keyup.enter="handleRegister"
+            />
+            <button
+              type="button"
+              @click="showPasswordConfirmation = !showPasswordConfirmation"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+            >
+              <Icon :icon="showPasswordConfirmation ? 'mdi:eye-off' : 'mdi:eye'" class="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         <button
@@ -135,17 +171,21 @@
 
 <script setup>
 import { ref } from 'vue'
+import { Icon } from '@iconify/vue'
 import { useAuthStore } from '../stores/authStore.js'
 
 const emit = defineEmits(['success', 'skip'])
 
 const auth = useAuthStore()
 
-const mode = ref('login') // 'login' or 'register'
+const mode = ref('login')
 const name = ref('')
 const email = ref('')
+const phone = ref('')
 const password = ref('')
 const passwordConfirmation = ref('')
+const showPassword = ref(false)
+const showPasswordConfirmation = ref(false)
 
 async function handleLogin() {
   if (!email.value || !password.value) {
@@ -162,7 +202,7 @@ async function handleLogin() {
 }
 
 async function handleRegister() {
-  if (!name.value || !email.value || !password.value) {
+  if (!name.value || !email.value || !phone.value || !password.value) {
     auth.error = 'Semua field wajib diisi'
     return
   }
@@ -172,13 +212,13 @@ async function handleRegister() {
     return
   }
 
-  if (password.value.length < 8) {
-    auth.error = 'Password minimal 8 karakter'
+  if (password.value.length < 6) {
+    auth.error = 'Password minimal 6 karakter'
     return
   }
 
   try {
-    await auth.register(name.value, email.value, password.value, passwordConfirmation.value)
+    await auth.register(name.value, email.value, phone.value, password.value, passwordConfirmation.value)
     emit('success')
   } catch (err) {
     // Error already set in store

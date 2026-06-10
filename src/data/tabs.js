@@ -5,5 +5,6 @@ export const tabs = [
   { id: 'challenge', label: 'Challenge', icon: 'emoji_events' },
   { id: 'jadwal', label: 'Jadwal', icon: 'schedule' },
   { id: 'checklist', label: 'Checklist', icon: 'fact_check' },
+  { id: 'billing', label: 'Billing', icon: 'workspace_premium' },
   { id: 'profile', label: 'Profile', icon: 'person' }
 ]

@@ -12,12 +12,16 @@
           <div v-if="!editingName">
             <h3 class="font-headline-md text-text-main">{{ userName }}</h3>
             <p class="text-sm text-on-surface-variant truncate">{{ userEmail }}</p>
+            <p v-if="userPhone" class="text-sm text-on-surface-variant truncate">📱 {{ userPhone }}</p>
             <p v-if="userGender" class="text-xs text-primary font-bold mt-0.5">{{ userGender }}</p>
           </div>
           <div v-else class="space-y-2 flex-1">
             <input v-model="editNameValue"
               class="w-full px-3 py-2 rounded-xl border-2 border-[#B7D9BC] text-sm focus:outline-none focus:border-primary bg-white"
               placeholder="Nama baru" @keyup.enter="saveName" />
+            <input v-model="editPhoneValue"
+              class="w-full px-3 py-2 rounded-xl border-2 border-[#B7D9BC] text-sm focus:outline-none focus:border-primary bg-white"
+              placeholder="Nomor telepon (opsional)" />
             <p v-if="nameError" class="text-xs text-error font-medium">{{ nameError }}</p>
             <div class="flex gap-2">
               <button @click="setGender('Bunda')"
@@ -84,10 +88,6 @@
           <span class="w-8 h-8 rounded-full bg-success-soft border-2 border-[#B7D9BC] flex items-center justify-center text-base">👶</span> Anak
         </h3>
         <div class="flex items-center gap-2">
-          <button v-if="anakList.length" @click="resetAnak"
-            class="px-4 py-2 rounded-xl text-sm font-bold border-2 border-error/30 text-error hover:bg-error/5 transition-colors">
-            Reset
-          </button>
           <button @click="tambahAnak"
             class="px-4 py-2 rounded-xl text-sm font-bold text-primary btn-pop-green-sm"
             :class="{ 'opacity-40 pointer-events-none': !canAddAnak }">
@@ -103,7 +103,7 @@
       <div class="space-y-3">
         <div v-for="anak in anakList" :key="anak.id"
           class="relative bg-canvas-cream rounded-[24px] p-4 flex items-center gap-4 border-4 border-[#B7D9BC] shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.01] transition-all"
-          @click="$emit('select-anak', anak)">
+          @click="openEditAnak(anak)">
           <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl border-2 border-white shadow-sm" :style="{ background: anak.bg }">
             {{ anak.emoji }}
           </div>
@@ -111,21 +111,10 @@
             <p class="font-label-lg text-text-main">{{ anak.nama }}</p>
             <p class="text-sm text-on-surface-variant">{{ ageLabel(anak.tahun, anak.bulan, anak.tanggal) }}</p>
           </div>
-          <button @click.stop="toggleMenu(anak.id)"
-            class="w-8 h-8 rounded-full bg-white border-2 border-[#B7D9BC] flex items-center justify-center text-on-surface-variant hover:bg-success-soft transition-colors shadow-sm">
-            <span class="material-symbols-outlined text-base">more_vert</span>
+          <button @click.stop="openEditAnak(anak)"
+            class="w-8 h-8 rounded-full bg-white border-2 border-[#B7D9BC] flex items-center justify-center text-primary hover:bg-success-soft transition-colors shadow-sm">
+            <span class="material-symbols-outlined text-base">edit</span>
           </button>
-          <div v-if="openMenuId === anak.id"
-            class="absolute right-4 top-14 bg-white rounded-2xl shadow-xl border-2 border-[#B7D9BC] py-1 z-10 min-w-[140px]">
-            <button @click.stop="openEditAnak(anak)"
-              class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-text-main hover:bg-success-soft transition-colors">
-              <span class="material-symbols-outlined text-base">edit</span> Edit
-            </button>
-            <button @click.stop="deleteAnak(anak)"
-              class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-error hover:bg-red-50 transition-colors">
-              <span class="material-symbols-outlined text-base">delete</span> Hapus
-            </button>
-          </div>
         </div>
 
         <div v-if="anakList.length === 0"
@@ -133,133 +122,6 @@
           <p class="text-4xl mb-2">👶</p>
           <p class="text-sm text-on-surface-variant font-medium">Belum ada data anak</p>
         </div>
-      </div>
-    </div>
-
-    <!-- Billing Section -->
-    <div class="mt-6">
-      <div class="bg-canvas-cream rounded-[32px] p-6 border-4 border-[#B7D9BC] shadow-lg">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shadow-sm"
-            :class="currentPlan === 'free' ? 'bg-warm-bonding/20' : 'bg-success-soft'">
-            <span class="material-symbols-outlined"
-              :class="currentPlan === 'free' ? 'text-warm-bonding' : 'text-primary'"
-              :style="fillIcon">workspace_premium</span>
-          </div>
-          <div>
-            <p class="font-label-lg text-text-main">Billing</p>
-            <p class="text-sm text-on-surface-variant">
-              Anak pertama: <span class="font-bold text-primary">Gratis</span> • Anak tambahan: <span class="font-bold text-primary">Rp99.000/tahun</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Info pricing -->
-        <div class="bg-white rounded-2xl p-4 border-2 border-[#B7D9BC] mb-4">
-          <div class="flex items-center gap-3 mb-3">
-            <span class="text-2xl">👶</span>
-            <div>
-              <p class="text-sm font-bold text-text-main">Anak Pertama</p>
-              <p class="text-xs text-on-surface-variant">Gratis selamanya</p>
-            </div>
-            <span class="ml-auto text-lg font-bold text-primary">GRATIS</span>
-          </div>
-          <div class="flex items-center gap-3 pt-3 border-t-2 border-[#B7D9BC]/50">
-            <span class="text-2xl">👧</span>
-            <div>
-              <p class="text-sm font-bold text-text-main">Anak Tambahan</p>
-              <p class="text-xs text-on-surface-variant">Per anak, per tahun</p>
-            </div>
-            <span class="ml-auto text-lg font-bold text-primary">Rp99rb</span>
-          </div>
-        </div>
-
-        <div class="mt-4 pt-4 border-t-2 border-[#B7D9BC]/50">
-          <button @click="shareReferral"
-            class="w-full py-3 rounded-2xl font-label-lg border-2 border-primary text-primary hover:bg-success-soft transition-all duration-200 flex items-center justify-center gap-2 font-bold">
-            <span class="material-symbols-outlined text-lg">share</span>
-            Share Link Referral
-          </button>
-          <p v-if="referralCode" class="text-center text-xs text-on-surface-variant mt-2">
-            Kode: <span class="font-bold text-primary">{{ referralCode }}</span>
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Pricing Modal for Additional Child -->
-    <div v-if="showPricingModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" @click.self="showPricingModal = false">
-      <div class="bg-canvas-cream rounded-[32px] p-6 border-4 border-[#B7D9BC] shadow-xl max-w-md w-full">
-        <div class="text-center mb-4">
-          <span class="text-4xl">👧</span>
-          <h3 class="font-headline-md text-text-main mt-2">Tambah Anak</h3>
-          <p class="text-sm text-on-surface-variant mt-1">Anak ke-{{ anakList.length + 1 }}</p>
-        </div>
-
-        <!-- Price Display -->
-        <div class="bg-white rounded-2xl p-4 border-2 border-[#B7D9BC] mb-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-bold text-text-main">Langganan Tahunan</p>
-              <p class="text-xs text-on-surface-variant">Akses semua fitur untuk 1 anak</p>
-            </div>
-            <div class="text-right">
-              <p v-if="discountApplied && discountPercent === 100" class="text-lg font-bold text-primary">GRATIS</p>
-              <template v-else>
-                <p v-if="discountApplied" class="text-xs text-on-surface-variant line-through">Rp{{ PRICE_PER_CHILD.toLocaleString('id-ID') }}</p>
-                <p class="text-lg font-bold text-primary">Rp{{ finalPrice.toLocaleString('id-ID') }}</p>
-              </template>
-              <p class="text-xs text-on-surface-variant">/tahun</p>
-            </div>
-          </div>
-
-          <!-- Discount Badge -->
-          <div v-if="discountApplied" class="mt-3 flex items-center gap-2 bg-success-soft rounded-xl p-2">
-            <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
-            <span class="text-xs font-bold text-primary">Diskon {{ discountPercent }}% diterapkan</span>
-            <button @click="removeDiscount" class="ml-auto text-xs text-on-surface-variant hover:text-error">
-              <span class="material-symbols-outlined text-sm">close</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Discount Code Input -->
-        <div v-if="!discountApplied" class="mb-4">
-          <button v-if="!showDiscountInput" @click="showDiscountInput = true"
-            class="w-full py-2.5 rounded-xl border-2 border-dashed border-[#B7D9BC] text-sm text-on-surface-variant hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined text-sm">local_offer</span>
-            Punya kode diskon?
-          </button>
-          <div v-else class="space-y-2">
-            <div class="flex gap-2">
-              <input v-model="discountCode"
-                class="flex-1 px-3 py-2.5 rounded-xl border-2 border-[#B7D9BC] text-sm focus:outline-none focus:border-primary bg-white uppercase"
-                placeholder="Masukkan kode diskon"
-                @keyup.enter="applyDiscount" />
-              <button @click="applyDiscount"
-                class="px-4 py-2.5 rounded-xl text-sm font-bold text-white btn-pop-green">
-                Pakai
-              </button>
-            </div>
-            <p v-if="discountError" class="text-xs text-error font-medium">{{ discountError }}</p>
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex gap-3">
-          <button @click="showPricingModal = false"
-            class="flex-1 py-3 rounded-2xl text-sm font-bold text-on-surface-variant btn-pop-gray">
-            Batal
-          </button>
-          <button @click="processPayment"
-            class="flex-1 py-3 rounded-2xl text-white text-sm font-bold btn-pop-green">
-            {{ finalPrice === 0 ? 'Klaim Gratis' : `Bayar Rp${finalPrice.toLocaleString('id-ID')}` }}
-          </button>
-        </div>
-
-        <p class="text-center text-xs text-on-surface-variant mt-4">
-          Pembayaran aman melalui Midtrans
-        </p>
       </div>
     </div>
 
@@ -377,7 +239,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { saveAnak, removeAnak, getSetting, saveSetting } from '../db.js'
+import { saveAnak, getSetting, saveSetting } from '../db.js'
 import { ageLabel } from '../utils/age.js'
 import { useAppStore } from '../stores/appStore.js'
 import { useAuthStore } from '../stores/authStore.js'
@@ -393,116 +255,51 @@ const props = defineProps({
   anakList: { type: Array, default: () => [] }
 })
 
-const emit = defineEmits(['select-anak', 'logout', 'sync'])
-
-const fillIcon = { fontVariationSettings: "'FILL' 1" }
+const emit = defineEmits(['logout', 'sync'])
 
 const userName = ref('Bunda')
 const userEmail = ref('')
+const userPhone = ref('')
 const userGender = ref('')
 const editingName = ref(false)
 const editNameValue = ref('')
+const editPhoneValue = ref('')
 const editGender = ref('')
-const openMenuId = ref(null)
+const editAnak = ref(null)
+const editAnakForm = ref({ nama: '', gender: '', tanggal: '', bulan: '', tahun: '' })
+const editAnakError = ref('')
+const nameError = ref('')
 
 const showPasswordForm = ref(false)
 const oldPassword = ref('')
 const newPassword = ref('')
 const passwordError = ref('')
 
-const editAnak = ref(null)
-const editAnakForm = ref({ nama: '', gender: '', tanggal: '', bulan: '', tahun: '' })
-const editAnakError = ref('')
-const nameError = ref('')
-
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
 const currentYear = new Date().getFullYear()
 const years = Array.from({ length: currentYear - 1999 }, (_, i) => currentYear - i)
 
-const currentPlan = ref('free')
-const selectedPlan = ref('premium')
 const addAnakError = ref('')
-const referralCode = ref('')
 
-// Pricing per child
-const PRICE_PER_CHILD = 99000
-const discountCode = ref('')
-const discountApplied = ref(false)
-const discountPercent = ref(0)
-const discountError = ref('')
-const showDiscountInput = ref(false)
-const showPricingModal = ref(false)
-
-// Simulated discount codes (in real app, this would be server-validated)
-const VALID_DISCOUNTS = {
-  'HEMAT10': 10,
-  'LAUNCH20': 20,
-  'SAHABAT30': 30,
-  'GRATIS': 100,
-}
-
-function applyDiscount() {
-  discountError.value = ''
-  const code = discountCode.value.trim().toUpperCase()
-  if (!code) {
-    discountError.value = 'Masukkan kode diskon'
-    return
-  }
-  if (VALID_DISCOUNTS[code]) {
-    discountPercent.value = VALID_DISCOUNTS[code]
-    discountApplied.value = true
-    discountError.value = ''
-  } else {
-    discountError.value = 'Kode diskon tidak valid'
-    discountApplied.value = false
-    discountPercent.value = 0
-  }
-}
-
-function removeDiscount() {
-  discountCode.value = ''
-  discountApplied.value = false
-  discountPercent.value = 0
-  discountError.value = ''
-  showDiscountInput.value = false
-}
-
-const finalPrice = computed(() => {
-  if (discountApplied.value && discountPercent.value === 100) return 0
-  if (discountApplied.value) {
-    return Math.round(PRICE_PER_CHILD * (1 - discountPercent.value / 100))
-  }
-  return PRICE_PER_CHILD
+const maxChildren = computed(() => {
+  if (auth.userRole === 'developer') return Infinity
+  const plan = auth.userPlan
+  if (!plan) return 0
+  const feature = plan.features?.find(f => f.slug === 'max-children')
+  return feature ? parseInt(feature.value) || 0 : 0
 })
 
-function generateRefCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-  let code = ''
-  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)]
-  return code
-}
-
-function shareReferral() {
-  const code = referralCode.value || generateRefCode()
-  referralCode.value = code
-  const appUrl = import.meta.env.VITE_APP_URL || 'https://halobunda.app'
-  const appName = appConfig.name
-  const url = `${appUrl}?ref=${code}`
-  const text = `Yuk coba ${appName}! Aplikasi pengembangan anak. Pakai kode referral: ${code} 🌸\n${url}`
-
-  if (navigator.share) {
-    navigator.share({ title: `Referral ${appName}`, text, url }).catch(() => {})
-  } else {
-    navigator.clipboard.writeText(text).then(() => {
-      alert('Link referral sudah disalin!')
-    })
-  }
-}
-
-const maxAnak = computed(() => 10) // Max 10 anak
 const canAddAnak = computed(() => {
-  // First child is free, subsequent children require payment
-  return props.anakList.length < maxAnak.value
+  if (auth.userRole === 'developer') return true
+  if (auth.userRole === 'trial') {
+    const trialStart = auth.user?.trial_start_date
+    if (!trialStart) return false
+    const serverNow = auth.serverDate ? new Date(auth.serverDate) : new Date()
+    const daysDiff = Math.floor((serverNow - new Date(trialStart)) / (1000 * 60 * 60 * 24))
+    return daysDiff <= auth.trialDays
+  }
+  if (!auth.userPlan) return false
+  return props.anakList.length < maxChildren.value
 })
 
 onMounted(async () => {
@@ -510,17 +307,21 @@ onMounted(async () => {
   if (name) userName.value = name
   const email = await getSetting('userEmail')
   if (email) userEmail.value = email
+  const phone = await getSetting('userPhone')
+  if (phone) userPhone.value = phone
   const gender = await getSetting('userGender')
   if (gender) userGender.value = gender
 
   if (auth.user) {
     if (auth.user.name) userName.value = auth.user.name
     if (auth.user.email) userEmail.value = auth.user.email
+    if (auth.user.phone) userPhone.value = auth.user.phone
   }
 })
 
 function startEditName() {
   editNameValue.value = userName.value
+  editPhoneValue.value = userPhone.value
   editGender.value = userGender.value
   editingName.value = true
 }
@@ -536,6 +337,8 @@ async function saveName() {
   userName.value = editNameValue.value.trim()
   app.userName = editNameValue.value.trim()
   saveSetting('userName', userName.value)
+  userPhone.value = editPhoneValue.value.trim()
+  saveSetting('userPhone', userPhone.value)
   userGender.value = editGender.value
   app.userGender = editGender.value
   saveSetting('userGender', userGender.value)
@@ -543,7 +346,7 @@ async function saveName() {
 
   if (auth.isAuthenticated) {
     try {
-      const res = await api.updateProfile({ name: userName.value })
+      const res = await api.updateProfile({ name: userName.value, phone: userPhone.value })
       if (res.user) {
         auth.user = res.user
         localStorage.setItem('lk_user', JSON.stringify(res.user))
@@ -584,12 +387,7 @@ async function savePassword() {
   cancelPassword()
 }
 
-function toggleMenu(id) {
-  openMenuId.value = openMenuId.value === id ? null : id
-}
-
 function openEditAnak(anak) {
-  openMenuId.value = null
   editAnak.value = anak
   editAnakForm.value = { nama: anak.nama, gender: anak.gender || '', tanggal: anak.tanggal || '', bulan: anak.bulan || '', tahun: anak.tahun || '' }
 }
@@ -630,62 +428,34 @@ async function saveEditAnak() {
   closeEditAnak()
 }
 
-async function deleteAnak(anak) {
-  openMenuId.value = null
-  if (!confirm(`Hapus data ${anak.nama}?`)) return
-  await removeAnak(anak.id)
-  const idx = props.anakList.indexOf(anak)
-  if (idx > -1) props.anakList.splice(idx, 1)
-  if (app.selectedAnakId === anak.id) {
-    app.selectedAnakId = props.anakList.length ? props.anakList[0].id : null
-  }
-}
-
-async function resetAnak() {
-  if (!confirm('Hapus semua data anak? Semua data challenge, jadwal, dan checklist akan ikut terhapus.')) return
-  for (const anak of [...props.anakList]) {
-    await removeAnak(anak.id)
-  }
-  props.anakList.splice(0)
-  app.selectedAnakId = null
-}
-
 async function tambahAnak() {
   addAnakError.value = ''
 
-  // First child is free
-  if (props.anakList.length === 0) {
-    const emojis = ['👦', '👧']
-    const bgs = ['#E3F2FD', '#FCE4EC', '#E8F5E9', '#FFF3E0', '#F3E5F5']
-    const idx = props.anakList.length
-    const newAnak = {
-      nama: `Anak ${idx + 1}`,
-      emoji: emojis[idx % 2],
-      bg: bgs[idx % bgs.length],
-      tanggal: null, bulan: null, tahun: null,
-      skills: [], completedSkills: [], history: []
+  if (auth.userRole === 'developer') {
+    // No limits
+  } else if (auth.userRole === 'trial') {
+    const trialStart = auth.user?.trial_start_date
+    if (!trialStart) {
+      addAnakError.value = 'Data trial tidak ditemukan. Silakan login ulang.'
+      return
     }
-    newAnak.id = await saveAnak(newAnak)
-    props.anakList.push(newAnak)
-    app.selectedAnakId = newAnak.id
-    currentPlan.value = 'active'
+    const serverNow = auth.serverDate ? new Date(auth.serverDate) : new Date()
+    const daysDiff = Math.floor((serverNow - new Date(trialStart)) / (1000 * 60 * 60 * 24))
+    if (daysDiff > auth.trialDays) {
+      addAnakError.value = `Masa trial ${auth.trialDays} hari telah berakhir. Pilih paket untuk melanjutkan.`
+      setTimeout(() => app.switchTab('billing'), 2000)
+      return
+    }
+  } else if (auth.userPlan) {
+    if (props.anakList.length >= maxChildren.value) {
+      addAnakError.value = `Batas ${maxChildren.value} anak untuk paket ini. Upgrade paket atau bayar anak tambahan.`
+      setTimeout(() => app.switchTab('billing'), 2000)
+      return
+    }
+  } else {
+    app.switchTab('billing')
     return
   }
-
-  // For 2nd+ child, show pricing modal
-  showPricingModal.value = true
-}
-
-function upgradePlan() {
-  currentPlan.value = selectedPlan.value
-  addAnakError.value = ''
-}
-
-async function processPayment() {
-  // In real app, this would integrate with payment gateway
-  // For now, simulate successful payment
-  addAnakError.value = ''
-  showPricingModal.value = false
 
   const emojis = ['👦', '👧']
   const bgs = ['#E3F2FD', '#FCE4EC', '#E8F5E9', '#FFF3E0', '#F3E5F5']
@@ -700,9 +470,6 @@ async function processPayment() {
   newAnak.id = await saveAnak(newAnak)
   props.anakList.push(newAnak)
   app.selectedAnakId = newAnak.id
-
-  // Reset discount after use
-  removeDiscount()
 }
 </script>
 

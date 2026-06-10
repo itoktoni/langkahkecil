@@ -50,6 +50,11 @@
                 <span class="material-symbols-outlined text-lg text-primary">settings</span>
                 <span class="text-sm text-text-main">Pengaturan</span>
               </button>
+              <button @click.stop="$emit('billing'); showUserMenu = false"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-success-soft/30 transition-colors">
+                <span class="material-symbols-outlined text-lg text-primary">workspace_premium</span>
+                <span class="text-sm text-text-main">Billing</span>
+              </button>
 
               <div class="border-t border-[#B7D9BC]/50 my-1"></div>
 
@@ -179,7 +184,7 @@ const props = defineProps({
   canInstall: { type: Boolean, default: false }
 })
 
-defineEmits(['switch', 'sync', 'install', 'profile', 'settings', 'logout'])
+defineEmits(['switch', 'sync', 'install', 'profile', 'settings', 'billing', 'logout'])
 
 const menuOpen = ref(false)
 const showUserMenu = ref(false)

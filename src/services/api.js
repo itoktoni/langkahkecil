@@ -109,6 +109,25 @@ export async function changePassword(currentPassword, newPassword, newPasswordCo
 }
 
 /**
+ * Purchase a plan
+ */
+export async function purchasePlan(planId, discountCode = null) {
+  const body = { plan_id: planId }
+  if (discountCode) body.discount_code = discountCode
+  return apiFetch('/purchase-plan', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  })
+}
+
+/**
+ * Get plans (public)
+ */
+export async function getPlans() {
+  return apiFetch('/plans')
+}
+
+/**
  * Login to Startok API
  */
 export async function login(email, password) {
@@ -127,12 +146,13 @@ export async function login(email, password) {
 /**
  * Register a new user
  */
-export async function register(name, email, password, passwordConfirmation) {
+export async function register(name, email, phone, password, passwordConfirmation) {
   const data = await apiFetch('/register', {
     method: 'POST',
     body: JSON.stringify({
       name,
       email,
+      phone,
       password,
       password_confirmation: passwordConfirmation,
     }),

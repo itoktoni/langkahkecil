@@ -26,21 +26,37 @@ export const useAnakStore = defineStore('anak', () => {
   })
 
   async function loadAnakList() {
+    const localList = await dbGetAnakList()
+
     if (api.isAuthenticated()) {
       try {
         const serverList = await api.getAnakList()
-        anakList.value = serverList.map(a => ({
+
+        const seen = new Map()
+        for (const a of serverList) {
+          seen.set(a.id, a)
+        }
+        const deduped = [...seen.values()]
+
+        const mapped = deduped.map(a => ({
           ...a,
           tanggal: a.tanggal_lahir || a.tanggal,
           bulan: a.bulan_lahir || a.bulan,
           tahun: a.tahun_lahir || a.tahun,
+          serverSynced: true,
           skills: (a.skills || []).map(s => ({
             ...s,
             activities: s.activities || [],
           })),
           completedSkills: a.completed_skills || a.completedSkills || [],
         }))
-        for (const a of anakList.value) {
+
+        const serverIds = new Set(mapped.map(a => a.id))
+        const localOnly = localList.filter(a => !serverIds.has(a.id)).map(a => ({ ...a, serverSynced: false }))
+        const merged = [...mapped, ...localOnly]
+
+        anakList.value = merged
+        for (const a of merged) {
           await dbSaveAnak(JSON.parse(JSON.stringify(a)))
         }
         return
@@ -48,7 +64,7 @@ export const useAnakStore = defineStore('anak', () => {
         console.warn('Failed to load from server, using local:', e)
       }
     }
-    anakList.value = await dbGetAnakList()
+    anakList.value = localList.map(a => ({ ...a, serverSynced: false }))
   }
 
   async function addAnak(anak) {
@@ -66,6 +82,7 @@ export const useAnakStore = defineStore('anak', () => {
         }
         const saved = await api.addAnak(payload)
         anak.id = saved.id
+        anak.serverSynced = true
         anak.skills = anak.skills || []
         anak.completedSkills = anak.completedSkills || []
         anakList.value.push(anak)
@@ -77,6 +94,7 @@ export const useAnakStore = defineStore('anak', () => {
     }
     const id = await dbSaveAnak(anak)
     anak.id = id
+    anak.serverSynced = false
     anakList.value.push(anak)
     return id
   }
@@ -95,6 +113,7 @@ export const useAnakStore = defineStore('anak', () => {
           settings: anak.settings,
         }
         await api.updateAnak(anak.id, payload)
+        anak.serverSynced = true
       } catch (e) {
         console.warn('Failed to update on server:', e)
       }

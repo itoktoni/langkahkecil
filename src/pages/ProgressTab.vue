@@ -270,6 +270,8 @@ function toggle(id) {
 
 async function fetchEvaluations(anakId) {
   if (!api.isAuthenticated()) return
+  const anak = props.anakList.find(a => a.id === anakId)
+  if (!anak || !anak.serverSynced) return
   try {
     const data = await api.getEvaluations(anakId)
     evaluationsData.value[anakId] = data.evaluations || []
@@ -307,6 +309,8 @@ function getCompletedEvals(anakId) {
 
 async function toggleActivityComplete(anakId, act) {
   if (!act.id) return
+  const anak = props.anakList.find(a => a.id === anakId)
+  if (!anak || !anak.serverSynced) return
   act.completed = !act.completed
   try {
     await api.toggleActivity(anakId, act.id)
@@ -373,6 +377,7 @@ function closeEvaluasi() {
 
 async function saveEvaluation() {
   if (!evalAnak.value || !evalSkill.value || evalPoints.value === 0) return
+  if (!evalAnak.value.serverSynced) return
   evalSaving.value = true
   try {
     await api.addEvaluation(evalAnak.value.id, {
