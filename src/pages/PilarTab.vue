@@ -1,5 +1,5 @@
 <template>
-  <div class="px-margin-mobile md:px-margin-desktop pt-2 mx-auto">
+  <div class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
 
     <div v-show="!selectedSub" class="mb-stack-lg">
       <section class="mb-4">

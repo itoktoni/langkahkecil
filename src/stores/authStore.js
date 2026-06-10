@@ -7,11 +7,13 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref(null)
   const loading = ref(false)
   const error = ref('')
+  const validationErrors = ref(null)
   const serverAnakList = ref([])
   const serverDate = ref(null)
   const trialDays = ref(10)
   const plans = ref([])
-  const discounts = ref({})
+  const discounts = ref([])
+  const affiliateConfig = ref({ customer_discount_rate: 20 })
 
   const isAuthenticated = computed(() => !!token.value)
 
@@ -54,11 +56,15 @@ export const useAuthStore = defineStore('auth', () => {
     if (data.discounts) {
       discounts.value = data.discounts
     }
+    if (data.affiliate_config) {
+      affiliateConfig.value = data.affiliate_config
+    }
   }
 
   async function login(email, password) {
     loading.value = true
     error.value = ''
+    validationErrors.value = null
 
     try {
       const data = await api.login(email, password)
@@ -67,23 +73,26 @@ export const useAuthStore = defineStore('auth', () => {
       return data
     } catch (err) {
       error.value = err.message || 'Login gagal'
+      validationErrors.value = err.errors || null
       throw err
     } finally {
       loading.value = false
     }
   }
 
-  async function register(name, email, phone, password, passwordConfirmation) {
+  async function register(name, email, phone, password, passwordConfirmation, referralCode) {
     loading.value = true
     error.value = ''
+    validationErrors.value = null
 
     try {
-      const data = await api.register(name, email, phone, password, passwordConfirmation)
+      const data = await api.register(name, email, phone, password, passwordConfirmation, referralCode)
       token.value = data.access_token
       applyServerData(data)
       return data
     } catch (err) {
       error.value = err.message || 'Registrasi gagal'
+      validationErrors.value = err.errors || null
       throw err
     } finally {
       loading.value = false
@@ -107,12 +116,14 @@ export const useAuthStore = defineStore('auth', () => {
     token,
     loading,
     error,
+    validationErrors,
     isAuthenticated,
     serverAnakList,
     serverDate,
     trialDays,
     plans,
     discounts,
+    affiliateConfig,
     userPlan,
     userRole,
     login,

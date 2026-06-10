@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { appConfig } from '../config/appConfig.js'
 
 export const useAppStore = defineStore('app', () => {
-  const activeTab = ref('pilar')
+  const savedTab = localStorage.getItem('lk_active_tab')
+  const activeTab = ref(savedTab && savedTab !== 'null' ? savedTab : 'pilar')
   const selectedPilar = ref(null)
   const selectedAnakId = ref(null)
   const userName = ref('Parent')
@@ -19,6 +20,7 @@ export const useAppStore = defineStore('app', () => {
       profile: 'Profile',
       settings: 'Pengaturan',
       billing: 'Billing',
+      referral: 'Affiliate',
       challenge: 'Challenge',
       jadwal: 'Jadwal Harian',
       checklist: 'Checklist Harian'
@@ -27,6 +29,10 @@ export const useAppStore = defineStore('app', () => {
   })
 
   const switchCounter = ref(0)
+
+  watch(activeTab, (val) => {
+    localStorage.setItem('lk_active_tab', val)
+  })
 
   function switchTab(tabId) {
     if (activeTab.value !== tabId) history.pushState({ action: 'tab', from: activeTab.value }, '')

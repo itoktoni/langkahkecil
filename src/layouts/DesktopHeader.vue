@@ -52,6 +52,11 @@
                 <span class="material-symbols-outlined text-lg text-primary">workspace_premium</span>
                 <span class="text-sm text-text-main">Billing</span>
               </button>
+              <button @click.stop="$emit('referral'); showProfileMenu = false"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-success-soft/30 transition-colors">
+                <span class="material-symbols-outlined text-lg text-primary">group_add</span>
+                <span class="text-sm text-text-main">Affiliate</span>
+              </button>
               <div class="border-t border-[#B7D9BC]/50 my-1"></div>
               <button @click.stop="$emit('logout'); showProfileMenu = false"
                 class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-error/5 transition-colors text-error">
@@ -123,7 +128,7 @@ const props = defineProps({
   userGender: { type: String, default: '' }
 })
 
-defineEmits(['sync', 'install', 'profile', 'settings', 'billing', 'logout'])
+defineEmits(['sync', 'install', 'profile', 'settings', 'billing', 'referral', 'logout'])
 
 const showNotifPanel = ref(false)
 const showProfileMenu = ref(false)

@@ -1,5 +1,5 @@
 <template>
-  <div class="px-margin-mobile md:px-margin-desktop pt-5 mx-auto pb-8">
+  <div class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
 
     <!-- Sync Banner -->
     <div v-if="auth.isAuthenticated && !selectedType"

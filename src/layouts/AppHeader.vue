@@ -40,20 +40,11 @@
                 <p class="text-[11px] text-on-surface-variant truncate">{{ userEmail }}</p>
               </div>
 
-              <button @click.stop="$emit('profile'); showUserMenu = false"
+              <button v-for="item in profileMenuItems" :key="item.id"
+                @click.stop="$emit(item.emit); showUserMenu = false"
                 class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-success-soft/30 transition-colors">
-                <span class="material-symbols-outlined text-lg text-primary">person</span>
-                <span class="text-sm text-text-main">Profile</span>
-              </button>
-              <button @click.stop="$emit('settings'); showUserMenu = false"
-                class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-success-soft/30 transition-colors">
-                <span class="material-symbols-outlined text-lg text-primary">settings</span>
-                <span class="text-sm text-text-main">Pengaturan</span>
-              </button>
-              <button @click.stop="$emit('billing'); showUserMenu = false"
-                class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-success-soft/30 transition-colors">
-                <span class="material-symbols-outlined text-lg text-primary">workspace_premium</span>
-                <span class="text-sm text-text-main">Billing</span>
+                <span class="material-symbols-outlined text-lg text-primary">{{ item.icon }}</span>
+                <span class="text-sm text-text-main">{{ item.label }}</span>
               </button>
 
               <div class="border-t border-[#B7D9BC]/50 my-1"></div>
@@ -127,16 +118,7 @@
             </button>
           </div>
           <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <button
-              class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200"
-              :class="activeTab === 'pilar'
-                ? 'bg-primary text-on-primary shadow-md'
-                : 'bg-white text-on-surface-variant border-2 border-[#B7D9BC] hover:shadow-md hover:border-primary/30'"
-              @click="$emit('switch', 'pilar'); menuOpen = false">
-              <span class="material-symbols-outlined text-xl" :style="iconStyle('pilar')">home</span>
-              <span class="font-label-lg">Home</span>
-            </button>
-            <button v-for="item in extraMenus" :key="item.id"
+            <button v-for="item in drawerMenus" :key="item.id"
               class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200"
               :class="activeTab === item.id
                 ? 'bg-primary text-on-primary shadow-md'
@@ -170,13 +152,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { appConfig } from '../config/appConfig.js'
+import { mobileDrawerNav } from '../data/mobileDrawerNav.js'
+import { profileMenu } from '../data/profileMenu.js'
 import { useNotifications } from '../composables/useNotifications.js'
 
 const { notifications, unreadCount, fetchNotifications, markRead, markAllRead, clearAll } = useNotifications()
 
 const props = defineProps({
   title: { type: String, default: `${appConfig.name} 👋` },
-  tabs: { type: Array, default: () => [] },
   activeTab: { type: String, default: '' },
   userName: { type: String, default: 'Bunda' },
   userGender: { type: String, default: '' },
@@ -184,7 +167,7 @@ const props = defineProps({
   canInstall: { type: Boolean, default: false }
 })
 
-defineEmits(['switch', 'sync', 'install', 'profile', 'settings', 'billing', 'logout'])
+defineEmits(['switch', 'sync', 'install', 'profile', 'settings', 'billing', 'referral', 'logout'])
 
 const menuOpen = ref(false)
 const showUserMenu = ref(false)
@@ -194,10 +177,8 @@ onMounted(() => { fetchNotifications() })
 
 const userEmoji = computed(() => props.userGender === 'Perempuan' ? '👩' : '👨')
 
-const extraMenus = computed(() => {
-  const footerIds = ['pilar', 'progress', 'tools', 'profile']
-  return props.tabs.filter(t => !footerIds.includes(t.id))
-})
+const drawerMenus = computed(() => mobileDrawerNav)
+const profileMenuItems = computed(() => profileMenu)
 
 function iconStyle(tabId) {
   return { fontVariationSettings: props.activeTab === tabId ? "'FILL' 1" : "'FILL' 0" }

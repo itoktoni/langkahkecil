@@ -1,27 +1,6 @@
 <template>
-  <div class="px-margin-mobile md:px-margin-desktop pt-2 mx-auto max-w-2xl">
+  <div class="px-margin-mobile md:px-margin-desktop pt-5 max-w-6xl mx-auto pb-8">
     <div class="space-y-6">
-
-      <!-- User Info Card -->
-      <div class="bg-canvas-cream rounded-[32px] p-6 border-4 border-[#B7D9BC] shadow-lg">
-        <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-full bg-success-soft flex items-center justify-center border-2 border-white shadow-md text-2xl">
-            {{ userEmoji }}
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="font-label-lg text-text-main truncate">{{ userName }}</p>
-            <p class="text-xs text-on-surface-variant truncate">{{ userEmail }}</p>
-            <span class="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-lg"
-              :class="auth.isAuthenticated ? 'bg-success-soft text-primary' : 'bg-warm-bonding/20 text-warm-bonding'">
-              {{ auth.isAuthenticated ? 'Online' : 'Offline' }}
-            </span>
-          </div>
-          <button @click="$emit('go-profile')"
-            class="w-9 h-9 rounded-full bg-white border-2 border-[#B7D9BC] flex items-center justify-center text-primary hover:opacity-80 shrink-0">
-            <span class="material-symbols-outlined text-lg">edit</span>
-          </button>
-        </div>
-      </div>
 
       <!-- Sync Settings -->
       <SyncSettings />
@@ -54,26 +33,10 @@
       </div>
 
       <!-- App Info -->
-      <div class="bg-canvas-cream rounded-[32px] p-6 border-4 border-[#B7D9BC] shadow-lg">
-        <div class="flex items-center gap-3 mb-3">
-          <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center border-2 border-[#B7D9BC] shadow-sm">
-            <span class="material-symbols-outlined text-lg text-primary">info</span>
-          </div>
-          <div>
-            <p class="font-label-lg text-text-main">Tentang Aplikasi</p>
-            <p class="text-xs text-on-surface-variant">{{ appConfig.name }} — {{ appConfig.tagline }}</p>
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-3 text-xs">
-          <div class="bg-white rounded-xl p-3 border-2 border-[#B7D9BC]">
-            <p class="text-on-surface-variant">Versi</p>
-            <p class="font-bold text-text-main mt-0.5">1.0.0</p>
-          </div>
-          <div class="bg-white rounded-xl p-3 border-2 border-[#B7D9BC]">
-            <p class="text-on-surface-variant">Status</p>
-            <p class="font-bold text-primary mt-0.5">{{ auth.isAuthenticated ? 'Terhubung' : 'Offline' }}</p>
-          </div>
-        </div>
+      <div class="text-center py-4">
+        <p class="text-sm font-bold text-primary">{{ appConfig.name }}</p>
+        <p class="text-xs text-on-surface-variant">{{ appConfig.tagline }}</p>
+        <p class="text-xs text-on-surface-variant/60 mt-1">v1.0.0</p>
       </div>
 
     </div>
@@ -105,8 +68,4 @@ async function doDownload() {
 }
 
 defineEmits(['go-profile'])
-
-const userName = computed(() => auth.user?.name || app.userName || 'User')
-const userEmail = computed(() => auth.user?.email || '')
-const userEmoji = computed(() => app.userGender === 'Perempuan' ? '👩' : '👨')
 </script>

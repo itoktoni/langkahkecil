@@ -24,10 +24,9 @@
       </div>
 
       <div class="ref-footer">
-        <a :href="`${appUrl}?ref=${refCode}`" class="ref-cta" target="_blank">
-          Buka {{ appName }} 🚀
-          <span class="ref-cta-url">{{ appUrl.replace('https://', '') }}?ref={{ refCode }}</span>
-        </a>
+        <button @click="goRegister" class="ref-cta">
+          Daftar {{ appName }} 🚀
+        </button>
         <p class="ref-small">{{ appTagline }} #1 di Indonesia</p>
       </div>
     </div>
@@ -40,7 +39,6 @@ import { appConfig } from '../config/appConfig.js'
 
 const appName = appConfig.name
 const appTagline = appConfig.tagline
-const appUrl = import.meta.env.VITE_APP_URL || 'https://halobunda.app'
 
 const refCode = ref('')
 
@@ -48,6 +46,14 @@ onMounted(() => {
   const params = new URLSearchParams(window.location.search)
   refCode.value = params.get('ref') || 'UNKNOWN'
 })
+
+function goRegister() {
+  if (refCode.value && refCode.value !== 'UNKNOWN') {
+    localStorage.setItem('lk_ref_code', refCode.value)
+  }
+  localStorage.setItem('lk_auth_mode', 'register')
+  window.location.href = '/'
+}
 </script>
 
 <style scoped>

@@ -141,15 +141,6 @@
         </div>
 
         <div v-if="auth.isAuthenticated" class="space-y-3">
-          <div class="flex items-center gap-3 p-3 bg-white rounded-xl border-2 border-[#B7D9BC]">
-            <span class="material-symbols-outlined text-primary text-xl">check_circle</span>
-            <div class="flex-1">
-              <p class="text-sm font-bold text-text-main">{{ auth.user?.name || 'User' }}</p>
-              <p class="text-xs text-on-surface-variant">{{ auth.user?.email || '' }}</p>
-            </div>
-            <span class="text-xs text-primary font-bold bg-success-soft px-2 py-1 rounded-lg">Online</span>
-          </div>
-
           <button @click="$emit('logout')"
             class="w-full py-3 rounded-2xl text-sm font-bold border-2 border-error/30 text-error hover:bg-error/5 transition-colors flex items-center justify-center gap-2">
             <span class="material-symbols-outlined text-lg">logout</span>
@@ -285,15 +276,14 @@ const maxChildren = computed(() => {
   if (auth.userRole === 'developer') return Infinity
   const plan = auth.userPlan
   if (!plan) return 0
-  const feature = plan.features?.find(f => f.slug === 'max-children')
-  return feature ? parseInt(feature.value) || 0 : 0
+  return plan.plan_value || 1
 })
 
 const canAddAnak = computed(() => {
   if (auth.userRole === 'developer') return true
   if (auth.userRole === 'trial') {
-    const trialStart = auth.user?.trial_start_date
-    if (!trialStart) return false
+    const trialStart = auth.userPlan?.subscribe_trial_at
+    if (!trialStart) return true
     const serverNow = auth.serverDate ? new Date(auth.serverDate) : new Date()
     const daysDiff = Math.floor((serverNow - new Date(trialStart)) / (1000 * 60 * 60 * 24))
     return daysDiff <= auth.trialDays
@@ -434,7 +424,7 @@ async function tambahAnak() {
   if (auth.userRole === 'developer') {
     // No limits
   } else if (auth.userRole === 'trial') {
-    const trialStart = auth.user?.trial_start_date
+    const trialStart = auth.userPlan?.subscribe_trial_at
     if (!trialStart) {
       addAnakError.value = 'Data trial tidak ditemukan. Silakan login ulang.'
       return

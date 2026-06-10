@@ -14,16 +14,15 @@
 
 <script setup>
 import { computed } from 'vue'
+import { bottomNav } from '../data/bottomNav.js'
 
 const props = defineProps({
-  tabs: { type: Array, required: true },
   activeTab: { type: String, required: true }
 })
 
 defineEmits(['switch'])
 
-const mainTabIds = ['pilar', 'progress', 'activity', 'profile']
-const mainTabs = computed(() => props.tabs.filter(t => mainTabIds.includes(t.id)))
+const mainTabs = computed(() => bottomNav)
 
 function iconStyle(tabId) {
   return { fontVariationSettings: props.activeTab === tabId ? "'FILL' 1" : "'FILL' 0" }

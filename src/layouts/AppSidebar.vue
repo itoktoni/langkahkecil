@@ -1,11 +1,8 @@
 <template>
   <aside class="desktop-sidebar fixed left-0 top-0 h-full w-[280px] z-50 flex flex-col border-r-4 border-[#B7D9BC]"
     style="background: #FFF9F3;">
-    <div class="p-6 pb-4">
+    <div class="p-3 pb-4">
       <div class="flex items-center gap-3 bg-canvas-cream rounded-[20px] p-4 border-4 border-[#B7D9BC] shadow-md">
-        <div class="w-12 h-12 rounded-full bg-success-soft flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
-          <span class="text-2xl">{{ userGender === 'Ayah' ? '👨' : '👩' }}</span>
-        </div>
         <div>
           <h2 class="font-headline-md text-headline-md text-text-main">Halo {{ userName }}!</h2>
           <p class="text-sm text-on-surface-variant">Selamat datang</p>
@@ -54,9 +51,9 @@
 
 <script setup>
 import { computed } from 'vue'
+import { sidebarNav } from '../data/sidebarNav.js'
 
 const props = defineProps({
-  tabs: { type: Array, required: true },
   activeTab: { type: String, required: true },
   userName: { type: String, default: 'Bunda' },
   userGender: { type: String, default: '' },
@@ -65,7 +62,7 @@ const props = defineProps({
 
 defineEmits(['switch', 'install'])
 
-const sidebarTabs = computed(() => props.tabs.filter(t => t.id !== 'profile'))
+const sidebarTabs = computed(() => sidebarNav)
 
 function iconStyle(tabId) {
   return { fontVariationSettings: props.activeTab === tabId ? "'FILL' 1" : "'FILL' 0" }

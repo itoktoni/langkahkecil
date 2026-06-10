@@ -25,6 +25,17 @@ export async function saveAnak(anak) {
   return db.anak.put(JSON.parse(JSON.stringify(anakData)))
 }
 
+export async function saveAnakBatch(anakList) {
+  await db.transaction('rw', db.anak, async () => {
+    await db.anak.clear()
+    for (const anak of anakList) {
+      const raw = toRaw(anak)
+      const { challenges, challengeHistory, challenge_history, checklists, schedules, worksheets, ...anakData } = raw
+      await db.anak.put(JSON.parse(JSON.stringify(anakData)))
+    }
+  })
+}
+
 export async function removeAnak(id) {
   await db.transaction('rw', db.anak, db.challenges, db.challengeHistory, db.checklists, db.schedules, async () => {
     await db.anak.delete(id)

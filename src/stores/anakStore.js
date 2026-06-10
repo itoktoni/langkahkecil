@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { getAnakList as dbGetAnakList, saveAnak as dbSaveAnak, removeAnak as dbRemoveAnak, getSetting } from '../db.js'
+import { getAnakList as dbGetAnakList, saveAnak as dbSaveAnak, saveAnakBatch as dbSaveAnakBatch, removeAnak as dbRemoveAnak, getSetting } from '../db.js'
 import * as api from '../services/api.js'
 
 async function shouldAutoSync() {
@@ -51,14 +51,8 @@ export const useAnakStore = defineStore('anak', () => {
           completedSkills: a.completed_skills || a.completedSkills || [],
         }))
 
-        const serverIds = new Set(mapped.map(a => a.id))
-        const localOnly = localList.filter(a => !serverIds.has(a.id)).map(a => ({ ...a, serverSynced: false }))
-        const merged = [...mapped, ...localOnly]
-
-        anakList.value = merged
-        for (const a of merged) {
-          await dbSaveAnak(JSON.parse(JSON.stringify(a)))
-        }
+        anakList.value = mapped
+        await dbSaveAnakBatch(mapped)
         return
       } catch (e) {
         console.warn('Failed to load from server, using local:', e)

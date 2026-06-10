@@ -48,9 +48,12 @@ async function apiFetch(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`
 
   const headers = {
-    'Content-Type': 'application/json',
     'Accept': 'application/json',
     ...options.headers,
+  }
+
+  if (!(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json'
   }
 
   if (token) {
@@ -69,7 +72,9 @@ async function apiFetch(endpoint, options = {}) {
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Request failed' }))
-    throw new Error(error.message || `HTTP ${response.status}`)
+    const err = new Error(error.message || `HTTP ${response.status}`)
+    err.errors = error.errors || null
+    throw err
   }
 
   return response.json()
@@ -108,6 +113,37 @@ export async function changePassword(currentPassword, newPassword, newPasswordCo
   })
 }
 
+export async function updateAffiliateCode(code, affiliateDiscount = null) {
+  const body = { affiliate_code: code }
+  if (affiliateDiscount !== null) body.affiliate_discount = affiliateDiscount
+  return apiFetch('/affiliate-code', {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  })
+}
+
+export async function getReferrals() {
+  return apiFetch('/referrals')
+}
+
+export async function updateRekening(data) {
+  return apiFetch('/rekening', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+}
+
+export async function requestCashout(amount) {
+  return apiFetch('/cashout', {
+    method: 'POST',
+    body: JSON.stringify({ amount }),
+  })
+}
+
+export async function getCashouts() {
+  return apiFetch('/cashouts')
+}
+
 /**
  * Purchase a plan
  */
@@ -120,11 +156,47 @@ export async function purchasePlan(planId, discountCode = null) {
   })
 }
 
+export async function createPayment(planId, discountCode = null) {
+  const body = { plan_id: planId }
+  if (discountCode) body.discount_code = discountCode
+  return apiFetch('/payments', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  })
+}
+
+export async function validateDiscount(code, planId) {
+  return apiFetch('/payments/validate-discount', {
+    method: 'POST',
+    body: JSON.stringify({ code, plan_id: planId }),
+  })
+}
+
+export async function getPaymentStatus(paymentId) {
+  return apiFetch(`/payments/${paymentId}`)
+}
+
+export async function settlePayment(paymentId) {
+  return apiFetch(`/payments/${paymentId}/settle`, {
+    method: 'POST',
+  })
+}
+
+export async function cancelPayment(paymentId) {
+  return apiFetch(`/payments/${paymentId}/cancel`, {
+    method: 'POST',
+  })
+}
+
+export async function getPaymentHistory() {
+  return apiFetch('/payments')
+}
+
 /**
  * Get plans (public)
  */
 export async function getPlans() {
-  return apiFetch('/plans')
+  return apiFetch('/langkahkecil/plans')
 }
 
 /**
@@ -146,16 +218,18 @@ export async function login(email, password) {
 /**
  * Register a new user
  */
-export async function register(name, email, phone, password, passwordConfirmation) {
+export async function register(name, email, phone, password, passwordConfirmation, referralCode) {
+  const body = {
+    name,
+    email,
+    phone,
+    password,
+    password_confirmation: passwordConfirmation,
+  }
+  if (referralCode) body.ref = referralCode
   const data = await apiFetch('/register', {
     method: 'POST',
-    body: JSON.stringify({
-      name,
-      email,
-      phone,
-      password,
-      password_confirmation: passwordConfirmation,
-    }),
+    body: JSON.stringify(body),
   })
 
   if (data.access_token) {
