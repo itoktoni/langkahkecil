@@ -10,7 +10,13 @@ async function shouldAutoSync() {
 }
 
 export const useAnakStore = defineStore('anak', () => {
-  const anakList = ref([])
+  const cachedAnakList = (() => {
+    try {
+      const raw = localStorage.getItem('lk_anak_cache')
+      return raw ? JSON.parse(raw) : []
+    } catch { return [] }
+  })()
+  const anakList = ref(cachedAnakList)
 
   const allHistory = computed(() => {
     return anakList.value
@@ -52,6 +58,7 @@ export const useAnakStore = defineStore('anak', () => {
         }))
 
         anakList.value = mapped
+        localStorage.setItem('lk_anak_cache', JSON.stringify(mapped))
         await dbSaveAnakBatch(mapped)
         return
       } catch (e) {
@@ -59,6 +66,7 @@ export const useAnakStore = defineStore('anak', () => {
       }
     }
     anakList.value = localList.map(a => ({ ...a, serverSynced: false }))
+    localStorage.setItem('lk_anak_cache', JSON.stringify(anakList.value))
   }
 
   async function addAnak(anak) {

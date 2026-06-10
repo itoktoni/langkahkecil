@@ -111,8 +111,9 @@
     </div>
 
     <!-- Cashout Modal -->
-    <div v-if="showCashout" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" @mousedown.self="showCashout = false">
-      <div class="bg-canvas-cream rounded-[32px] p-6 border-4 border-primary shadow-xl max-w-sm w-full">
+    <div v-if="showCashout" class="fixed inset-0 bg-black/50 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4" @mousedown.self="showCashout = false">
+      <div class="bg-canvas-cream rounded-t-[32px] sm:rounded-[32px] p-5 sm:p-6 border-4 border-primary shadow-xl w-full sm:max-w-sm max-h-[90vh] overflow-y-auto">
+        <div class="w-10 h-1 bg-outline-variant rounded-full mx-auto mb-4 sm:hidden"></div>
         <h3 class="font-bold text-lg text-text-main mb-2">Cairkan Komisi</h3>
         <p class="text-xs text-on-surface-variant mb-4">Saldo tersedia: <span class="font-bold text-primary">Rp{{ totalKomisi.toLocaleString('id-ID') }}</span></p>
 
@@ -125,7 +126,7 @@
 
         <div v-if="cashoutAmount >= cashoutConfig.minimum" class="bg-white rounded-xl p-3 border-2 border-[#B7D9BC] mb-3">
           <div class="flex justify-between text-xs text-on-surface-variant mb-1">
-            <span>Administrasi ({{ cashoutConfig.admin_rate }}%)</span>
+            <span>Platform Fee ({{ cashoutConfig.admin_rate }}%)</span>
             <span class="font-bold text-error">-Rp{{ adminFee.toLocaleString('id-ID') }}</span>
           </div>
           <div class="flex justify-between text-sm font-bold text-text-main">
@@ -138,7 +139,7 @@
           <p class="text-xs text-amber-700 font-medium">Lengkapi data rekening terlebih dahulu melalui tombol Edit Data.</p>
         </div>
 
-        <p class="text-[11px] text-on-surface-variant mb-4">Pencairan diproses maksimal <span class="font-bold">2 hari kerja</span>.</p>
+        <p class="text-[11px] text-on-surface-variant mb-4">Pencairan diproses maksimal <span class="font-bold">1 hari kerja</span>.</p>
 
         <p v-if="cashoutError" class="text-xs text-error font-medium mb-3">{{ cashoutError }}</p>
 
@@ -170,7 +171,7 @@
       <div class="bg-canvas-cream rounded-[24px] p-5 border-4 border-[#B7D9BC] shadow-md">
         <p class="text-xs text-on-surface-variant mb-1">Komisi Upgrade</p>
         <p class="font-bold text-2xl text-text-main">Rp{{ earnings.upgrade.toLocaleString('id-ID') }}</p>
-        <p class="text-xs text-on-surface-variant">{{ rates.commission_rate }}% dari pembayaran</p>
+        <p class="text-xs text-on-surface-variant">Komisi bersih {{ effectiveCommissionRate }}% dari pembayaran</p>
       </div>
       <div class="bg-canvas-cream rounded-[24px] p-5 border-4 border-primary shadow-md">
         <p class="text-xs text-on-surface-variant mb-1">Total Komisi</p>
@@ -285,6 +286,11 @@ const totalKomisi = computed(() => earnings.value.upgrade + bonusRegister.value)
 const hasRekening = computed(() => auth.user?.rekening_nama && auth.user?.rekening_bank && auth.user?.rekening_nomor)
 const adminFee = computed(() => Math.round((cashoutAmount.value || 0) * cashoutConfig.value.admin_rate / 100))
 const received = computed(() => (cashoutAmount.value || 0) - adminFee.value)
+const effectiveCommissionRate = computed(() => {
+  const base = rates.value.commission_rate
+  const disc = auth.user?.affiliate_discount || 0
+  return disc > 0 ? Math.max(0, base - disc) : base
+})
 
 function formatDate(iso) {
   if (!iso) return '-'

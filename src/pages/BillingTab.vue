@@ -168,7 +168,7 @@
     </div>
 
     <!-- Checkout Modal -->
-    <div v-if="showCheckout && checkoutPlan" class="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" @mousedown.self="showCheckout = false">
+    <div v-if="showCheckout && checkoutPlan" class="fixed inset-0 bg-black/50 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4" @mousedown.self="showCheckout = false">
       <div class="bg-canvas-cream rounded-t-[32px] sm:rounded-[32px] p-5 sm:p-6 border-4 border-primary shadow-xl w-full sm:max-w-sm max-h-[90vh] overflow-y-auto">
         <div class="w-10 h-1 bg-outline-variant rounded-full mx-auto mb-4 sm:hidden"></div>
         <h3 class="font-bold text-lg text-text-main mb-1">Checkout</h3>
@@ -234,7 +234,7 @@
     </div>
 
     <!-- QR Payment Modal -->
-    <div v-if="showQrModal && activePayment" class="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" @mousedown.self="closeQrModal">
+    <div v-if="showQrModal && activePayment" class="fixed inset-0 bg-black/50 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4" @mousedown.self="closeQrModal">
       <div class="bg-canvas-cream rounded-t-[32px] sm:rounded-[32px] p-5 sm:p-6 border-4 border-[#B7D9BC] shadow-xl w-full sm:max-w-sm max-h-[90vh] overflow-y-auto">
         <div class="w-10 h-1 bg-outline-variant rounded-full mx-auto mb-4 sm:hidden"></div>
         <div class="text-center">

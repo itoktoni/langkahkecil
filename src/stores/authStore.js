@@ -11,7 +11,7 @@ export const useAuthStore = defineStore('auth', () => {
   const serverAnakList = ref([])
   const serverDate = ref(null)
   const trialDays = ref(10)
-  const plans = ref([])
+  const plans = ref(JSON.parse(localStorage.getItem('lk_plans_cache') || '[]'))
   const discounts = ref([])
   const affiliateConfig = ref({ customer_discount_rate: 20 })
 
@@ -52,6 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
     if (data.plans) {
       plans.value = data.plans
+      localStorage.setItem('lk_plans_cache', JSON.stringify(data.plans))
     }
     if (data.discounts) {
       discounts.value = data.discounts
