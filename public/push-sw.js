@@ -4,7 +4,7 @@ self.addEventListener('push', function (event) {
   var data = event.data.json()
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Halo Bunda', {
+    self.registration.showNotification(data.title || 'Notifikasi', {
       body: data.body || '',
       icon: data.icon || '/icons/icon-192.svg',
       badge: data.badge || '/icons/icon-192.svg',

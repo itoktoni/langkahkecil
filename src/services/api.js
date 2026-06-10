@@ -422,7 +422,13 @@ export async function getVapidKey() {
   const res = await fetch(`${API_BASE}/push/vapid-key`, {
     headers: { 'Accept': 'application/json' },
   })
+  if (!res.ok) {
+    throw new Error(`VAPID key request failed: ${res.status} ${res.statusText}`)
+  }
   const data = await res.json()
+  if (!data.publicKey) {
+    throw new Error('Server returned empty VAPID public key')
+  }
   return data.publicKey
 }
 
