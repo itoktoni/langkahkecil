@@ -108,23 +108,6 @@
             </span>
           </div>
 
-          <div v-if="auth.user?.affiliate_reff && plan.price > 0" class="rounded-xl p-3 border-2 mb-3"
-            :style="{ background: planTheme(plan).bg, borderColor: planTheme(plan).color + '40' }">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="material-symbols-outlined text-sm sm:text-base" :style="{ color: planTheme(plan).color }">sell</span>
-              <p class="text-[11px] sm:text-xs font-bold" :style="{ color: planTheme(plan).color }">Diskon Affiliate</p>
-            </div>
-            <p class="text-[11px] sm:text-xs text-on-surface-variant">
-              Kode: <span class="font-bold text-text-main">{{ auth.user.affiliate_reff }}</span>
-              <span v-if="auth.user.affiliate_reff_nama"> &middot; {{ auth.user.affiliate_reff_nama }}</span>
-            </p>
-            <div class="flex items-center justify-between mt-2">
-              <span class="text-[11px] sm:text-xs text-on-surface-variant line-through">Rp{{ plan.price.toLocaleString('id-ID') }}</span>
-              <span class="text-[11px] sm:text-xs text-text-main">-Rp{{ affiliateDiscountAmount(plan.price).toLocaleString('id-ID') }}</span>
-            </div>
-            <p class="font-bold text-sm sm:text-base text-text-main text-right mt-0.5">Rp{{ affiliateFinalPrice(plan.price).toLocaleString('id-ID') }}</p>
-          </div>
-
           <button v-if="!isDowngrade(plan) && !(plan.price === 0 && isCurrentPlan(plan))"
             @click.stop="startPayment(plan)"
             class="w-full py-2.5 sm:py-3 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition-all"
@@ -190,14 +173,7 @@
               {{ discountLoading ? '...' : 'Pakai' }}
             </button>
           </div>
-          <div v-if="auth.user?.affiliate_reff && discountCode.toUpperCase() === auth.user.affiliate_reff.toUpperCase() && !appliedDiscount" class="mt-2 rounded-lg bg-success-soft px-3 py-2">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-sm text-primary">sell</span>
-              <span class="text-xs font-bold text-primary">{{ auth.user.affiliate_reff_nama }} kasih kamu kode voucher!</span>
-            </div>
-            <p class="text-[10px] text-primary/70 mt-1 ml-6">Tambahan discount</p>
-          </div>
-          <p v-if="discountError" class="text-xs text-error font-medium mt-1">{{ discountError }}</p>
+           <p v-if="discountError" class="text-xs text-error font-medium mt-1">{{ discountError }}</p>
         </div>
 
         <div v-if="appliedDiscount" class="rounded-xl p-4 border-2 mb-3"
@@ -334,22 +310,6 @@ const trialProgress = computed(() => {
   return Math.min(100, Math.round((Math.floor((now - new Date(t)) / 86400000) / auth.trialDays) * 100))
 })
 
-const affiliateDiscountRate = computed(() => {
-  if (!auth.user?.affiliate_reff) return 0
-  const base = auth.affiliateConfig.customer_discount_rate || 20
-  const affDisc = auth.user.affiliate_reff_discount || 0
-  const commission = auth.affiliateConfig.commission_rate || 15
-  return base + Math.max(0, commission - affDisc)
-})
-
-function affiliateDiscountAmount(price) {
-  return Math.round(price * affiliateDiscountRate.value / 100)
-}
-
-function affiliateFinalPrice(price) {
-  return price - affiliateDiscountAmount(price)
-}
-
 function isCurrentPlan(plan) { return currentPlanId.value === plan.id }
 function isDowngrade(plan) {
   if (!currentPlanId.value) return false
@@ -407,12 +367,8 @@ async function startPayment(plan) {
   checkoutPlan.value = plan
   discountError.value = ''
   appliedDiscount.value = null
-  discountCode.value = auth.user?.affiliate_reff || ''
+  discountCode.value = ''
   showCheckout.value = true
-
-  if (discountCode.value) {
-    await applyDiscount()
-  }
 }
 
 async function applyDiscount() {
@@ -440,7 +396,7 @@ async function confirmPayment() {
   checkoutLoading.value = true
   try {
     stopPolling()
-    const res = await api.createPayment(checkoutPlan.value.id, discountCode.value || null)
+    const res = await api.createPayment(checkoutPlan.value.id, discountCode.value?.trim().toUpperCase() || null)
     activePayment.value = res.payment
     showCheckout.value = false
     showQrModal.value = true

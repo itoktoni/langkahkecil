@@ -339,7 +339,6 @@ async function saveName() {
       const res = await api.updateProfile({ name: userName.value, phone: userPhone.value })
       if (res.user) {
         auth.user = res.user
-        localStorage.setItem('lk_user', JSON.stringify(res.user))
       }
     } catch (e) {
       console.warn('Failed to update profile on server:', e)

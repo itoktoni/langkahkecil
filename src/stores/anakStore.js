@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { getAnakList as dbGetAnakList, saveAnak as dbSaveAnak, saveAnakBatch as dbSaveAnakBatch, removeAnak as dbRemoveAnak, getSetting } from '../db.js'
+import { getAnakList as dbGetAnakList, saveAnak as dbSaveAnak, saveAnakBatch as dbSaveAnakBatch, removeAnak as dbRemoveAnak, clearAllUserData, getSetting } from '../db.js'
 import * as api from '../services/api.js'
 
 async function shouldAutoSync() {
@@ -32,8 +32,6 @@ export const useAnakStore = defineStore('anak', () => {
   })
 
   async function loadAnakList() {
-    const localList = await dbGetAnakList()
-
     if (api.isAuthenticated()) {
       try {
         const serverList = await api.getAnakList()
@@ -65,8 +63,19 @@ export const useAnakStore = defineStore('anak', () => {
         console.warn('Failed to load from server, using local:', e)
       }
     }
+
+    const localList = await dbGetAnakList()
     anakList.value = localList.map(a => ({ ...a, serverSynced: false }))
     localStorage.setItem('lk_anak_cache', JSON.stringify(anakList.value))
+  }
+
+  async function validateAndClearIfDifferentUser(userId) {
+    const storedUserId = localStorage.getItem('lk_cache_user_id')
+    if (storedUserId && String(storedUserId) !== String(userId)) {
+      await clearAllUserData()
+      anakList.value = []
+    }
+    localStorage.setItem('lk_cache_user_id', String(userId))
   }
 
   async function addAnak(anak) {
@@ -222,6 +231,6 @@ export const useAnakStore = defineStore('anak', () => {
 
   return {
     anakList, allHistory,
-    loadAnakList, addAnak, updateAnak, deleteAnak, resetSkill, deleteSkill, addSkill, addActivity
+    loadAnakList, validateAndClearIfDifferentUser, addAnak, updateAnak, deleteAnak, resetSkill, deleteSkill, addSkill, addActivity
   }
 })

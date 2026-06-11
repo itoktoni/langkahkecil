@@ -4,7 +4,7 @@ import { appConfig } from '../config/appConfig.js'
 
 export const useAppStore = defineStore('app', () => {
   const savedTab = localStorage.getItem('lk_active_tab')
-  const activeTab = ref(savedTab && savedTab !== 'null' ? savedTab : 'pilar')
+  const activeTab = ref(savedTab && savedTab !== 'null' ? savedTab : appConfig.defaultTab)
   const selectedPilar = ref(null)
   const selectedAnakId = ref(null)
   const userName = ref('Parent')

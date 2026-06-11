@@ -1,6 +1,6 @@
 <template>
   <ReferralPage v-if="isReferral" />
-  <LoginPage v-else-if="showLogin" @success="onLoginSuccess" @skip="showLogin = false" />
+  <LoginPage v-else-if="!auth.isAuthenticated" @success="onLoginSuccess" />
   <div v-else class="bg-canvas-cream text-text-main min-h-screen">
     <AppSidebar :active-tab="app.activeTab" :user-name="app.userName" :user-gender="app.userGender" :can-install="canInstall" @switch="app.switchTab" @install="installApp" />
     <DesktopHeader :title="app.pageTitle" :can-install="canInstall" :user-name="app.userName" :user-email="userEmail" :user-gender="app.userGender" @sync="showSyncModal = true" @install="installApp" @profile="app.switchTab('profile')" @settings="app.switchTab('settings')" @billing="app.switchTab('billing')" @referral="app.switchTab('referral')" @logout="handleLogout" />
@@ -41,7 +41,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useInstall } from './composables/useInstall.js'
-import { getSetting, saveSetting, getAnakList as getLocalAnakList, syncServerData } from './db.js'
+import { getSetting, saveSetting, syncServerData } from './db.js'
 import { useAppStore } from './stores/appStore.js'
 import { useAnakStore } from './stores/anakStore.js'
 import { useToolsStore } from './stores/toolsStore.js'
@@ -87,49 +87,29 @@ const activityTabRef = ref(null)
 const { canInstall, install: installApp } = useInstall()
 
 const showSyncModal = ref(false)
-const showLogin = ref(false)
 const userEmail = computed(() => auth.user?.email || '')
 
-// Show login page if not authenticated (first visit)
-// User can skip login to use app offline
-onMounted(() => {
-  if (!auth.isAuthenticated) {
-    // Check if user has chosen to skip login before
-    const skipLogin = localStorage.getItem('lk_skip_login')
-    if (!skipLogin) {
-      showLogin.value = true
-    }
-  }
-})
-
 async function onLoginSuccess() {
-  showLogin.value = false
-  localStorage.removeItem('lk_skip_login')
   app.switchTab('pilar')
 
   if (auth.serverAnakList.length) {
     await syncServerData(auth.serverAnakList)
   }
 
-  await syncLocalToServer()
   await seedAndLoad()
 }
 
-async function syncLocalToServer() {
-  const localList = await getLocalAnakList()
-  if (localList.length) {
-    try {
-      await api.syncToServer(localList)
-    } catch (e) {
-      console.warn('Failed to sync local data to server:', e)
-    }
-  }
+function handleLogout() {
+  clearLocalData()
+  auth.logout()
 }
 
-function handleLogout() {
-  auth.logout()
-  showLogin.value = true
-  localStorage.removeItem('lk_skip_login')
+function clearLocalData() {
+  anak.anakList = []
+  tools.anakToolsData = {}
+  tools.toolsAnakId = null
+  app.selectedAnakId = null
+  app.appReady = false
 }
 
 async function onSynced() {
@@ -137,26 +117,17 @@ async function onSynced() {
 }
 
 async function seedAndLoad() {
-  const savedName = await getSetting('userName')
-  if (savedName) app.userName = savedName
-  const savedGender = await getSetting('userGender')
-  if (savedGender) app.userGender = savedGender
+  if (!auth.user) return
 
-  // If authenticated, use server user info
-  if (auth.user) {
-    if (auth.user.name) {
-      app.userName = auth.user.name
-      await saveSetting('userName', auth.user.name)
-    }
-    if (auth.user.email) {
-      await saveSetting('userEmail', auth.user.email)
-    }
+  await anak.validateAndClearIfDifferentUser(auth.user.id)
+
+  if (auth.user.name) {
+    app.userName = auth.user.name
   }
 
   await anak.loadAnakList()
   await tools.loadToolsData(anak.anakList)
 
-  // Load activities from cache (download is manual via Settings/Activity)
   await activityStore.loadFromCache()
   if (activityStore.activitiesCache) {
     const aktivitas = buildAktivitasDataFromAPI(activityStore.activitiesCache)
@@ -198,7 +169,16 @@ function handleBack() {
 onMounted(async () => {
   history.replaceState({ action: 'root' }, '')
   window.addEventListener('popstate', handleBack)
-  await seedAndLoad()
+
+  if (auth.isAuthenticated) {
+    try {
+      const me = await api.getMe()
+      auth.applyServerData(me)
+      await seedAndLoad()
+    } catch (e) {
+      auth.logout()
+    }
+  }
 })
 
 onUnmounted(() => {

@@ -113,6 +113,18 @@ export async function removeWorksheet(id) {
   return db.worksheets.delete(id)
 }
 
+export async function clearAllUserData() {
+  await db.transaction('rw', db.anak, db.challenges, db.challengeHistory, db.checklists, db.schedules, db.worksheets, async () => {
+    await db.anak.clear()
+    await db.challenges.clear()
+    await db.challengeHistory.clear()
+    await db.checklists.clear()
+    await db.schedules.clear()
+    await db.worksheets.clear()
+  })
+  localStorage.removeItem('lk_anak_cache')
+}
+
 function cleanRecord(obj, foreignKey, foreignValue) {
   const { anak_id, id, ...rest } = obj
   const record = { ...rest, [foreignKey]: foreignValue }

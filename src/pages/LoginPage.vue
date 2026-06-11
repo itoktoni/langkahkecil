@@ -166,14 +166,6 @@
           <span v-else>Daftar</span>
         </button>
       </div>
-
-      <!-- Skip Login -->
-      <button
-        @click="$emit('skip')"
-        class="w-full mt-4 py-2 text-sm text-on-surface-variant hover:text-primary transition"
-      >
-        Lewati, gunakan tanpa akun →
-      </button>
     </div>
   </div>
 </template>
@@ -183,7 +175,7 @@ import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '../stores/authStore.js'
 
-const emit = defineEmits(['success', 'skip'])
+const emit = defineEmits(['success'])
 
 const auth = useAuthStore()
 

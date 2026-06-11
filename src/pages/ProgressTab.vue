@@ -39,7 +39,7 @@
           <div v-if="anak.skills && anak.skills.length" class="pt-4 space-y-3">
             <h4 class="text-xs font-bold text-primary uppercase tracking-wider">Skills Aktif</h4>
             <div v-for="sp in anak.skills" :key="sp.key"
-              class="bg-white rounded-2xl p-4 border-2 border-[#B7D9BC] shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+              class="rounded-2xl p-4 border-2 border-[#B7D9BC] shadow-sm cursor-pointer hover:shadow-md transition-shadow"
               @click="$emit('open-skill', { anakId: anak.id, skillKey: sp.key, pilarKey: sp.pilar })">
               <div class="flex items-center gap-3 mb-3">
                 <div class="flex-1 min-w-0">
@@ -60,9 +60,10 @@
                   class="flex items-center gap-2 px-3 py-2 bg-canvas-cream rounded-xl text-xs border border-[#B7D9BC]/50"
                   :class="{ 'opacity-50 line-through': act.completed }">
                   <button @click.stop="toggleActivityComplete(anak.id, act)"
-                    class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
-                    :class="act.completed ? 'bg-primary border-primary' : 'border-gray-300'">
-                    <span v-if="act.completed" class="material-symbols-outlined text-white text-xs">check</span>
+                    class="relative w-10 h-6 rounded-full shrink-0 transition-colors duration-200 focus:outline-none"
+                    :class="act.completed ? 'bg-primary' : 'bg-gray-300'">
+                    <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200"
+                      :class="{ 'translate-x-4': act.completed }"></span>
                   </button>
                   <span class="text-base">{{ act.emoji }}</span>
                   <span class="flex-1 font-medium text-text-main">{{ act.title }}</span>
@@ -156,53 +157,51 @@
       </div>
     </div>
 
-    <AppModal v-model="showEvaluasi" :title="evalTitle">
+    <AppModal v-model="showEvaluasi" :title="evalTitle" fullscreen closable>
       <div class="text-center mb-4">
-        <div class="text-4xl mb-2">{{ evalEmoji }}</div>
         <p class="text-xs text-on-surface-variant">{{ evalDesc }}</p>
       </div>
 
       <div v-if="evalQuestions.length" class="space-y-2 mb-5">
         <p class="text-[11px] font-bold text-primary uppercase tracking-wider">Panduan Penilaian</p>
         <div v-for="(q, i) in evalQuestions" :key="i"
-          class="bg-canvas-cream rounded-xl p-3 text-sm text-text-main border-2 border-[#B7D9BC]/50">
+          class="bg-white rounded-xl p-3 text-sm text-text-main border-2 border-[#B7D9BC]/50">
           {{ i + 1 }}. {{ q }}
         </div>
       </div>
 
-      <div class="bg-canvas-cream rounded-2xl p-4 shadow-sm border-2 border-[#B7D9BC]/50">
+      <div class="bg-success-soft rounded-xl p-3 border-2 border-[#B7D9BC]/50 mb-4 text-center">
+        <p class="text-xs text-on-surface-variant">
+          <template v-if="app.userGender === 'Ayah'">Menurut <span class="font-bold text-text-main">Ayah</span>, berapa nilai yang sudah <span class="font-bold text-text-main">ananda</span> peroleh berdasarkan pertanyaan diatas terhadap softskill yang sudah dikuasai?</template>
+          <template v-else-if="app.userGender === 'Bunda'">Menurut <span class="font-bold text-text-main">Bunda</span>, berapa nilai yang sudah <span class="font-bold text-text-main">ananda</span> peroleh berdasarkan pertanyaan diatas terhadap softskill yang sudah dikuasai?</template>
+          <template v-else>Menurut Ayah / Bunda, berapa nilai yang sudah <span class="font-bold text-text-main">ananda</span> peroleh berdasarkan pertanyaan diatas terhadap softskill yang sudah dikuasai?</template>
+        </p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 shadow-sm border-2 border-[#B7D9BC]/50">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold text-primary uppercase tracking-wider">Penilaian Orang Tua</span>
-          <span class="text-xs font-bold" :style="{ color: evalColor }">{{ evalPoints }}/{{ evalMax }}</span>
+          <span class="text-xs font-bold text-primary uppercase tracking-wider">Penilaian</span>
+          <span class="text-xs font-bold text-primary">{{ evalPoints }}/{{ evalMax }}</span>
         </div>
         <div class="flex items-center gap-3 mb-3">
           <div class="flex-1">
-            <div class="w-full h-5 rounded-full overflow-hidden relative" :style="{ background: evalColor + '20' }">
-              <div class="h-full rounded-full transition-all duration-700"
-                :style="{ width: evalPercent + '%', background: evalColor }">
+            <div class="w-full h-5 rounded-full overflow-hidden relative bg-primary/10">
+              <div class="h-full rounded-full transition-all duration-300 bg-primary"
+                :style="{ width: evalPercent + '%' }">
               </div>
             </div>
           </div>
         </div>
-        <div class="flex items-center justify-center gap-2 mt-2">
-          <button @click="removeEvalPoint"
-            class="h-9 px-3 rounded-xl text-sm font-bold border-2 transition-all active:scale-95"
-            :style="{ borderColor: evalColor + '80', color: evalColor }">
-            -1 Poin
-          </button>
-          <button @click="addEvalPoint"
-            class="h-9 px-3 rounded-xl text-sm font-bold text-white transition-all active:scale-95"
-            :style="{ background: evalColor }">
-            +1 Poin
-          </button>
+        <input type="range" v-model.number="evalPoints" :min="0" :max="evalMax" step="1"
+          class="w-full accent-primary h-3 rounded-full appearance-none cursor-pointer"
+          @input="onSliderChange" />
+        <div class="flex justify-between text-[10px] text-on-surface-variant mt-1.5 px-0.5">
+          <span v-for="i in evalMax + 1" :key="i">{{ i - 1 }}</span>
         </div>
       </div>
 
       <div class="flex gap-3 mt-5">
         <AppButton variant="outline" block @click="closeEvaluasi">Tutup</AppButton>
-        <AppButton block @click="saveEvaluation" :disabled="evalSaving || evalPoints === 0">
-          <span class="material-symbols-outlined text-lg">save</span> {{ evalSaving ? 'Menyimpan...' : 'Simpan' }}
-        </AppButton>
         <AppButton block @click="shareEval">
           <span class="material-symbols-outlined text-lg">share</span> Share
         </AppButton>
@@ -220,8 +219,10 @@ import { ageLabel } from '../utils/age.js'
 import { shareProgress } from '../utils/share.js'
 import AppModal from '../components/AppModal.vue'
 import AppButton from '../components/AppButton.vue'
-import { playAddSound, playRemoveSound } from '../utils/sound.js'
+import { useAppStore } from '../stores/appStore.js'
 import * as api from '../services/api.js'
+
+const app = useAppStore()
 
 const props = defineProps({
   anakList: { type: Array, default: () => [] },
@@ -239,6 +240,7 @@ const evalQuestions = ref([])
 const evalPoints = ref(0)
 const evalMax = 10
 const evalSaving = ref(false)
+let autoSaveTimer = null
 
 const evaluationsData = ref({})
 const activeEvals = ref({})
@@ -360,15 +362,40 @@ function openEvaluasi(anak, sp) {
 function addEvalPoint() {
   if (evalPoints.value < evalMax) {
     evalPoints.value++
-    playAddSound()
   }
 }
 
 function removeEvalPoint() {
   if (evalPoints.value > 0) {
     evalPoints.value--
-    playRemoveSound()
   }
+}
+
+function onSliderChange() {
+  if (autoSaveTimer) clearTimeout(autoSaveTimer)
+  autoSaveTimer = setTimeout(() => {
+    autoSaveEvaluation()
+  }, 800)
+}
+
+async function autoSaveEvaluation() {
+  if (!evalAnak.value || !evalSkill.value || evalPoints.value === 0) return
+  if (!evalAnak.value.serverSynced) return
+  evalSaving.value = true
+  try {
+    await api.addEvaluation(evalAnak.value.id, {
+      skill_key: evalSkill.value.key,
+      skill_title: evalSkill.value.title,
+      pilar: evalSkill.value.pilar,
+      points: evalPoints.value,
+      max_points: evalMax,
+      notes: `${evalPoints.value} dari ${evalMax} poin`,
+    })
+    await fetchEvaluations(evalAnak.value.id)
+  } catch (e) {
+    console.warn('Auto-save failed:', e)
+  }
+  evalSaving.value = false
 }
 
 function closeEvaluasi() {
@@ -431,3 +458,11 @@ function shareEvalDirect(anak, sp) {
   })
 }
 </script>
+
+<style scoped>
+input[type="range"] { -webkit-appearance: none; background: transparent; }
+input[type="range"]::-webkit-slider-runnable-track { height: 10px; border-radius: 5px; background: #B7D9BC; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #176C33; margin-top: -9px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer; }
+input[type="range"]::-moz-range-track { height: 10px; border-radius: 5px; background: #B7D9BC; }
+input[type="range"]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: #176C33; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer; }
+</style>

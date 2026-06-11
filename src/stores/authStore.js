@@ -11,9 +11,9 @@ export const useAuthStore = defineStore('auth', () => {
   const serverAnakList = ref([])
   const serverDate = ref(null)
   const trialDays = ref(10)
-  const plans = ref(JSON.parse(localStorage.getItem('lk_plans_cache') || '[]'))
+  const plans = ref([])
   const discounts = ref([])
-  const affiliateConfig = ref({ customer_discount_rate: 20 })
+  const affiliateConfig = ref({})
 
   const isAuthenticated = computed(() => !!token.value)
 
@@ -22,24 +22,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   function init() {
     const storedToken = api.getAuthToken()
-    const storedUser = localStorage.getItem('lk_user')
-
     if (storedToken) {
       token.value = storedToken
-    }
-    if (storedUser) {
-      try {
-        user.value = JSON.parse(storedUser)
-      } catch (e) {
-        user.value = null
-      }
     }
   }
 
   function applyServerData(data) {
     if (data.user) {
       user.value = data.user
-      localStorage.setItem('lk_user', JSON.stringify(data.user))
     }
     if (data.anak_list) {
       serverAnakList.value = data.anak_list
@@ -52,7 +42,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
     if (data.plans) {
       plans.value = data.plans
-      localStorage.setItem('lk_plans_cache', JSON.stringify(data.plans))
     }
     if (data.discounts) {
       discounts.value = data.discounts
@@ -106,7 +95,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
     serverAnakList.value = []
     serverDate.value = null
-    localStorage.removeItem('lk_user')
+    localStorage.removeItem('lk_cache_user_id')
   }
 
   // Auto-init on store creation

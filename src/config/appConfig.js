@@ -8,4 +8,5 @@ export const appConfig = {
   syncTitle: import.meta.env.VITE_SYNC_TITLE || 'Sinkronisasi Data',
   syncDescription: import.meta.env.VITE_SYNC_DESCRIPTION || 'Backup & restore data anak ke cloud',
   loginDescription: import.meta.env.VITE_LOGIN_DESCRIPTION || 'Masuk untuk sinkronisasi data',
+  defaultTab: import.meta.env.VITE_DEFAULT_TAB || 'activity',
 }

@@ -73,7 +73,7 @@ async function apiFetch(endpoint, options = {}) {
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Request failed' }))
     const err = new Error(error.message || `HTTP ${response.status}`)
-    err.errors = error.errors || null
+    err.errors = error.errors || error.data || null
     throw err
   }
 
@@ -113,17 +113,32 @@ export async function changePassword(currentPassword, newPassword, newPasswordCo
   })
 }
 
-export async function updateAffiliateCode(code, affiliateDiscount = null) {
-  const body = { affiliate_code: code }
-  if (affiliateDiscount !== null) body.affiliate_discount = affiliateDiscount
+export async function updateAffiliateCode(code) {
   return apiFetch('/affiliate-code', {
     method: 'PUT',
-    body: JSON.stringify(body),
+    body: JSON.stringify({ affiliate_code: code }),
   })
 }
 
 export async function getReferrals() {
   return apiFetch('/referrals')
+}
+
+export async function getMyDiscounts() {
+  return apiFetch('/discounts')
+}
+
+export async function createDiscount(data) {
+  return apiFetch('/discounts', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+}
+
+export async function deleteDiscount(id) {
+  return apiFetch(`/discounts/${id}`, {
+    method: 'DELETE',
+  })
 }
 
 export async function updateRekening(data) {
