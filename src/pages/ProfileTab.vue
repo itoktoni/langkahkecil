@@ -89,8 +89,7 @@
         </h3>
         <div class="flex items-center gap-2">
           <button @click="tambahAnak"
-            class="px-4 py-2 rounded-xl text-sm font-bold text-primary btn-pop-green-sm"
-            :class="{ 'opacity-40 pointer-events-none': !canAddAnak }">
+            class="px-4 py-2 rounded-xl text-sm font-bold text-primary btn-pop-green-sm">
             + Tambah
           </button>
         </div>
@@ -225,12 +224,38 @@
       </div>
     </div>
 
+    <!-- Upgrade Popup -->
+    <div v-if="showUpgradePopup" class="fixed inset-0 z-[100] flex items-end justify-center lg:items-center">
+      <div class="absolute inset-0 bg-black/40" @click="showUpgradePopup = false"></div>
+      <div class="relative bg-canvas-cream rounded-t-[32px] lg:rounded-[32px] w-full max-w-md p-6 pb-8 lg:mb-0 border-4 border-primary border-b-0 lg:border-b-4">
+        <div class="w-10 h-1 bg-primary/30 rounded-full mx-auto mb-5 lg:hidden"></div>
+        <div class="text-center">
+          <div class="w-16 h-16 rounded-full bg-success-soft flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-md">
+            <span class="material-symbols-outlined text-3xl text-primary">workspace_premium</span>
+          </div>
+          <h3 class="font-headline-md text-text-main mb-2">Upgrade Paket</h3>
+          <p class="text-sm text-on-surface-variant mb-1">Kamu sudah mencapai batas <span class="font-bold text-primary">{{ maxChildren }} anak</span> untuk paket saat ini.</p>
+          <p class="text-xs text-on-surface-variant mb-6">Upgrade paket untuk menambah lebih banyak anak dan fitur premium lainnya.</p>
+          <div class="flex gap-3">
+            <button @click="showUpgradePopup = false"
+              class="flex-1 py-3 rounded-2xl text-sm font-bold text-on-surface-variant btn-pop-gray">
+              Nanti Saja
+            </button>
+            <button @click="showUpgradePopup = false; app.switchTab('billing')"
+              class="flex-1 py-3 rounded-2xl text-sm font-bold text-white btn-pop-green">
+              Lihat Paket
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { saveAnak, getSetting, saveSetting } from '../db.js'
+import { getSetting, saveSetting } from '../db.js'
 import { ageLabel } from '../utils/age.js'
 import { useAppStore } from '../stores/appStore.js'
 import { useAuthStore } from '../stores/authStore.js'
@@ -262,6 +287,7 @@ const editAnakError = ref('')
 const nameError = ref('')
 
 const showPasswordForm = ref(false)
+const showUpgradePopup = ref(false)
 const oldPassword = ref('')
 const newPassword = ref('')
 const passwordError = ref('')
@@ -281,14 +307,14 @@ const maxChildren = computed(() => {
 
 const canAddAnak = computed(() => {
   if (auth.userRole === 'developer') return true
+  if (!auth.userPlan) return false
   if (auth.userRole === 'trial') {
     const trialStart = auth.userPlan?.subscribe_trial_at
     if (!trialStart) return true
     const serverNow = auth.serverDate ? new Date(auth.serverDate) : new Date()
     const daysDiff = Math.floor((serverNow - new Date(trialStart)) / (1000 * 60 * 60 * 24))
-    return daysDiff <= auth.trialDays
+    if (daysDiff > auth.trialDays) return false
   }
-  if (!auth.userPlan) return false
   return props.anakList.length < maxChildren.value
 })
 
@@ -422,28 +448,27 @@ async function tambahAnak() {
 
   if (auth.userRole === 'developer') {
     // No limits
-  } else if (auth.userRole === 'trial') {
-    const trialStart = auth.userPlan?.subscribe_trial_at
-    if (!trialStart) {
-      addAnakError.value = 'Data trial tidak ditemukan. Silakan login ulang.'
-      return
-    }
-    const serverNow = auth.serverDate ? new Date(auth.serverDate) : new Date()
-    const daysDiff = Math.floor((serverNow - new Date(trialStart)) / (1000 * 60 * 60 * 24))
-    if (daysDiff > auth.trialDays) {
-      addAnakError.value = `Masa trial ${auth.trialDays} hari telah berakhir. Pilih paket untuk melanjutkan.`
-      setTimeout(() => app.switchTab('billing'), 2000)
-      return
-    }
-  } else if (auth.userPlan) {
-    if (props.anakList.length >= maxChildren.value) {
-      addAnakError.value = `Batas ${maxChildren.value} anak untuk paket ini. Upgrade paket atau bayar anak tambahan.`
-      setTimeout(() => app.switchTab('billing'), 2000)
-      return
-    }
-  } else {
-    app.switchTab('billing')
+  } else if (!auth.userPlan) {
+    showUpgradePopup.value = true
     return
+  } else {
+    if (auth.userRole === 'trial') {
+      const trialStart = auth.userPlan?.subscribe_trial_at
+      if (!trialStart) {
+        addAnakError.value = 'Data trial tidak ditemukan. Silakan login ulang.'
+        return
+      }
+      const serverNow = auth.serverDate ? new Date(auth.serverDate) : new Date()
+      const daysDiff = Math.floor((serverNow - new Date(trialStart)) / (1000 * 60 * 60 * 24))
+      if (daysDiff > auth.trialDays) {
+        showUpgradePopup.value = true
+        return
+      }
+    }
+    if (props.anakList.length >= maxChildren.value) {
+      showUpgradePopup.value = true
+      return
+    }
   }
 
   const emojis = ['👦', '👧']
@@ -456,9 +481,13 @@ async function tambahAnak() {
     tanggal: null, bulan: null, tahun: null,
     skills: [], completedSkills: [], history: []
   }
-  newAnak.id = await saveAnak(newAnak)
-  props.anakList.push(newAnak)
-  app.selectedAnakId = newAnak.id
+  try {
+    const id = await anakStore.addAnak(newAnak)
+    newAnak.id = id
+    app.selectedAnakId = id
+  } catch (e) {
+    addAnakError.value = e.message || 'Gagal menambahkan anak'
+  }
 }
 </script>
 

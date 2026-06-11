@@ -80,28 +80,24 @@ export const useAnakStore = defineStore('anak', () => {
 
   async function addAnak(anak) {
     if (await shouldAutoSync()) {
-      try {
-        const payload = {
-          nama: anak.nama,
-          gender: anak.gender,
-          umur: anak.umur,
-          tanggal_lahir: anak.tanggal || anak.tanggal_lahir,
-          bulan_lahir: anak.bulan || anak.bulan_lahir,
-          tahun_lahir: anak.tahun || anak.tahun_lahir,
-          emoji: anak.emoji,
-          settings: anak.settings,
-        }
-        const saved = await api.addAnak(payload)
-        anak.id = saved.id
-        anak.serverSynced = true
-        anak.skills = anak.skills || []
-        anak.completedSkills = anak.completedSkills || []
-        anakList.value.push(anak)
-        await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
-        return saved.id
-      } catch (e) {
-        console.warn('Failed to save to server, saving locally:', e)
+      const payload = {
+        nama: anak.nama,
+        gender: anak.gender,
+        umur: anak.umur,
+        tanggal_lahir: anak.tanggal || anak.tanggal_lahir,
+        bulan_lahir: anak.bulan || anak.bulan_lahir,
+        tahun_lahir: anak.tahun || anak.tahun_lahir,
+        emoji: anak.emoji,
+        settings: anak.settings,
       }
+      const saved = await api.addAnak(payload)
+      anak.id = saved.id
+      anak.serverSynced = true
+      anak.skills = anak.skills || []
+      anak.completedSkills = anak.completedSkills || []
+      anakList.value.push(anak)
+      await dbSaveAnak(JSON.parse(JSON.stringify(anak)))
+      return saved.id
     }
     const id = await dbSaveAnak(anak)
     anak.id = id
